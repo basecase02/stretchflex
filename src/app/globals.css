@@ -5,8 +5,10 @@
             out of a pill photo. Below it the page is bold and full-bleed:
             chunky caps headlines with a handwritten word, running type,
             tabbed folder cards, pinned notes and a block of review cards.
-   Colour   The StretchFLEX palette: Stretch blue, Flex red, navy ink, blush
-            and white. Rose is the brand red tinted into blush; sky is the
+   Colour   The StretchFLEX palette only: Stretch blue, Flex red, navy ink
+            and white, with pale tints of the blue for quiet surfaces. No
+            pink anywhere. (The token names "blush" and "rose" are kept, but
+            they now hold white and a pale blue.) Sky is the
             brand blue tinted into white.
    Type     Albert Sans for the first screen and all text. Lilita One (chunky
             caps) for headlines below it, Qwitcher Grypen for the handwritten
@@ -19,17 +21,17 @@
   --red: #ef4036;
   --red-deep: #b9241b;
   --navy: #06314e;
-  --blush: #fff6f6;
+  --blush: #ffffff;
   --white: #ffffff;
-  --rose: #fbd3cf;
-  --sky: #d8e9f6;
+  --rose: #e6eff8;
+  --sky: #d4e6f5;
 
-  --ground: var(--rose);
+  --ground: #dde7f1;
   --ink: var(--navy);
   --ink-soft: rgb(6 49 78 / 0.8);
   --rule: rgb(6 49 78 / 0.14);
-  --on-dark-soft: rgb(255 246 246 / 0.86);
-  --rule-dark: rgb(255 246 246 / 0.22);
+  --on-dark-soft: rgb(255 255 255 / 0.86);
+  --rule-dark: rgb(255 255 255 / 0.22);
   /* Brand blue with a soft light behind the top, so big panels are not flat. */
   --blue-panel: radial-gradient(115% 80% at 50% 20%, #1b87d4 0%, var(--blue) 46%, #0b63a3 100%);
 
@@ -161,7 +163,7 @@ button {
 }
 
 /* A large rounded colour block, inset from the page edge. Every section is
-   one, with a strip of the rose page between them, so no two section
+   one, with a strip of the page between them, so no two section
    backgrounds ever touch. */
 .panel {
   margin: var(--frame) var(--frame) 0;
@@ -730,7 +732,7 @@ button {
 
 /* ───────────────────────── Hero ─────────────────────────
    One pale panel that fills the first screen, with the menu along its top.
-   Below the menu, two tiles: the headline on rose, and the team photo. */
+   Below the menu, two tiles: the headline on pale blue, and the team photo. */
 
 .hero {
   display: grid;
@@ -947,7 +949,7 @@ button {
 
 /* ───────────────────────── Intro (H1) ─────────────────────────
    A pale panel holding a grid of tiles: the statement on navy, a tall photo,
-   the longer paragraph on rose, a pill-shaped photo, and a round sticker. */
+   the longer paragraph on pale blue, a pill-shaped photo, and a round sticker. */
 
 .intro {
   padding: clamp(12px, 1.4vw, 20px);
@@ -1200,9 +1202,16 @@ button {
   text-align: center;
 }
 
+/* The brand red card. */
 .plan--rose {
-  --f-bg: var(--rose);
-  --f-accent: var(--red-deep);
+  --f-bg: var(--red);
+  --f-fg: var(--white);
+  --f-soft: rgb(255 255 255 / 0.9);
+  --f-accent: var(--white);
+}
+
+.plan--rose .plan__badge {
+  background: var(--navy);
 }
 
 .plan--blue {
@@ -1595,7 +1604,7 @@ button {
 }
 
 .note--navy {
-  --tape: rgb(255 246 246 / 0.45);
+  --tape: rgb(255 255 255 / 0.45);
   --soft: var(--on-dark-soft);
   --icon: var(--rose);
   background: var(--navy);
@@ -1607,7 +1616,11 @@ button {
 }
 
 .note--rose {
-  background: var(--rose);
+  --tape: rgb(255 255 255 / 0.5);
+  --soft: rgb(255 255 255 / 0.92);
+  --icon: var(--white);
+  background: var(--red);
+  color: var(--white);
 }
 
 .note__icon {
@@ -1929,10 +1942,21 @@ button {
   color: var(--navy);
 }
 
+/* The brand red card. */
 .review:nth-child(2) {
-  --r-bg: var(--rose);
-  --r-mark: var(--red-deep);
+  --r-bg: var(--red);
+  --r-soft: rgb(255 255 255 / 0.92);
+  --r-mark: var(--white);
+  color: var(--white);
   translate: 0 clamp(0px, 3vh, 28px);
+}
+
+.review:nth-child(2) .review__who span {
+  color: rgb(255 255 255 / 0.85);
+}
+
+.review:nth-child(2) .stars {
+  color: var(--white);
 }
 
 .review:nth-child(3) {
@@ -1940,7 +1964,7 @@ button {
 }
 
 .review:nth-child(4) {
-  --r-bg: var(--blush);
+  --r-bg: var(--rose);
   --r-mark: var(--red);
   translate: 0 clamp(0px, 3vh, 28px);
 }
@@ -2089,7 +2113,7 @@ button {
     width: 8px;
     height: 8px;
     border-radius: 999px;
-    background: rgb(255 246 246 / 0.35);
+    background: rgb(255 255 255 / 0.35);
     transition:
       width 0.3s var(--ease),
       background-color 0.3s;
@@ -2230,7 +2254,7 @@ button {
   width: 46px;
   height: 46px;
   border-radius: 50%;
-  background: rgb(255 246 246 / 0.12);
+  background: rgb(255 255 255 / 0.12);
   transition:
     background-color 0.2s,
     color 0.2s;

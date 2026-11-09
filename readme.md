@@ -27,14 +27,14 @@ npm start
 
 ## Design
 
-- **Look:** every section is its own rounded panel on a pale rose page, with a strip of
-  rose between panels. The first screen is the team photo edge to edge with a giant chunky
+- **Look:** every section is its own rounded panel on a pale blue-grey page, with a strip
+  of the page between panels. The first screen is the team photo edge to edge with a giant chunky
   headline along the bottom. Below it: a grid of photo and text tiles, the sessions in three
   tabs of price cards, notes pinned up around the benefits, and the reviews (a swipeable
   carousel on phones). Headlines are chunky caps with one handwritten word.
-- **Colours:** the StretchFLEX palette — blue `#0F75BC`, red `#EF4036`, navy `#06314E`,
-  blush `#FFF6F6`, white — plus rose `#FBD3CF` (the red tinted into blush) and sky
-  `#D8E9F6` (the blue tinted into white).
+- **Colours:** the StretchFLEX palette only — blue `#0F75BC`, red `#EF4036`, navy `#06314E`
+  and white — with pale tints of the blue for quiet surfaces (`#E6EFF8`, `#D4E6F5`, and the
+  page itself `#DDE7F1`). No pink.
 - **Fonts:** Albert Sans (all text), Lilita One (headlines),
   Qwitcher Grypen (handwritten words). All are self-hosted by `next/font`, so no requests go
   to Google at runtime.
