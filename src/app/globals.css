@@ -10,9 +10,9 @@
             pink anywhere. (The token names "blush" and "rose" are kept, but
             they now hold white and a pale blue.) Sky is the
             brand blue tinted into white.
-   Type     Albert Sans for the first screen and all text. Lilita One (chunky
-            caps) for headlines below it, Qwitcher Grypen for the handwritten
-            words inside them.
+   Type     Albert Sans for all text. Lilita One (chunky caps) for every
+            headline, the first screen's included, and Qwitcher Grypen for
+            the handwritten words inside them.
    Shape    Square-cut photos, cards with small corners, pill buttons.
    ========================================================================== */
 
@@ -167,6 +167,7 @@ button {
    backgrounds ever touch. */
 .panel {
   margin: var(--frame) var(--frame) 0;
+  overflow: hidden; /* older Safari has no clip */
   overflow: clip;
   border-radius: var(--r-panel);
 }
@@ -758,12 +759,14 @@ button {
   overflow: hidden;
 }
 
+/* Same chunky caps as every headline below it. */
 .hero__title {
-  font-family: var(--font-serif), Georgia, serif;
-  font-size: clamp(3rem, min(6.6vw, 12svh), 7.4rem);
+  font-family: var(--font-display), "Arial Black", sans-serif;
+  font-size: clamp(2.6rem, min(5.4vw, 10svh), 6.4rem);
   font-weight: 400;
-  letter-spacing: -0.02em;
-  line-height: 0.98;
+  letter-spacing: 0.005em;
+  line-height: 0.95;
+  text-transform: uppercase;
   color: var(--blue);
 }
 
@@ -838,6 +841,26 @@ button {
   object-position: 52% 34%;
 }
 
+/* The real team photo, already cropped from the sign to the team's feet,
+   so it fits the tile with almost nothing cut. */
+.hero__photo--team {
+  object-position: 50% 40%;
+}
+
+/* Phones and tablets: the photo tile takes the photo's own shape, so the
+   sign and the whole team always show. */
+@media (max-width: 899.98px) {
+  .hero--home {
+    height: auto;
+    grid-template-rows: auto auto;
+  }
+
+  .hero--home .hero__media {
+    aspect-ratio: 1499 / 1540;
+    max-height: 80svh;
+  }
+}
+
 /* The changing word: every word shares one cell and they cross-fade. */
 .rotator {
   display: inline-grid;
@@ -877,7 +900,7 @@ button {
   }
 
   .hero__title {
-    font-size: clamp(2.8rem, 13vw, 4.6rem);
+    font-size: clamp(2.4rem, 12vw, 4.4rem);
   }
 
   .hero__sparkle {
@@ -906,6 +929,7 @@ button {
    the track slides left by half its width, so the loop is seamless. */
 
 .marquee {
+  overflow: hidden; /* older Safari has no clip */
   overflow: clip;
   font-size: clamp(3.8rem, min(12vw, 20vh), 11.5rem);
   line-height: 0.92;
@@ -916,6 +940,8 @@ button {
   display: flex;
   width: max-content;
   animation: marquee 46s linear infinite;
+  will-change: transform;
+  backface-visibility: hidden;
 }
 
 .marquee__group,
@@ -1106,6 +1132,105 @@ button {
   }
 }
 
+/* Phones: the intro photos and the "What to Expect" photo are shown whole,
+   stacked, each in its own 4:3 shape. Laptops keep the tall tile and pill. */
+@media (max-width: 899.98px) {
+  .intro__grid {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: none;
+  }
+
+  .intro__head,
+  .intro__text,
+  .intro__photo--tall,
+  .intro__photo--pill {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .intro__photo--tall,
+  .intro__photo--pill {
+    aspect-ratio: 1200 / 896;
+    border-radius: var(--r-card);
+  }
+
+  .intro__photo--tall img,
+  .intro__photo--pill img,
+  .first__pic img {
+    object-position: 50% 50%;
+  }
+
+  .intro__text {
+    order: 0;
+  }
+
+  .folder__pic.first__pic {
+    aspect-ratio: 1200 / 896;
+  }
+}
+
+/* ───────────────────────── Same-gender therapists ─────────────────────────
+   One pale panel: "Women stretch women" over "Men stretch men", the
+   repeated word handwritten in red. */
+
+.promise {
+  padding-block: clamp(56px, 10vh, 104px);
+  background: var(--rose);
+}
+
+.promise__inner {
+  display: grid;
+  justify-items: center;
+  gap: clamp(16px, 2.6vh, 26px);
+  text-align: center;
+}
+
+.promise__kicker {
+  color: var(--red-deep);
+}
+
+.promise__title {
+  display: grid;
+  justify-items: center;
+  gap: 0.16em;
+  font-size: clamp(1.6rem, 6vw, 4.6rem);
+  line-height: 0.95;
+  color: var(--navy);
+}
+
+.promise__line {
+  white-space: nowrap;
+}
+
+/* Phones: both lines break the same way, "Female therapists / for women". */
+@media (max-width: 599.98px) {
+  .promise__title {
+    gap: 0.5em;
+    font-size: clamp(1.7rem, 8.6vw, 2.6rem);
+  }
+
+  .promise__end {
+    display: block;
+  }
+}
+
+/* The repeated word, handwritten in red, sitting on the line. */
+.promise .hand {
+  margin-left: -0.08em;
+  font-size: 1.5em;
+  line-height: 0;
+  color: var(--red);
+  transform: translateY(-0.06em) rotate(-6deg);
+}
+
+.promise__body {
+  max-width: 46ch;
+  font-size: clamp(1rem, 0.95rem + 0.3vw, 1.2rem);
+  line-height: 1.5;
+  color: var(--ink-soft);
+  text-wrap: balance;
+}
+
 /* ───────────────────────── Stretch & Recovery ─────────────────────────
    A navy panel: the running title, three tabs, and the chosen tab's
    sessions as price cards side by side (swiped sideways on phones). */
@@ -1121,48 +1246,80 @@ button {
   color: var(--rose);
 }
 
-.tabs {
+/* The session-type picker: a label with the totals, then one wide pill
+   holding the three tabs. Each tab shows how many sessions it holds. */
+.picker__lead {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 8px;
-  margin-top: clamp(14px, 2.6vh, 28px);
+  align-items: baseline;
+  gap: 4px 12px;
+  margin-top: clamp(16px, 3vh, 32px);
+  text-align: center;
+}
+
+.picker__lead .caps {
+  font-size: 0.78rem;
+  color: var(--white);
+}
+
+.picker__total {
+  font-size: 0.9rem;
+  color: var(--on-dark-soft);
+}
+
+.tabs {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) repeat(3, minmax(0, 1fr));
+  gap: 6px;
+  width: min(100%, 1120px);
+  margin: 14px auto 0;
+  padding: 6px;
+  border: 1.5px solid var(--rule-dark);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.06);
 }
 
 .tabs__btn {
-  display: grid;
-  flex: none;
-  justify-items: center;
-  gap: 3px;
-  min-height: 58px;
-  padding: 9px 24px;
-  border: 1.5px solid var(--rule-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 64px;
+  padding: 8px 14px 8px 22px;
+  border: 0;
   border-radius: 999px;
   background: transparent;
-  color: var(--blush);
+  color: var(--white);
+  text-align: left;
   cursor: pointer;
   transition:
     background-color 0.25s,
-    border-color 0.25s,
     color 0.25s;
 }
 
 .tabs__btn:hover {
-  border-color: var(--rose);
+  background: rgb(255 255 255 / 0.12);
 }
 
-.tabs__btn[aria-selected="true"] {
-  border-color: var(--rose);
+.tabs__btn[aria-pressed="true"] {
   background: var(--rose);
   color: var(--navy);
 }
 
+.tabs__text {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
 .tabs__name {
   font-family: var(--font-display), sans-serif;
-  font-size: 1.08rem;
+  font-size: clamp(1rem, 0.9rem + 0.3vw, 1.2rem);
   letter-spacing: 0.01em;
   line-height: 1;
   text-transform: uppercase;
-  white-space: nowrap;
+  text-wrap: balance;
 }
 
 .tabs__meta {
@@ -1170,16 +1327,116 @@ button {
   opacity: 0.75;
 }
 
-.plans {
+/* How many sessions the tab holds, on a small red disc. */
+.tabs__count {
   display: grid;
-  grid-auto-columns: minmax(0, 340px);
-  grid-auto-flow: column;
-  justify-content: center;
-  gap: clamp(14px, 1.6vw, 22px);
-  padding-top: clamp(34px, 5vh, 48px);
+  flex: none;
+  place-items: center;
+  width: 30px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--red);
+  color: var(--white);
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1;
 }
 
-.plans[hidden] {
+/* Under the cards: a button on to the next kind of session. */
+.plans__next {
+  display: flex;
+  justify-content: center;
+  padding-top: clamp(22px, 3.4vh, 34px);
+}
+
+.plans__next .btn {
+  gap: 10px;
+}
+
+.plans__next svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.35s var(--ease);
+}
+
+.plans__next .btn:hover svg {
+  transform: translateX(3px);
+}
+
+/* The cards in one row that scrolls sideways, with an arrow either side.
+   A row narrower than the page sits in the middle. */
+.carousel {
+  position: relative;
+}
+
+.plans {
+  display: grid;
+  grid-auto-columns: 340px;
+  grid-auto-flow: column;
+  gap: clamp(14px, 1.6vw, 22px);
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
+  /* Side padding leaves room for the tilted badge on the last card. */
+  padding: clamp(34px, 5vh, 48px) 20px 8px;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 20px;
+  scrollbar-width: none;
+}
+
+.plans::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel__arrow {
+  position: absolute;
+  top: calc(50% + 18px);
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--navy);
+  box-shadow: 0 14px 30px -12px rgb(0 0 0 / 0.55);
+  cursor: pointer;
+  transition:
+    background-color 0.25s,
+    color 0.25s,
+    opacity 0.25s;
+}
+
+.carousel__arrow--prev {
+  left: 0;
+  translate: -50% -50%;
+}
+
+.carousel__arrow--next {
+  right: 0;
+  translate: 50% -50%;
+}
+
+.carousel__arrow svg {
+  width: 22px;
+  height: 22px;
+}
+
+.carousel__arrow:hover:not(:disabled) {
+  background: var(--red);
+  color: var(--white);
+}
+
+.carousel__arrow:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.carousel__arrow[hidden] {
   display: none;
 }
 
@@ -1196,10 +1453,15 @@ button {
   gap: 9px;
   padding: clamp(24px, 2.2vw, 32px) clamp(20px, 1.8vw, 26px) clamp(20px, 1.8vw, 26px);
   container-type: inline-size;
+  scroll-snap-align: start;
   border-radius: var(--r-card);
   background: var(--f-bg);
   color: var(--f-fg);
   text-align: center;
+}
+
+.plan[hidden] {
+  display: none;
 }
 
 /* The brand red card. */
@@ -1331,15 +1593,15 @@ button {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .plans:not([hidden]) .plan {
+  .plans .plan {
     animation: deal 0.6s var(--ease) both;
   }
 
-  .plans:not([hidden]) .plan:nth-child(2) {
+  .plans .plan:nth-child(2) {
     animation-delay: 0.06s;
   }
 
-  .plans:not([hidden]) .plan:nth-child(3) {
+  .plans .plan:nth-child(3) {
     animation-delay: 0.12s;
   }
 }
@@ -1351,39 +1613,64 @@ button {
   }
 }
 
-/* Narrow screens: the tabs and the cards scroll sideways. */
+/* Narrow screens: the row runs edge to edge and the arrows sit over the
+   card edges; the filters go two by two so none is hidden off-screen. */
 @media (max-width: 999.98px) {
-  .tabs,
   .plans {
+    grid-auto-columns: min(78vw, 320px);
+    width: auto;
+    max-width: none;
     margin-inline: calc(-1 * var(--gutter));
     padding-inline: var(--gutter);
-    overflow-x: auto;
     scroll-padding-inline: var(--gutter);
-    scrollbar-width: none;
-  }
-
-  .tabs {
-    justify-content: flex-start;
-  }
-
-  .tabs::-webkit-scrollbar,
-  .plans::-webkit-scrollbar {
-    display: none;
-  }
-
-  .plans {
-    grid-auto-columns: min(80vw, 320px);
-    justify-content: start;
-    padding-bottom: 6px;
-    scroll-snap-type: x mandatory;
-  }
-
-  .plan {
-    scroll-snap-align: start;
   }
 
   .plan__badge {
     right: 8px;
+  }
+
+  .carousel__arrow {
+    width: 44px;
+  }
+
+  .carousel__arrow--prev {
+    left: calc(6px - var(--gutter));
+    translate: 0 -50%;
+  }
+
+  .carousel__arrow--next {
+    right: calc(6px - var(--gutter));
+    translate: 0 -50%;
+  }
+
+  .carousel__arrow:disabled {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 999.98px) {
+  .tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    border-radius: 26px;
+  }
+
+  .tabs__btn {
+    justify-content: space-between;
+    min-height: 60px;
+    padding: 8px 10px 8px 16px;
+    border-radius: 20px;
+  }
+}
+
+@media (max-width: 479.98px) {
+  .tabs__name {
+    font-size: 0.92rem;
+  }
+
+  .tabs__count {
+    width: 26px;
+    font-size: 0.78rem;
   }
 }
 
@@ -1475,6 +1762,7 @@ button {
   place-items: center;
   min-height: min(76svh, 700px);
   padding: clamp(80px, 13vh, 130px) var(--gutter);
+  overflow: hidden; /* older Safari has no clip */
   overflow: clip;
   background: var(--blue);
   color: var(--blush);
@@ -1840,6 +2128,7 @@ button {
 
   .step::details-content {
     block-size: 0;
+    overflow: hidden; /* older Safari has no clip */
     overflow: clip;
     transition:
       block-size 0.5s var(--ease),
@@ -2393,7 +2682,11 @@ button {
     scroll-behavior: auto !important;
   }
 
+  /* The running title keeps moving on every device, including phones and
+     laptops with Reduce Motion or battery saver on (which froze it half
+     off-screen before). It just drifts more slowly for them. */
   .marquee__track {
-    animation: none;
+    animation-duration: 90s !important;
+    animation-iteration-count: infinite !important;
   }
 }

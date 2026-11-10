@@ -1,25 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Albert_Sans, DM_Serif_Display, Lilita_One, Qwitcher_Grypen } from "next/font/google";
+import { Albert_Sans, Lilita_One, Qwitcher_Grypen } from "next/font/google";
 import { Analytics, AnalyticsNoScript } from "@/components/analytics";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { SITE_URL } from "@/content/site";
 import "./globals.css";
+import "@/styles/blocks.css";
 
-/** Chunky caps for the headlines below the first screen. */
+/** Chunky caps for every headline. */
 const display = Lilita_One({
   subsets: ["latin", "latin-ext"],
   weight: "400",
   display: "swap",
   variable: "--font-display",
-});
-
-/** High-contrast serif for the first screen's headline. */
-const serif = DM_Serif_Display({
-  subsets: ["latin", "latin-ext"],
-  weight: "400",
-  display: "swap",
-  variable: "--font-serif",
 });
 
 /** Handwritten face for the single words set inside headlines. */
@@ -71,10 +64,10 @@ export const metadata: Metadata = {
     siteName,
     images: [
       {
-        url: "/wp-content/uploads/2026/02/openart-image_-Cb-sXPh_1770269064583_raw.webp",
-        width: 1200,
-        height: 896,
-        type: "image/webp",
+        url: "/images/team/stretchflex-team-reception.jpg",
+        width: 2000,
+        height: 1499,
+        type: "image/jpeg",
       },
     ],
   },
@@ -90,7 +83,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-AU" className={`${sans.variable} ${serif.variable} ${display.variable} ${hand.variable}`}>
+    <html lang="en-AU" className={`${sans.variable} ${display.variable} ${hand.variable}`}>
       <body>
         <AnalyticsNoScript />
         <a className="skip-link" href="#content">

@@ -1,7 +1,8 @@
-# StretchFLEX — homepage (Next.js)
+# StretchFLEX — website (Next.js)
 
-A rebuild of the [stretchflex.au](https://stretchflex.au/) homepage in Next.js (App Router).
-Same content, photos, reviews, prices and links as the live page, with a new interface.
+A rebuild of [stretchflex.au](https://stretchflex.au/) in Next.js (App Router): the homepage,
+all 24 other pages and the blog with its 45 posts. Same content, photos, prices, links and SEO
+as the live WordPress site, with one new interface throughout.
 
 ## Run it
 
@@ -21,8 +22,15 @@ npm start
 | `src/content/images.ts` | The site photos and logos. |
 | `src/app/layout.tsx` | Fonts, page title, meta tags, Open Graph, header and footer. |
 | `src/app/page.tsx` | The homepage sections, in order. |
+| `src/content/pages/*.ts` | **Every inner page's content**, as a list of blocks (hero, split, checklist, cards, accordion, offers, text, prose, people, embed, cta, sessions, reviews, contact). Edit page text here. |
+| `src/content/blocks.ts` | The block types, with what each field does. |
+| `src/components/blocks.tsx`, `src/styles/blocks.css` | How each block looks. Built from the homepage's parts so every page matches it. |
+| `src/content/photos.ts` | The shared studio photos, named by what they show. |
+| `src/app/<path>/page.tsx` | One small file per inner page; it renders the page's blocks with its SEO. |
+| `src/app/blog`, `src/app/blogs/[slug]`, `src/components/blog` | The blog index and the post template. |
+| `src/content/wp/seo.json`, `posts.json` | A snapshot from the WordPress API: each URL's Yoast title, description, Open Graph image and structured data, and the blog posts' text cleaned to plain HTML. |
 | `src/app/globals.css` | The design system: colours, type, every section's styles. |
-| `src/components/` | Header and menu, running title (marquee), session tabs, review carousel, rotating word, icons, analytics. |
+| `src/components/` | Header and menu, running title (marquee), session filter and carousel, review carousel, rotating word, icons, analytics, and the sections every page shares (`sections.tsx`). |
 | `src/app/robots.ts`, `sitemap.ts` | `robots.txt` and `sitemap.xml`. |
 
 ## Design
@@ -38,8 +46,11 @@ npm start
 - **Fonts:** Albert Sans (all text), Lilita One (headlines),
   Qwitcher Grypen (handwritten words). All are self-hosted by `next/font`, so no requests go
   to Google at runtime.
-- The session tabs are grouped in `SESSION_GROUPS` in `src/content/site.ts`. All eight
-  sessions are in the HTML; the inactive tabs are only hidden.
+- The sessions show in one carousel with arrows, filtered by "All" (the default) or by kind.
+  The kinds are grouped in `SESSION_GROUPS` in `src/content/site.ts`. Every card is in the
+  HTML once; a filter only hides the others.
+- Inner pages open with the homepage's two hero tiles (headline beside a photo) and end
+  with the booking band and the reviews, so every page reads as part of one site.
 - The first panel fills exactly one screen; on desktop each main panel is sized to one
   screen.
 
@@ -55,15 +66,25 @@ npm start
   already indexed or shared keep working.
 - The page is static HTML: all eight sessions and all four reviews are in the markup.
 
+## SEO on the inner pages
+
+- Each page keeps its live URL, Yoast title, meta description, Open Graph tags and
+  structured data (from `src/content/wp/seo.json`), and its H1 text.
+- Blog posts keep their FAQ structured data, publish and modified dates, and featured images.
+- The thank-you pages, `/risk-of-injury` and `/muscle-tension-and-stiffness` stay `noindex`,
+  as on the live site, and are left out of `sitemap.xml`.
+- All photos are in `public/` at their original `/wp-content/uploads/...` paths.
+
 ## Before pointing the domain at this app
 
-Only the homepage is rebuilt. The other 21 pages and 45 blog posts still live on WordPress.
-Until they are rebuilt, keep them reachable so no indexed URL 404s:
+Every page and post in the WordPress sitemap is rebuilt. Keep `WP_ORIGIN` set while switching
+over so anything else WordPress serves (`/feed`, old attachment URLs) still resolves:
 
 - Set `WP_ORIGIN` to wherever WordPress is served from (it must be a different origin from
   this app, for example `https://wp.stretchflex.au`). Any URL this app does not own is then
   passed through to WordPress. See `next.config.ts`.
-- In development, `.env.development` points `WP_ORIGIN` at the live site, so menu links open
-  the current pages.
 - `robots.txt` drops the live site's `Disallow: /*?` rule, because Next.js serves optimised
   images from `/_next/image?url=...` and that rule would block them from Google.
+
+To refresh the content snapshot from WordPress, re-fetch `/wp-json/wp/v2/pages` and
+`/wp-json/wp/v2/posts` and regenerate `src/content/wp/*.json`.

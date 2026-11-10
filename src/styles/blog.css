@@ -1,0 +1,266 @@
+/* ==========================================================================
+   Blog: the article list (cards and search) and the article page.
+   Built from the shared tokens; cards follow the inner-page tiles.
+   ========================================================================== */
+
+/* ───────── Search ───────── */
+
+.blog__finder {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  margin-bottom: clamp(28px, 4vh, 44px);
+}
+
+.blog__finder-title {
+  font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.4rem);
+}
+
+.blog__search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: min(100%, 560px);
+  padding: 6px;
+  border: 1.5px solid var(--rule);
+  border-radius: 999px;
+  background: var(--white);
+}
+
+.blog__search:focus-within {
+  border-color: var(--blue);
+}
+
+.blog__search label {
+  flex: none;
+  color: var(--red-deep);
+}
+
+.blog__search input {
+  flex: 1;
+  min-width: 0;
+  min-height: 46px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--rose);
+  font: inherit;
+  color: var(--navy);
+}
+
+.blog__search input:focus {
+  outline: none;
+}
+
+.blog__search .btn {
+  flex: none;
+  min-height: 46px;
+}
+
+/* ───────── Grid of cards ───────── */
+
+.blog__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(14px, 1.6vw, 22px);
+}
+
+.post-card[hidden] {
+  display: none;
+}
+
+.post-card {
+  border-radius: var(--r-card);
+  background: var(--white);
+  transition:
+    transform 0.5s var(--ease),
+    box-shadow 0.5s var(--ease);
+}
+
+.post-card:hover {
+  box-shadow: 0 30px 50px -36px rgb(6 49 78 / 0.55);
+  transform: translateY(-4px);
+}
+
+.post-card__link {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+}
+
+.post-card__pic {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  margin: 8px 8px 0;
+  overflow: hidden;
+  border-radius: calc(var(--r-card) - 8px);
+  background: var(--sky);
+}
+
+.post-card__pic img {
+  object-fit: cover;
+  transition: transform 0.8s var(--ease);
+}
+
+.post-card:hover .post-card__pic img {
+  transform: scale(1.04);
+}
+
+.post-card__copy {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  align-content: start;
+  gap: 10px;
+  padding: clamp(18px, 1.8vw, 26px);
+}
+
+.post-card__meta {
+  color: var(--red-deep);
+}
+
+.post-card__title {
+  font-size: clamp(1.25rem, 1rem + 0.5vw, 1.5rem);
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.post-card:hover .post-card__title {
+  color: var(--blue);
+}
+
+
+
+/* The newest post: wide, photo beside the text. */
+.post-card--featured {
+  grid-column: 1 / -1;
+}
+
+.post-card--featured .post-card__link {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  grid-template-rows: none;
+}
+
+.post-card--featured .post-card__pic {
+  aspect-ratio: auto;
+  min-height: 340px;
+  margin: 8px 0 8px 8px;
+}
+
+.post-card--featured .post-card__copy {
+  align-content: center;
+  grid-template-rows: none;
+  padding: clamp(24px, 3.4vw, 52px);
+}
+
+.post-card--featured .post-card__title {
+  font-size: clamp(1.8rem, 1rem + 2vw, 3rem);
+}
+
+
+
+@media (max-width: 1023.98px) {
+  .blog__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .blog__grid--three .post-card:nth-child(3) {
+    display: none;
+  }
+}
+
+@media (max-width: 719.98px) {
+  .blog__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .blog__grid--three .post-card:nth-child(3) {
+    display: block;
+  }
+
+  .post-card--featured .post-card__link {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .post-card--featured .post-card__pic {
+    aspect-ratio: 16 / 9;
+    min-height: 0;
+    margin: 8px 8px 0;
+  }
+}
+
+/* ───────── Article ───────── */
+
+.post-hero.hero--solo {
+  min-height: clamp(380px, 52svh, 560px);
+}
+
+.post-hero .hero__title {
+  max-width: 18em;
+  font-size: clamp(2.2rem, min(3.8vw, 8svh), 4.4rem);
+}
+
+.article {
+  padding-top: clamp(14px, 1.6vw, 22px);
+}
+
+.article__pic {
+  position: relative;
+  max-width: 980px;
+  aspect-ratio: 16 / 9;
+  margin: 0 auto clamp(36px, 6vh, 64px);
+  overflow: hidden;
+  border-radius: var(--r-card);
+  background: var(--sky);
+}
+
+.article__pic img {
+  object-fit: cover;
+}
+
+.article__foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  max-width: 72ch;
+  margin: clamp(40px, 6vh, 64px) auto 0;
+  padding-top: clamp(24px, 4vh, 36px);
+  border-top: 1.5px solid var(--rule);
+}
+
+@media (max-width: 899.98px) {
+  /* No photo row under the title on phones. */
+  .post-hero {
+    grid-template-rows: auto;
+  }
+
+  .post-hero .hero__title {
+    font-size: clamp(2rem, 8.4vw, 3.2rem);
+  }
+}
+
+/* Phones: a card photo that isn't 16:9 is shown whole over a blurred copy of
+   itself. Laptops and desktops crop it to the card as before. */
+.post-card__pic img.post-card__backdrop {
+  display: none;
+}
+
+@media (max-width: 899.98px) {
+  .post-card__pic img.post-card__backdrop {
+    display: block;
+    object-fit: cover;
+    filter: blur(18px) saturate(1.1);
+    transform: scale(1.15);
+    opacity: 0.7;
+  }
+
+  .post-card__pic img.post-card__img--whole {
+    object-fit: contain;
+  }
+
+  .post-card:hover .post-card__pic img.post-card__backdrop {
+    transform: scale(1.15);
+  }
+}

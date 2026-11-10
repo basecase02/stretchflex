@@ -1,0 +1,225 @@
+/* ───────────────────────── Package pages ─────────────────────────
+   Sections that follow the live pages' heading structure (an H2 then H3s,
+   H3/H4 headings inside price cards). Built from the shared block classes. */
+
+/* Runs of content inside a split or text panel. */
+.pk-part {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+}
+
+.pk-part + .pk-part {
+  margin-top: clamp(18px, 3vh, 30px);
+}
+
+.pk-copy {
+  gap: 0;
+}
+
+.pk-h2 {
+  font-size: clamp(2rem, 1rem + 2.4vw, 3.4rem);
+}
+
+.pk-h3 {
+  font-size: clamp(1.25rem, 1rem + 0.8vw, 1.7rem);
+  line-height: 1;
+  color: var(--blue);
+}
+
+.pk-h2 + .pk-h3 {
+  margin-top: -4px;
+}
+
+.on-dark .pk-h3 {
+  color: var(--rose);
+}
+
+.pk-checks {
+  grid-template-columns: minmax(0, 1fr);
+  width: 100%;
+  margin: 4px 0 0;
+}
+
+.split__copy .pk-checks .check {
+  background: var(--white);
+}
+
+.split__copy.on-dark .pk-checks .check {
+  background: rgb(255 255 255 / 0.08);
+}
+
+.pk-part .checks.pk-checks > .check:last-child:nth-child(odd) {
+  grid-column: auto;
+  width: auto;
+  justify-self: stretch;
+}
+
+/* Centred text panel. */
+.pk-text__inner {
+  max-width: 860px;
+  margin-inline: auto;
+}
+
+.pk-part--center {
+  justify-items: center;
+  text-align: center;
+}
+
+.pk-part--center .blk__title {
+  max-width: 16em;
+  font-size: clamp(2.1rem, 1rem + 3.4vw, 4.2rem);
+}
+
+.pk-part--center .split__p {
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.14rem);
+  line-height: 1.65;
+}
+
+.pk-part--center .ticks,
+.pk-part--center .pk-checks {
+  text-align: left;
+}
+
+.pk-part--center .ticks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 28px;
+}
+
+.pk-part--center .blk__actions {
+  justify-content: center;
+}
+
+.on-dark .split__p {
+  color: var(--on-dark-soft);
+}
+
+/* A wide photo above a text panel. */
+.pk-banner {
+  position: relative;
+  aspect-ratio: 21 / 8;
+  margin-bottom: clamp(28px, 5vh, 52px);
+  overflow: hidden;
+  border-radius: var(--r-card);
+  background: var(--sky);
+}
+
+.pk-banner img {
+  object-fit: cover;
+}
+
+/* Grouped Q&A: an H3 over each accordion. */
+.pk-groups {
+  display: grid;
+  gap: clamp(26px, 4vh, 40px);
+}
+
+.pk-group__title {
+  margin-bottom: 10px;
+  font-size: clamp(1.2rem, 1rem + 0.6vw, 1.5rem);
+  line-height: 1;
+  color: var(--red-deep);
+}
+
+.on-dark .pk-group__title {
+  color: var(--rose);
+}
+
+.pk-groups .steps {
+  margin-bottom: 0;
+}
+
+.acc__list .step__body .ticks {
+  margin-top: 8px;
+}
+
+/* Price cards over the live section photo, dimmed into the navy. */
+.pk-offers {
+  position: relative;
+  overflow: hidden; /* older Safari has no clip */
+  overflow: clip;
+}
+
+.pk-offers__photo {
+  object-fit: cover;
+  opacity: 0.22;
+  filter: grayscale(1);
+}
+
+.pk-offers .wrap {
+  position: relative;
+}
+
+.pk-offers .offers {
+  padding-top: 26px;
+}
+
+.pk-offers .offer {
+  grid-template-rows: auto auto auto auto 1fr auto auto;
+}
+
+.pk-offer__sec {
+  display: grid;
+  gap: 6px;
+}
+
+.pk-offer__closing {
+  padding-top: 6px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--f-fg);
+}
+
+/* The booking band's title is a heading here; keep the band's look. */
+.pk-cta__title {
+  margin: 0;
+}
+
+/* A live picture on its own. */
+.pk-figure img {
+  width: 100%;
+  max-width: 900px;
+  height: auto;
+  margin-inline: auto;
+  border-radius: var(--r-card);
+  box-shadow: 0 30px 60px -40px rgb(6 49 78 / 0.5);
+}
+
+@media (max-width: 719.98px) {
+  .pk-part--center .ticks {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pk-banner {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+/* The live specification picture above the spectrum questions. */
+.pk-spec {
+  width: 100%;
+  height: auto;
+  border-radius: var(--r-card);
+  box-shadow: 0 30px 60px -40px rgb(6 49 78 / 0.5);
+}
+
+/* A long section heading in the narrow accordion column. */
+.blk__head--left .pk-title--long {
+  font-size: clamp(1.6rem, 1rem + 1.3vw, 2.4rem);
+}
+
+/* The full price, struck through after the sessions line. */
+.pk-offers .plan__lead .offer__was {
+  margin-left: 0.2em;
+  font-size: 1em;
+  font-weight: 600;
+  vertical-align: baseline;
+}
+
+@media (max-width: 599.98px) {
+  /* Keep the package name clear of the round sticker. */
+  .pk-offers .plan__name {
+    padding-inline: 44px;
+  }
+}

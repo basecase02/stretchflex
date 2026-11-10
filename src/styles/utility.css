@@ -1,0 +1,143 @@
+/* ==========================================================================
+   Utility pages: the policy's table of contents and the Goodlife partner
+   pages' discount table. Everything else on these pages is shared blocks.
+   ========================================================================== */
+
+/* ───────── Policy: table of contents ───────── */
+
+.policy-toc {
+  padding: clamp(20px, 2.4vw, 30px);
+  border-radius: var(--r-card);
+  background: var(--rose);
+}
+
+.prose .policy-toc h4 {
+  margin: 0 0 12px;
+}
+
+.prose .policy-toc ol {
+  gap: 6px;
+  list-style: none;
+}
+
+.prose .policy-toc li {
+  padding-left: 0;
+}
+
+.prose .policy-toc li::before {
+  content: none;
+}
+
+.prose .policy-toc a {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+
+.prose .policy-toc a:hover {
+  color: var(--red);
+}
+
+.prose h2[id] {
+  scroll-margin-top: calc(var(--header-h) + 30px);
+}
+
+/* ───────── Goodlife: six included services sit three by three ───────── */
+
+#included .tiles {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 899.98px) {
+  #included .tiles {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 599.98px) {
+  #included .tiles {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ───────── Goodlife: the discount table ───────── */
+
+.rates {
+  max-width: 1000px;
+  margin-inline: auto;
+  overflow-x: auto;
+  border-radius: var(--r-card);
+  background: var(--white);
+}
+
+.rates table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.rates th,
+.rates td {
+  padding: 16px clamp(14px, 2vw, 24px);
+  text-align: left;
+  vertical-align: top;
+}
+
+.rates thead th {
+  background: var(--navy);
+  color: var(--white);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.rates thead th:nth-child(2) {
+  background: var(--red);
+}
+
+.rates thead th:nth-child(3) {
+  background: var(--blue);
+}
+
+.rates tbody tr + tr {
+  border-top: 1px solid var(--rule);
+}
+
+.rates tbody th {
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.rates td {
+  color: var(--ink-soft);
+}
+
+/* ───────── Template pages: the two closing H3s ───────── */
+
+.closing__line {
+  max-width: 34ch;
+  margin-top: 6px;
+  font-family: var(--font-display), "Arial Black", sans-serif;
+  font-size: clamp(1.3rem, 1rem + 0.9vw, 1.8rem);
+  font-weight: 400;
+  line-height: 1.05;
+  text-transform: uppercase;
+  color: var(--navy);
+  text-wrap: balance;
+}
+
+.closing__line--soft {
+  max-width: 46ch;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.5;
+  text-transform: none;
+  color: var(--ink-soft);
+}

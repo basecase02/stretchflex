@@ -1,51 +1,23 @@
 import Image from "next/image";
-import type { ReactNode } from "react";
-import { BenefitGlyph, GoogleIcon, Stars } from "@/components/icons";
+import { BenefitGlyph } from "@/components/icons";
 import { Marquee } from "@/components/marquee";
-import { ReviewCarousel } from "@/components/review-carousel";
 import { Rotator } from "@/components/rotator";
+import { ContactPanel, CtaBand, ReviewsPanel } from "@/components/sections";
 import { SessionTabs } from "@/components/session-tabs";
+import { hand, JsonLd } from "@/components/text";
 import { images } from "@/content/images";
 import { localBusiness, yoastGraph } from "@/content/schema";
 import {
   BENEFITS,
   BOOK_URL,
-  CONTACT,
-  CTA_BAND,
   FIRST_SESSION,
   HERO,
   INTRO,
-  PHONE,
-  REVIEWS,
+  SAME_GENDER,
   SESSION_GROUPS,
   SESSIONS,
   SESSIONS_TITLE,
 } from "@/content/site";
-
-function JsonLd({ data }: { data: object }) {
-  return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }}
-    />
-  );
-}
-
-/**
- * Sets one word of a phrase in the handwritten face. The text itself is
- * unchanged, so headings read exactly as they do in the content file.
- */
-function hand(text: string, word: string): ReactNode {
-  const at = text.indexOf(word);
-  if (at < 0) return text;
-  return (
-    <>
-      {text.slice(0, at)}
-      <span className="hand">{word}</span>
-      {text.slice(at + word.length)}
-    </>
-  );
-}
 
 /** Note colours for the six benefits, so no two neighbours match. */
 const NOTE_TONES = ["rose", "navy", "sky", "sky", "rose", "navy"] as const;
@@ -68,7 +40,7 @@ export default function HomePage() {
       <JsonLd data={localBusiness} />
 
       {/* ───────── Hero: the headline on a rose tile beside the team photo ───────── */}
-      <section className="hero panel">
+      <section className="hero hero--home panel">
         <div className="hero__card">
           <svg className="hero__sparkle" viewBox="0 0 40 40" aria-hidden="true">
             <path fill="currentColor" d="M20 0c1.2 10.6 8.8 18.8 20 20-11.2 1.2-18.8 9.4-20 20-1.2-10.6-8.8-18.8-20-20C11.2 18.8 18.8 10.6 20 0z" />
@@ -93,9 +65,9 @@ export default function HomePage() {
         </div>
         <figure className="hero__media">
           <Image
-            className="hero__photo"
-            src={images.team}
-            alt="The StretchFLEX stretch therapy team in their Perth CBD studio"
+            className="hero__photo hero__photo--team"
+            src={images.teamTall}
+            alt="The StretchFLEX stretch therapy team at the front desk of their Perth CBD studio"
             fill
             priority
             placeholder="blur"
@@ -120,7 +92,7 @@ export default function HomePage() {
               alt="A StretchFLEX therapist guiding a client through an assisted leg stretch in Perth"
               fill
               placeholder="blur"
-              sizes="(min-width: 900px) 42vw, 50vw"
+              sizes="(min-width: 900px) 42vw, 100vw"
             />
           </figure>
           <div className="intro__text">
@@ -131,12 +103,39 @@ export default function HomePage() {
               src={images.legStretch}
               alt="A stretch therapist assisting a client with a hip stretch at StretchFLEX"
               fill
-              sizes="(min-width: 900px) 18vw, 50vw"
+              placeholder="blur"
+              sizes="(min-width: 900px) 18vw, 100vw"
             />
           </figure>
           <a className="intro__sticker" href="#contact">
             <span>Perth CBD</span>
           </a>
+        </div>
+      </section>
+
+      {/* ───────── Same-gender therapists: women stretch women, men stretch men ───────── */}
+      <section className="promise panel" aria-labelledby="promise-title">
+        <div className="promise__inner wrap">
+          <p className="kicker promise__kicker">{SAME_GENDER.kicker}</p>
+          <h2
+            className="display promise__title"
+            id="promise-title"
+            aria-label={`${SAME_GENDER.women.lead} ${SAME_GENDER.women.ending} ${SAME_GENDER.women.hand}, ${SAME_GENDER.men.lead.toLowerCase()} ${SAME_GENDER.men.ending} ${SAME_GENDER.men.hand}`}
+          >
+            <span className="promise__line">
+              {SAME_GENDER.women.lead}{" "}
+              <span className="promise__end">
+                {SAME_GENDER.women.ending} <span className="hand">{SAME_GENDER.women.hand}</span>
+              </span>
+            </span>
+            <span className="promise__line">
+              {SAME_GENDER.men.lead}{" "}
+              <span className="promise__end">
+                {SAME_GENDER.men.ending} <span className="hand">{SAME_GENDER.men.hand}</span>
+              </span>
+            </span>
+          </h2>
+          <p className="promise__body">{SAME_GENDER.body}</p>
         </div>
       </section>
 
@@ -151,15 +150,7 @@ export default function HomePage() {
       </section>
 
       {/* ───────── Call to action over the tinted team photo ───────── */}
-      <section className="cta panel on-dark">
-        <Image className="cta__photo" src={images.team} alt="" fill sizes="100vw" />
-        <div className="cta__inner">
-          <p className="display cta__title">{hand(CTA_BAND.title, "for")}</p>
-          <a className="btn btn--caps btn--light" href={BOOK_URL}>
-            {CTA_BAND.cta}
-          </a>
-        </div>
-      </section>
+      <CtaBand />
 
       {/* ───────── Key benefits: notes pinned around the question ───────── */}
       <section className="benefits panel">
@@ -235,70 +226,10 @@ export default function HomePage() {
       </section>
 
       {/* ───────── Google reviews: rating on the left, the reviews on the right ───────── */}
-      <section className="reviews panel on-dark" id="reviews" aria-label="Google reviews">
-        <div className="reviews__grid wrap">
-          <div className="reviews__intro">
-            <p className="reviews__business caps">
-              <GoogleIcon className="reviews__g" />
-              {REVIEWS.business}
-            </p>
-            <p className="display reviews__count">{hand(REVIEWS.countLabel, "reviews")}</p>
-            <Stars className="stars stars--lg" />
-            <a
-              className="btn btn--caps btn--light"
-              href={REVIEWS.writeReview.href}
-              target="_blank"
-              rel="noopener"
-              aria-label="Write a review to Google"
-            >
-              {REVIEWS.writeReview.label}
-            </a>
-          </div>
-          <ReviewCarousel reviews={REVIEWS.items} />
-        </div>
-      </section>
+      <ReviewsPanel />
 
       {/* ───────── Contact ───────── */}
-      <section className="contact panel" id="contact">
-        <div className="contact__grid wrap">
-          <div className="contact__copy">
-            <h2 className="display">{hand(CONTACT.title, "Us")}</h2>
-            <p className="contact__lead">{CONTACT.body}</p>
-            <dl className="contact__facts">
-              <div>
-                <dt className="caps">Address:</dt>
-                <dd>{CONTACT.address}</dd>
-              </div>
-              <div>
-                <dt className="caps">Phone:</dt>
-                <dd>
-                  <a href={PHONE.href}>{PHONE.label}</a>
-                </dd>
-              </div>
-              <div>
-                <dt className="caps">Opening Hours:</dt>
-                <dd>
-                  {CONTACT.hours.map((line) => (
-                    <span key={line}>{line}</span>
-                  ))}
-                </dd>
-              </div>
-            </dl>
-            <a className="btn btn--caps" href={BOOK_URL}>
-              {CONTACT.cta}
-            </a>
-          </div>
-          <div className="contact__map">
-            <iframe
-              src={CONTACT.mapSrc}
-              title="StretchFlex on Google Maps"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              allowFullScreen
-            />
-          </div>
-        </div>
-      </section>
+      <ContactPanel />
     </>
   );
 }

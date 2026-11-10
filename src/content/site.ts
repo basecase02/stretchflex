@@ -71,6 +71,16 @@ export const HERO = {
   cta: "Book Appointment",
 };
 
+/* ───────────────────────── Same-gender therapists ───────────────────────── */
+
+/** Every client is stretched by a therapist of their own gender. */
+export const SAME_GENDER = {
+  kicker: "Your comfort matters",
+  women: { lead: "Female therapists", ending: "for", hand: "women" },
+  men: { lead: "Male therapists", ending: "for", hand: "men" },
+  body: "Every session is one-on-one with a therapist of the same gender, so you can relax and feel completely at ease.",
+};
+
 /* ───────────────────────── Stretch & Recovery ───────────────────────── */
 
 export type Session = {
@@ -85,7 +95,12 @@ export type Session = {
   /** Paragraph (Photobiotic sessions). */
   body?: string;
   learnHref: string;
-  bookHref: string;
+  /** Without one, the card shows only "Learn More" (as on the packages overview). */
+  bookHref?: string;
+  /** Price as written on a page, e.g. "$65.00"; defaults to "$" + price. */
+  priceLabel?: string;
+  /** Sticker text as written on a page, e.g. "30 minute session"; defaults to duration. */
+  durationLabel?: string;
 };
 
 export const SESSIONS_TITLE = "Stretch & Recovery";
@@ -328,7 +343,7 @@ export const FIRST_SESSION = {
 export const REVIEWS = {
   business: "StretchFlex",
   rating: 5,
-  countLabel: "7 Google reviews",
+  countLabel: "Google reviews",
   writeReview: {
     label: "Write a review",
     href: "https://search.google.com/local/writereview?placeid=ChIJeVqjE9GlMioRGoEGr-Y4_WI",
