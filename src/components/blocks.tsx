@@ -277,18 +277,17 @@ function Accordion({ block, index }: { block: AccordionBlock; index: number }) {
         </div>
         <div className={`steps acc__list${block.numbered ? "" : " steps--plain"}`}>
           {block.items.map((item, i) => (
-            <details className="step" name={`acc-${index}`} key={item.title} open={i === 0}>
-              <summary>
+            <div className="step step--open" key={item.title}>
+              <h3 className="step__head">
                 {block.numbered ? <span className="step__num display">{i + 1}.</span> : null}{" "}
                 <span className="step__title">{item.title}</span>
-                <span className="step__mark" aria-hidden="true" />
-              </summary>
+              </h3>
               <div className="step__body">
                 {list(item.body).map((text) => (
                   <p key={text.slice(0, 40)}>{rich(text)}</p>
                 ))}
               </div>
-            </details>
+            </div>
           ))}
         </div>
       </div>
@@ -489,6 +488,7 @@ export function Blocks({ blocks }: { blocks: Block[] }) {
                 handWord={block.hand}
                 label={block.action?.label}
                 href={block.action?.href}
+                actions={block.actions}
                 body={list(block.body)}
               />
             );
@@ -499,7 +499,7 @@ export function Blocks({ blocks }: { blocks: Block[] }) {
           case "reviews":
             return <ReviewsPanel key={key} />;
           case "contact":
-            return <ContactPanel key={key} />;
+            return <ContactPanel key={key} actions={block.actions} />;
           default:
             return <Fragment key={key} />;
         }

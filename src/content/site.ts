@@ -45,13 +45,12 @@ export const NAV: NavItem[] = [
     groups: [
       {
         label: "Therapist",
-        links: [{ label: "Biljana Stojanović", href: "/biljana-stojanovic" }],
+        links: [{ label: "Biljana Mancini", href: "/biljana-mancini" }],
       },
       {
         label: "Advisory Board",
         links: [
           { label: "Dr Joe Kosterich", href: "/dr-joe-kosterich" },
-          { label: "Alan Chapman", href: "/alan-chapman" },
         ],
       },
     ],
@@ -412,10 +411,12 @@ export const FOOTER = {
     {
       title: "Our Packages",
       links: [
-        { label: "The Revive Stretch Session", href: "/our-packages/the-revive-stretch-session" },
-        { label: "The Prime Mobility Stretch Sessions", href: "/our-packages/the-prime-mobility-stretch-session" },
-        { label: "The Ultimate Stretch Session", href: "/our-packages/the-ultimate-stretch" },
-        { label: "Rapid Rejuvenaton", href: "/our-packages/rapid-rejuvenation" },
+        { label: "Revive Stretch", href: "/our-packages/the-revive-stretch-session" },
+        { label: "Prime Mobility Stretch", href: "/our-packages/the-prime-mobility-stretch-session" },
+        { label: "The Ultimate Stretch", href: "/our-packages/the-ultimate-stretch" },
+        { label: "De-Compression Recovery Stack", href: "/our-packages/rapid-rejuvenation" },
+        { label: "Photobiotic Assisted Stretching", href: "/our-packages/photobiotic-assisted-stretching" },
+        { label: "Red Light Therapy Perth", href: "/our-packages/red-light-therapy-benefits" },
       ],
     },
   ],

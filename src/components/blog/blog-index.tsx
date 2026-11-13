@@ -1,23 +1,25 @@
 "use client";
 
+import Link from "next/link";
 import { useDeferredValue, useId, useState, type FormEvent } from "react";
 import { PostCard } from "./post-card";
 import type { PostCard as Card } from "./posts";
 
+const pageHref = (n: number) => (n <= 1 ? "/blog" : `/blog/page/${n}`);
+
 /**
- * The blog list as on the live page: every post (newest large), then the
- * "Search" box, which here filters the list as you type. Every post is in the
- * HTML; a search only hides the ones that don't match.
+ * One page of the blog list (the newest post large on page 1), with page
+ * links, and the "Search" box, which searches every post as you type.
  */
-export function BlogIndex({ posts }: { posts: Card[] }) {
+export function BlogIndex({ posts, all, page, pageCount }: { posts: Card[]; all: Card[]; page: number; pageCount: number }) {
   const [query, setQuery] = useState("");
   const deferred = useDeferredValue(query.trim().toLowerCase());
   const searchId = useId();
   const headingId = useId();
 
   const searching = deferred.length > 0;
-  const matches = (post: Card) => !searching || `${post.title} ${post.excerpt}`.toLowerCase().includes(deferred);
-  const count = posts.filter(matches).length;
+  const matches = (post: Card) => `${post.title} ${post.excerpt}`.toLowerCase().includes(deferred);
+  const results = searching ? all.filter(matches) : [];
   const [featured, ...rest] = posts;
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -42,15 +44,57 @@ export function BlogIndex({ posts }: { posts: Card[] }) {
         </form>
       </section>
       <p className="sr-only" aria-live="polite">
-        {searching ? `${count} of ${posts.length}` : ""}
+        {searching ? `${results.length} of ${all.length} articles` : ""}
       </p>
 
-      <ul className="blog__grid">
-        <PostCard post={featured} featured={!searching} hidden={!matches(featured)} />
-        {rest.map((post) => (
-          <PostCard post={post} key={post.slug} hidden={!matches(post)} />
-        ))}
-      </ul>
+      {searching ? (
+        results.length ? (
+          <ul className="blog__grid">
+            {results.map((post) => (
+              <PostCard post={post} key={post.slug} />
+            ))}
+          </ul>
+        ) : (
+          <p className="blog__empty">No articles match “{query.trim()}”.</p>
+        )
+      ) : (
+        <>
+          <ul className="blog__grid">
+            {page === 1 ? <PostCard post={featured} featured /> : <PostCard post={featured} />}
+            {rest.map((post) => (
+              <PostCard post={post} key={post.slug} />
+            ))}
+          </ul>
+          {pageCount > 1 ? (
+            <nav className="pager" aria-label="Blog pages">
+              {page > 1 ? (
+                <Link className="pager__step" href={pageHref(page - 1)} rel="prev">
+                  ← Newer
+                </Link>
+              ) : (
+                <span className="pager__step" aria-hidden="true" data-off />
+              )}
+              <ol className="pager__list">
+                {Array.from({ length: pageCount }, (_, i) => i + 1).map((n) => (
+                  <li key={n}>
+                    <Link className="pager__num" href={pageHref(n)} aria-current={n === page ? "page" : undefined}>
+                      <span className="sr-only">Page </span>
+                      {n}
+                    </Link>
+                  </li>
+                ))}
+              </ol>
+              {page < pageCount ? (
+                <Link className="pager__step" href={pageHref(page + 1)} rel="next">
+                  Older →
+                </Link>
+              ) : (
+                <span className="pager__step" aria-hidden="true" data-off />
+              )}
+            </nav>
+          ) : null}
+        </>
+      )}
     </div>
   );
 }

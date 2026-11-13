@@ -20,6 +20,5 @@ export const page: PageContent = {
       },
     },
     { type: "node", node: createElement(ContactDetails) },
-    { type: "reviews" },
   ],
 };

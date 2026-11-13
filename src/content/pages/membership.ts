@@ -82,6 +82,5 @@ export const page: PageContent = {
       ],
       actions: [{ label: "Book Appointment", href: BOOK_GROUP }],
     },
-    { type: "reviews" },
   ],
 };

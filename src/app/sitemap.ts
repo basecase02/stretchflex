@@ -19,7 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     .filter((path) => !PAGES[path].noindex)
     .map((path) => ({
       url: `${SITE_URL}${path}`,
-      lastModified: date(path),
+      lastModified: date(PAGES[path].seoFrom ?? path),
       changeFrequency: "monthly" as const,
       priority: path.startsWith("/our-packages") ? 0.8 : 0.6,
     }));

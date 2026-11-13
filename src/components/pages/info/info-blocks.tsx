@@ -6,6 +6,7 @@ import { hand, rich, SmartLink } from "@/components/text";
 import type { Action, Img, Tone } from "@/content/blocks";
 import { images } from "@/content/images";
 import "@/styles/info.css";
+import { CtaButtons } from "@/components/sections";
 
 /**
  * Sections used only by the about / info pages. They reuse the shared block
@@ -101,16 +102,15 @@ export function RichAccordion({
         </div>
         <div className={`steps acc__list info-acc${numbered ? "" : " steps--plain"}`}>
           {items.map((item, i) => (
-            <details className="step" name={name} key={item.title} open={i === 0}>
-              <summary>
+            <div className="step step--open" key={item.title}>
+              <h3 className="step__head">
                 {numbered ? <span className="step__num display">{i + 1}.</span> : null}{" "}
                 <span className="step__title">{item.title}</span>
-                <span className="step__mark" aria-hidden="true" />
-              </summary>
+              </h3>
               <div className="step__body">
                 <Body parts={item.body} />
               </div>
-            </details>
+            </div>
           ))}
         </div>
       </div>
@@ -304,7 +304,20 @@ export function InfoSplit({
 }
 
 /** The booking band over the team photo, with its question as a real heading. */
-export function HeadingCta({ title, hand: word, body = [], action }: { title: string; hand?: string; body?: string[]; action: Action }) {
+export function HeadingCta({
+  title,
+  hand: word,
+  body = [],
+  action,
+  actions,
+}: {
+  title: string;
+  hand?: string;
+  body?: string[];
+  action?: Action;
+  /** Session buttons on service pages (they replace `action`). */
+  actions?: Action[];
+}) {
   return (
     <section className="cta panel on-dark">
       <Image className="cta__photo" src={images.team} alt="" fill sizes="100vw" />
@@ -315,9 +328,7 @@ export function HeadingCta({ title, hand: word, body = [], action }: { title: st
             {rich(text)}
           </p>
         ))}
-        <SmartLink className="btn btn--caps btn--light" href={action.href}>
-          {action.label}
-        </SmartLink>
+        <CtaButtons actions={actions?.length ? actions : action ? [action] : []} />
       </div>
     </section>
   );

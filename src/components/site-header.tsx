@@ -16,12 +16,21 @@ export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openSub, setOpenSub] = useState<string | null>(null);
   const [stuck, setStuck] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const navId = useId();
 
-  // Once the page has scrolled, the bar gets its blue pill background.
+  // Once the page has scrolled, the bar gets its pill background. It slides
+  // up out of the way while scrolling down and comes back on scrolling up.
   useEffect(() => {
-    const onScroll = () => setStuck(window.scrollY > 12);
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setStuck(y > 12);
+      if (Math.abs(y - last) < 6) return;
+      setHidden(y > last && y > 140);
+      last = y;
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -64,6 +73,7 @@ export function SiteHeader() {
       className="header"
       data-menu-open={menuOpen || undefined}
       data-stuck={stuck || undefined}
+      data-hidden={(hidden && !menuOpen && !openSub) || undefined}
     >
       <div className="header__bar">
         <Link href="/" className="header__logo" aria-label="StretchFLEX home">
@@ -115,7 +125,10 @@ export function SiteHeader() {
           className="header__menu"
           aria-expanded={menuOpen}
           aria-controls={navId}
-          onClick={() => setMenuOpen((value) => !value)}
+          onClick={() => {
+            setMenuOpen((value) => !value);
+            setOpenSub(null);
+          }}
         >
           <span className="header__menu-icon" aria-hidden="true" />
           <span className="sr-only">{menuOpen ? "Close menu" : "Open menu"}</span>

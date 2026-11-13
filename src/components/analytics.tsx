@@ -1,15 +1,15 @@
 import Script from "next/script";
 
 /**
- * Tracking and chat, carried over from the live site with the same IDs:
- * Google Tag Manager, Meta Pixel and the LeadConnector chat widget.
+ * Tracking carried over from the live site with the same IDs: Google Tag
+ * Manager and Meta Pixel. (The LeadConnector chat / AI call button was
+ * removed at the client's request.)
  * They only load in production builds so local development never
  * sends page views to the real accounts.
  */
 
 export const GTM_ID = "GTM-NT7HBXFJ";
 export const META_PIXEL_ID = "194257025689965";
-const CHAT_WIDGET_ID = "699be46a6e60092353e35c49";
 
 const enabled = process.env.NODE_ENV === "production";
 
@@ -59,13 +59,6 @@ s.parentNode.insertBefore(t,s)}(window, document,'script',
 fbq('init', '${META_PIXEL_ID}');
 fbq('track', 'PageView');`}
       </Script>
-      <Script
-        id="leadconnector-chat"
-        src="https://widgets.leadconnectorhq.com/loader.js"
-        data-resources-url="https://widgets.leadconnectorhq.com/chat-widget/loader.js"
-        data-widget-id={CHAT_WIDGET_ID}
-        strategy="lazyOnload"
-      />
     </>
   );
 }

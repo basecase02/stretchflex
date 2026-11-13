@@ -1,7 +1,8 @@
 import Image from "next/image";
 import { GoogleIcon, Stars } from "@/components/icons";
 import { ReviewCarousel } from "@/components/review-carousel";
-import { hand, rich } from "@/components/text";
+import { hand, rich, SmartLink } from "@/components/text";
+import type { Action } from "@/content/blocks";
 import { images } from "@/content/images";
 import { BOOK_URL, CONTACT, CTA_BAND, PHONE, REVIEWS } from "@/content/site";
 
@@ -11,18 +12,34 @@ import { BOOK_URL, CONTACT, CTA_BAND, PHONE, REVIEWS } from "@/content/site";
  * the contact panel.
  */
 
+/** The booking band's buttons: one, or one per session on service pages. */
+export function CtaButtons({ actions }: { actions: Action[] }) {
+  return (
+    <div className="cta__actions">
+      {actions.map((action) => (
+        <SmartLink key={action.label + action.href} className="btn btn--caps btn--light" href={action.href}>
+          {action.label}
+        </SmartLink>
+      ))}
+    </div>
+  );
+}
+
 export function CtaBand({
   title = CTA_BAND.title,
   handWord = "for",
   label = CTA_BAND.cta,
   href = BOOK_URL,
   body = [],
+  actions,
 }: {
   title?: string;
   handWord?: string;
   label?: string;
   href?: string;
   body?: string[];
+  /** Several buttons (session choices) instead of the one label/href. */
+  actions?: Action[];
 }) {
   return (
     <section className="cta panel on-dark">
@@ -34,9 +51,7 @@ export function CtaBand({
             {rich(text)}
           </p>
         ))}
-        <a className="btn btn--caps btn--light" href={href}>
-          {label}
-        </a>
+        <CtaButtons actions={actions?.length ? actions : [{ label, href }]} />
       </div>
     </section>
   );
@@ -69,7 +84,7 @@ export function ReviewsPanel() {
   );
 }
 
-export function ContactPanel({ heading = "h2" }: { heading?: "h1" | "h2" }) {
+export function ContactPanel({ heading = "h2", actions }: { heading?: "h1" | "h2"; actions?: Action[] }) {
   const Heading = heading;
   return (
     <section className="contact panel" id="contact">
@@ -97,9 +112,19 @@ export function ContactPanel({ heading = "h2" }: { heading?: "h1" | "h2" }) {
               </dd>
             </div>
           </dl>
-          <a className="btn btn--caps" href={BOOK_URL}>
-            {CONTACT.cta}
-          </a>
+          {actions?.length ? (
+            <div className="contact__actions">
+              {actions.map((action) => (
+                <SmartLink key={action.label + action.href} className="btn btn--caps" href={action.href}>
+                  {action.label}
+                </SmartLink>
+              ))}
+            </div>
+          ) : (
+            <a className="btn btn--caps" href={BOOK_URL}>
+              {CONTACT.cta}
+            </a>
+          )}
         </div>
         <div className="contact__map">
           <iframe

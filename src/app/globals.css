@@ -652,8 +652,73 @@ button {
     display: none;
   }
 
+  /* Each section with sub-links gets a round + that opens them (− when open). */
+  .nav__item--sub {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 12px;
+  }
+
   .nav__toggle {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1.5px solid var(--rule);
+    border-radius: 50%;
+    background: transparent;
+    color: var(--navy);
+    cursor: pointer;
+    transition:
+      background-color 0.25s,
+      border-color 0.25s;
+  }
+
+  .nav__toggle svg {
     display: none;
+  }
+
+  .nav__toggle::before,
+  .nav__toggle::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 14px;
+    height: 2px;
+    margin: -1px 0 0 -7px;
+    border-radius: 2px;
+    background: currentColor;
+    transition: transform 0.35s var(--ease);
+  }
+
+  .nav__toggle::after {
+    transform: rotate(90deg);
+  }
+
+  .nav__item--sub[data-open] .nav__toggle {
+    border-color: var(--red);
+    background: var(--red);
+    color: var(--white);
+  }
+
+  .nav__item--sub[data-open] .nav__toggle::after {
+    transform: rotate(0deg);
+  }
+
+  /* Sub-links stay closed until their + is tapped. */
+  .nav__item--sub .nav__sub,
+  .nav__item--sub:hover > .nav__sub,
+  .nav__item--sub:focus-within > .nav__sub {
+    display: none;
+  }
+
+  .nav__item--sub[data-open] > .nav__sub {
+    display: block;
+    grid-column: 1 / -1;
   }
 
   .nav__sub {
@@ -2688,5 +2753,25 @@ button {
   .marquee__track {
     animation-duration: 90s !important;
     animation-iteration-count: infinite !important;
+  }
+}
+
+/* The header slides up while scrolling down and returns on scrolling up. */
+.header {
+  transition: transform 0.4s var(--ease);
+}
+
+.header[data-hidden] {
+  transform: translateY(calc(-100% - 2 * var(--frame)));
+}
+
+/* Keyboard users tabbing into the bar always see it. */
+.header:has(:focus-visible) {
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header {
+    transition: none;
   }
 }

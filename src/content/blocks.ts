@@ -130,7 +130,7 @@ export type PeopleBlock = Head & {
 
 export type EmbedBlock = Head & { type: "embed"; tone?: Tone; src: string; label: string; height?: number };
 
-export type CtaBlock = { type: "cta"; title?: string; hand?: string; /** Rich paragraph(s) under the title. */ body?: string | string[]; action?: Action };
+export type CtaBlock = { type: "cta"; title?: string; hand?: string; /** Rich paragraph(s) under the title. */ body?: string | string[]; action?: Action; actions?: Action[] };
 
 /** A one-off section built in the page's own .tsx content file. */
 export type NodeBlock = { type: "node"; node: import("react").ReactNode };
@@ -150,4 +150,4 @@ export type Block =
   | NodeBlock
   | { type: "sessions" }
   | { type: "reviews" }
-  | { type: "contact" };
+  | { type: "contact"; actions?: Action[] };

@@ -13,6 +13,13 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
   },
+  // Pages that moved or were removed keep their old links working.
+  async redirects() {
+    return [
+      { source: "/biljana-stojanovic", destination: "/biljana-mancini", permanent: true },
+      { source: "/alan-chapman", destination: "/about", permanent: true },
+    ];
+  },
   async rewrites() {
     return {
       beforeFiles: [],

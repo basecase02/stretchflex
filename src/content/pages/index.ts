@@ -12,9 +12,8 @@ import { page as redLightTherapyBenefits } from "./red-light-therapy-benefits";
 import { page as firstTimeVisitors } from "./first-time-visitors";
 import { page as assistedStretchingPerth } from "./assisted-stretching-perth";
 import { page as about } from "./about";
-import { page as biljanaStojanovic } from "./biljana-stojanovic";
+import { page as biljanaMancini } from "./biljana-mancini";
 import { page as drJoeKosterich } from "./dr-joe-kosterich";
-import { page as alanChapman } from "./alan-chapman";
 import { page as membership } from "./membership";
 import { page as faqs } from "./faqs";
 import { page as contactUs } from "./contact-us";
@@ -38,9 +37,8 @@ export const PAGES = {
   "/first-time-visitors": firstTimeVisitors,
   "/assisted-stretching-perth": assistedStretchingPerth,
   "/about": about,
-  "/biljana-stojanovic": biljanaStojanovic,
+  "/biljana-mancini": biljanaMancini,
   "/dr-joe-kosterich": drJoeKosterich,
-  "/alan-chapman": alanChapman,
   "/membership": membership,
   "/faqs": faqs,
   "/contact-us": contactUs,

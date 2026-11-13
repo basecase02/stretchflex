@@ -5,6 +5,7 @@ import { images as siteImages } from "@/content/images";
 import type { Action, Img, Tone } from "@/content/blocks";
 import "@/styles/packages.css";
 import { photoFrame } from "@/lib/photo";
+import { CtaButtons } from "@/components/sections";
 
 /**
  * Package-page sections that need the live page's exact heading structure
@@ -168,17 +169,16 @@ function Qa({ items, name }: { items: QaItem[]; name: string }) {
   return (
     <div className="steps steps--plain acc__list">
       {items.map((item, i) => (
-        <details className="step" name={name} key={item.q + i} open={i === 0}>
-          <summary>
+        <div className="step step--open" key={item.q + i}>
+          <h4 className="step__head">
             <span className="step__title">{item.q}</span>
-            <span className="step__mark" aria-hidden="true" />
-          </summary>
+          </h4>
           <div className="step__body">
             {item.a?.map((text) => <p key={text.slice(0, 48)}>{rich(text)}</p>)}
             {item.list ? <Ticks items={item.list} /> : null}
             {item.after?.map((text) => <p key={text.slice(0, 48)}>{rich(text)}</p>)}
           </div>
-        </details>
+        </div>
       ))}
     </div>
   );
@@ -344,12 +344,15 @@ export function HeadingCta({
   handWord,
   body = [],
   action,
+  actions,
   image,
 }: {
   title: string;
   handWord?: string;
   body?: string[];
-  action: Action;
+  action?: Action;
+  /** Session buttons on service pages (they replace `action`). */
+  actions?: Action[];
   /** The live section photo; without one, the shared team photo. */
   image?: Img;
 }) {
@@ -370,9 +373,7 @@ export function HeadingCta({
             {rich(text)}
           </p>
         ))}
-        <SmartLink className="btn btn--caps btn--light" href={action.href}>
-          {action.label}
-        </SmartLink>
+        <CtaButtons actions={actions?.length ? actions : action ? [action] : []} />
       </div>
     </section>
   );

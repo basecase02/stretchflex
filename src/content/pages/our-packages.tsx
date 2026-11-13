@@ -149,6 +149,5 @@ export const page: PageContent = {
       ),
     },
     { type: "cta" },
-    { type: "reviews" },
   ],
 };
