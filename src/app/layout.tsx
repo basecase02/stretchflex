@@ -3,6 +3,7 @@ import { Albert_Sans, Lilita_One, Qwitcher_Grypen } from "next/font/google";
 import { Analytics, AnalyticsNoScript } from "@/components/analytics";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { QuickActions } from "@/components/quick-actions";
 import { SITE_URL } from "@/content/site";
 import "./globals.css";
 import "@/styles/blocks.css";
@@ -92,6 +93,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <SiteHeader />
         <main id="content">{children}</main>
         <SiteFooter />
+        <QuickActions />
         <Analytics />
       </body>
     </html>

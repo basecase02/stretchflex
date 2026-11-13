@@ -145,12 +145,9 @@ export default function HomePage() {
           {SESSIONS_TITLE}
         </Marquee>
         <div className="wrap">
-          <SessionTabs groups={SESSION_TABS} />
+          <SessionTabs groups={SESSION_TABS} maxPoints={3} />
         </div>
       </section>
-
-      {/* ───────── Call to action over the tinted team photo ───────── */}
-      <CtaBand />
 
       {/* ───────── Key benefits: notes pinned around the question ───────── */}
       <section className="benefits panel">
@@ -172,11 +169,6 @@ export default function HomePage() {
               </li>
             ))}
           </ul>
-          <div className="benefits__cta">
-            <a className="btn btn--caps" href={BOOK_URL}>
-              Book Appointment
-            </a>
-          </div>
         </div>
       </section>
 
@@ -197,33 +189,32 @@ export default function HomePage() {
               </figure>
               <div className="folder__copy first__copy">
                 <h2 className="display">{hand(FIRST_SESSION.title, "to")}</h2>
-                <div className="steps">
+                <ol className="steps first__steps">
                   {FIRST_SESSION.steps.map((step, i) => (
-                    <details className="step" name="first-session" key={step.title} open={i === 0}>
-                      <summary>
+                    <li className="step step--open" key={step.title}>
+                      <h3 className="step__head">
                         <span className="step__num display">{i + 1}.</span>{" "}
                         <span className="step__title">{step.title}</span>
-                        <span className="step__mark" aria-hidden="true" />
-                      </summary>
+                      </h3>
                       <div className="step__body">
                         <p>{step.body}</p>
                       </div>
-                    </details>
+                    </li>
                   ))}
-                </div>
+                </ol>
                 <div className="first__notes">
                   {FIRST_SESSION.closing.map((text) => (
                     <p key={text.slice(0, 24)}>{text}</p>
                   ))}
                 </div>
-                <a className="btn btn--caps" href={BOOK_URL}>
-                  {FIRST_SESSION.cta}
-                </a>
               </div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* ───────── Call to action over the tinted team photo, once the visit is clear ───────── */}
+      <CtaBand />
 
       {/* ───────── Google reviews: rating on the left, the reviews on the right ───────── */}
       <ReviewsPanel />

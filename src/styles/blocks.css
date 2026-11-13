@@ -1583,3 +1583,183 @@
     margin-bottom: 24px;
   }
 }
+
+/* ───────────────────────── Quick actions ─────────────────────────
+   Call and Book, pinned bottom-right on every page (quick-actions.tsx).
+   Kept small and quiet so it never covers much of the page: no motion,
+   no pulse. Steps aside while a service page's booking bar is up, and
+   under the open phone menu. */
+
+.quick {
+  position: fixed;
+  right: max(14px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom));
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition:
+    transform 0.45s var(--ease),
+    opacity 0.3s;
+}
+
+.quick__call,
+.quick__book {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 42px;
+  border-radius: 999px;
+  text-decoration: none;
+  box-shadow: 0 10px 24px -12px rgb(6 49 78 / 0.55);
+  transition:
+    background-color 0.25s,
+    color 0.25s;
+}
+
+.quick__call {
+  width: 42px;
+  background: var(--white);
+  color: var(--navy);
+  box-shadow:
+    inset 0 0 0 1px var(--rule),
+    0 10px 24px -12px rgb(6 49 78 / 0.55);
+}
+
+.quick__book {
+  gap: 7px;
+  padding: 0 16px 0 13px;
+  background: var(--red);
+  color: var(--white);
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.quick svg {
+  width: 17px;
+  height: 17px;
+  flex: none;
+}
+
+.quick__call:hover {
+  background: var(--navy);
+  color: var(--white);
+}
+
+.quick__book:hover {
+  background: var(--navy);
+}
+
+.quick :focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+}
+
+/* Service pages: the booking bar has the session buttons, so step aside. */
+body:has(.bookbar[data-shown]) .quick,
+.is-locked .quick {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(140%);
+}
+
+/* Phones: smaller still, tucked into the corner. */
+@media (max-width: 759.98px) {
+  .quick {
+    right: max(10px, env(safe-area-inset-right));
+    bottom: max(10px, env(safe-area-inset-bottom));
+  }
+
+  .quick__call,
+  .quick__book {
+    height: 38px;
+  }
+
+  .quick__call {
+    width: 38px;
+  }
+
+  .quick__book {
+    gap: 6px;
+    padding: 0 13px 0 11px;
+    font-size: 0.68rem;
+  }
+
+  .quick svg {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+/* Room under the footer's last line so the corner buttons never sit on it. */
+.footer__base {
+  padding-bottom: 64px;
+}
+
+/* ───────────────────────── Homepage, lighter ─────────────────────────
+   Less to read before the point: short steps shown open, three ticks per
+   price card, one call to action after "What to Expect" (the corner
+   buttons cover the rest), and on phones no repeated photo and benefits
+   as a compact 2 × 3 grid of titles. */
+
+.first__steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.first__steps .step--open {
+  padding-block: 14px 16px;
+}
+
+.first__steps .step__body p {
+  font-size: 0.95rem;
+}
+
+.first__notes {
+  margin-top: 18px;
+  margin-bottom: 0;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+@media (max-width: 899.98px) {
+  .intro__photo--pill {
+    display: none;
+  }
+}
+
+@media (max-width: 599.98px) {
+  .benefits .notes {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 12px;
+    padding-inline: 0;
+  }
+
+  .benefits .note {
+    padding: 22px 14px 16px;
+  }
+
+  .benefits .note::before {
+    top: -8px;
+    width: 56px;
+    height: 16px;
+  }
+
+  .benefits .note__icon {
+    width: 30px;
+    height: 30px;
+    margin-bottom: 10px;
+  }
+
+  .benefits .note h3 {
+    font-size: 1.02rem;
+    line-height: 1.05;
+  }
+
+  .benefits .note p {
+    display: none;
+  }
+}

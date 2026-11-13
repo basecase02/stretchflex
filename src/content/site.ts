@@ -253,7 +253,7 @@ export const SESSION_GROUPS = [
 export const INTRO = {
   title: "Professional Assisted Stretching Perth",
   paragraphs: [
-    "Unlock the benefits of professional assisted stretching in Perth with personalised sessions shaped around your body’s unique needs. Our qualified stretch therapists use targeted, evidence-based techniques to boost flexibility, improve mobility, and release built-up muscle tension. Whether you’re recovering from injury, dealing with tightness from training, or simply wanting to move with greater ease, our assisted stretching programs help restore balance and enhance overall performance.",
+    "Qualified stretch therapists use targeted, evidence-based techniques to boost flexibility, improve mobility and release built-up tension. Recovering from injury, tight from training or just want to move easier? We shape every session around you.",
     "Every session is crafted to support better posture, reduce discomfort, and elevate your sense of wellbeing, leaving you feeling stronger, more relaxed, and ready to take on the day.",
   ],
   cta: { label: "Explore Packages", href: "/our-packages" },
@@ -315,26 +315,24 @@ export const FIRST_SESSION = {
   steps: [
     {
       title: "Quick Chat to Understand Your Needs",
-      body: "We’ll start with a friendly chat to learn about your goals, lifestyle, and any areas of tightness, discomfort, or previous injuries. This helps us tailor the session specifically to your body’s needs.",
+      body: "Your goals, tight spots and past injuries, so the session fits your body.",
     },
     {
       title: "Guided Stretching with Expert Support",
-      body: "You’ll be guided through a series of assisted stretches led by a fully certified stretch therapist. Each movement is carefully designed to increase flexibility, release tension, and restore balance.",
+      body: "A certified therapist takes you through assisted stretches to release tension and restore balance.",
     },
     {
       title: "Real-Time Adjustments for Safety and Results",
-      body: "Your therapist will make continuous adjustments throughout your session to ensure proper alignment and maximum benefit, so you feel safe, supported and fully relaxed from start to finish.",
+      body: "Constant tweaks for alignment, so you feel safe and relaxed throughout.",
     },
     {
       title: "Personalised Aftercare Tips",
-      body: "Before you leave, you’ll receive simple aftercare advice, including stretches and mobility exercises you can do at home to maintain your results between sessions.",
+      body: "Simple stretches to do at home and keep your results between sessions.",
     },
   ],
   closing: [
-    "You’ll walk out feeling looser, lighter and more mobile, with noticeably reduced tension and improved range of motion.",
-    "All fitness levels are welcome, and no prior experience is needed. Whether you’re recovering from training, improving posture or simply wanting to move better, our team of qualified stretch therapists will make sure your first session is comfortable, effective and enjoyable.",
+    "All fitness levels welcome, no experience needed. You’ll walk out looser, lighter and more mobile.",
   ],
-  cta: "Book Appointment",
 };
 
 /* ───────────────────────── Google reviews ───────────────────────── */
@@ -379,7 +377,7 @@ export const REVIEWS = {
 
 export const CONTACT = {
   title: "Contact Us",
-  body: "We’re conveniently located in Perth CBD, with easy appointment times that fit your life. Whether you want to drop in before work, unwind after the gym, or recharge on your lunch break, we make looking after your body simple and stress-free.",
+  body: "Right in Perth CBD, with times that fit around work, the gym or your lunch break.",
   address: "111 Trinity Arcade, 72 St Georges Terrace, Perth CBD, WA 6000",
   hours: ["Mon-Fri, 8:30 am–5.30 pm", "Sat, By Appointment Only", "Sun, Closed"],
   cta: "Book Appointment",

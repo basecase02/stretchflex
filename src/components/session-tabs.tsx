@@ -28,7 +28,7 @@ const count = (n: number) => `${n} session${n === 1 ? "" : "s"}`;
  * Each card is in the HTML once, so all eight sessions are visible to search
  * engines; a filter only hides the cards outside it.
  */
-export function SessionTabs({ groups }: { groups: SessionGroupView[] }) {
+export function SessionTabs({ groups, maxPoints }: { groups: SessionGroupView[]; /** Cap each card's checklist (the homepage shows the top few). */ maxPoints?: number }) {
   const [active, setActive] = useState<string>(ALL);
   const [edges, setEdges] = useState({ overflow: false, start: true, end: true });
   const trackRef = useRef<HTMLUListElement>(null);
@@ -142,7 +142,7 @@ export function SessionTabs({ groups }: { groups: SessionGroupView[] }) {
                 <p className="plan__lead">{session.lead}</p>
                 {session.points ? (
                   <ul className="plan__points">
-                    {session.points.map((point, k) => (
+                    {session.points.slice(0, maxPoints).map((point, k) => (
                       <li key={`${point}-${k}`}>{point}</li>
                     ))}
                   </ul>
