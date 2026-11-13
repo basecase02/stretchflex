@@ -5,6 +5,7 @@ import { hand, rich, SmartLink } from "@/components/text";
 import type { Action } from "@/content/blocks";
 import { images } from "@/content/images";
 import { BOOK_URL, CONTACT, CTA_BAND, PHONE, REVIEWS } from "@/content/site";
+import { OpenStatus } from "@/components/open-status";
 
 /**
  * Sections shared by the homepage and the inner pages, so every page ends the
@@ -92,6 +93,7 @@ export function ContactPanel({ heading = "h2", actions }: { heading?: "h1" | "h2
         <div className="contact__copy">
           <Heading className="display">{hand(CONTACT.title, "Us")}</Heading>
           <p className="contact__lead">{CONTACT.body}</p>
+          <OpenStatus />
           <dl className="contact__facts">
             <div>
               <dt className="caps">Address:</dt>

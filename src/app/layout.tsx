@@ -4,6 +4,7 @@ import { Analytics, AnalyticsNoScript } from "@/components/analytics";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { QuickActions } from "@/components/quick-actions";
+import { Reveal } from "@/components/reveal";
 import { SITE_URL } from "@/content/site";
 import "./globals.css";
 import "@/styles/blocks.css";
@@ -94,6 +95,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main id="content">{children}</main>
         <SiteFooter />
         <QuickActions />
+        <Reveal />
         <Analytics />
       </body>
     </html>

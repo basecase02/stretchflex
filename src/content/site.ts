@@ -331,7 +331,8 @@ export const FIRST_SESSION = {
     },
   ],
   closing: [
-    "All fitness levels welcome, no experience needed. You’ll walk out looser, lighter and more mobile.",
+    "All fitness levels welcome, no experience needed.",
+    "You’ll walk out looser, lighter and more mobile.",
   ],
 };
 

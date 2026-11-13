@@ -210,9 +210,6 @@ export function InfoHero({
   return (
     <section className={`hero hero--page panel${image ? "" : " hero--solo"}${image?.portrait ? " hero--portrait" : ""}`}>
       <div className="hero__card">
-        <svg className="hero__sparkle" viewBox="0 0 40 40" aria-hidden="true">
-          <path fill="currentColor" d="M20 0c1.2 10.6 8.8 18.8 20 20-11.2 1.2-18.8 9.4-20 20-1.2-10.6-8.8-18.8-20-20C11.2 18.8 18.8 10.6 20 0z" />
-        </svg>
         <nav className="crumbs caps" aria-label="Breadcrumb">
           <ol>
             {trail.map((crumb) => (

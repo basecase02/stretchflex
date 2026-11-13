@@ -11,6 +11,13 @@ import Script from "next/script";
 export const GTM_ID = "GTM-NT7HBXFJ";
 export const META_PIXEL_ID = "194257025689965";
 
+/**
+ * Microsoft Clarity (free heatmaps and session replays). Off until the
+ * client creates a project at clarity.microsoft.com and its ID is set as
+ * NEXT_PUBLIC_CLARITY_ID in the hosting environment.
+ */
+const CLARITY_ID = process.env.NEXT_PUBLIC_CLARITY_ID;
+
 const enabled = process.env.NODE_ENV === "production";
 
 /** Goes first inside <body>. */
@@ -59,6 +66,14 @@ s.parentNode.insertBefore(t,s)}(window, document,'script',
 fbq('init', '${META_PIXEL_ID}');
 fbq('track', 'PageView');`}
       </Script>
+      {CLARITY_ID ? (
+        <Script id="clarity" strategy="lazyOnload">
+          {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+})(window, document, "clarity", "script", ${JSON.stringify(CLARITY_ID)});`}
+        </Script>
+      ) : null}
     </>
   );
 }

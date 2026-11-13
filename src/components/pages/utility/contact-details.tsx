@@ -1,5 +1,6 @@
 import { hand } from "@/components/text";
 import { BOOK_URL, CONTACT, PHONE } from "@/content/site";
+import { OpenStatus } from "@/components/open-status";
 
 /**
  * The contact page's details beside the map. Same parts as the homepage
@@ -14,6 +15,7 @@ export function ContactDetails() {
         <div className="contact__copy">
           <h2 className="display">{hand("Hey, let's talk", "talk")}</h2>
           <p className="contact__lead">{CONTACT.body}</p>
+          <OpenStatus />
           <dl className="contact__facts">
             <div>
               <dt className="caps">Address:</dt>

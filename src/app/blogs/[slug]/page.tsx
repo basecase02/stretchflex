@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { PostCard } from "@/components/blog/post-card";
 import { formatDate, getPost, POSTS, toCard } from "@/components/blog/posts";
 import { CtaBand } from "@/components/sections";
+import { ReadProgress } from "@/components/read-progress";
 import { JsonLd } from "@/components/text";
 import { BOOK_URL } from "@/content/site";
 import { pageMetadata, seoFor } from "@/lib/seo";
@@ -38,11 +39,10 @@ export default async function PostPage({ params }: Props) {
         <JsonLd data={data} key={i} />
       ))}
 
+      <ReadProgress />
+
       <section className="hero hero--page hero--solo post-hero panel">
         <div className="hero__card">
-          <svg className="hero__sparkle" viewBox="0 0 40 40" aria-hidden="true">
-            <path fill="currentColor" d="M20 0c1.2 10.6 8.8 18.8 20 20-11.2 1.2-18.8 9.4-20 20-1.2-10.6-8.8-18.8-20-20C11.2 18.8 18.8 10.6 20 0z" />
-          </svg>
           <nav className="crumbs caps" aria-label="Breadcrumb">
             <ol>
               <li>

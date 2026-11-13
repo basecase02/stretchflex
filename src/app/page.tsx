@@ -4,6 +4,7 @@ import { Marquee } from "@/components/marquee";
 import { Rotator } from "@/components/rotator";
 import { ContactPanel, CtaBand, ReviewsPanel } from "@/components/sections";
 import { SessionTabs } from "@/components/session-tabs";
+import { SessionFinder } from "@/components/session-finder";
 import { hand, JsonLd } from "@/components/text";
 import { images } from "@/content/images";
 import { localBusiness, yoastGraph } from "@/content/schema";
@@ -42,9 +43,6 @@ export default function HomePage() {
       {/* ───────── Hero: the headline on a rose tile beside the team photo ───────── */}
       <section className="hero hero--home panel">
         <div className="hero__card">
-          <svg className="hero__sparkle" viewBox="0 0 40 40" aria-hidden="true">
-            <path fill="currentColor" d="M20 0c1.2 10.6 8.8 18.8 20 20-11.2 1.2-18.8 9.4-20 20-1.2-10.6-8.8-18.8-20-20C11.2 18.8 18.8 10.6 20 0z" />
-          </svg>
           <h2 className="hero__title">
             {HERO.lead}
             <br />
@@ -146,6 +144,9 @@ export default function HomePage() {
         </Marquee>
         <div className="wrap">
           <SessionTabs groups={SESSION_TABS} maxPoints={3} />
+          <SessionFinder
+            sessions={SESSIONS.map(({ id, name, duration, price, lead, learnHref, bookHref }) => ({ id, name, duration, price, lead, learnHref, bookHref }))}
+          />
         </div>
       </section>
 
@@ -172,43 +173,41 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ───────── Your first session: one tabbed folder, photo beside the steps ───────── */}
-      <section className="first panel">
+      {/* ───────── Your first session: a winding path through the four steps ───────── */}
+      <section className="first panel on-dark">
         <div className="wrap">
-          <div className="folder folder--blush">
-            <p className="folder__tab caps">{FIRST_SESSION.kicker}</p>
-            <div className="folder__body">
-              <figure className="folder__pic first__pic">
-                <Image
-                  src={images.legStretch}
-                  alt="A stretch therapist assisting a client with a hip stretch at StretchFLEX"
-                  fill
-                  placeholder="blur"
-                  sizes="(min-width: 900px) 480px, 100vw"
-                />
-              </figure>
-              <div className="folder__copy first__copy">
-                <h2 className="display">{hand(FIRST_SESSION.title, "to")}</h2>
-                <ol className="steps first__steps">
-                  {FIRST_SESSION.steps.map((step, i) => (
-                    <li className="step step--open" key={step.title}>
-                      <h3 className="step__head">
-                        <span className="step__num display">{i + 1}.</span>{" "}
-                        <span className="step__title">{step.title}</span>
-                      </h3>
-                      <div className="step__body">
-                        <p>{step.body}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-                <div className="first__notes">
-                  {FIRST_SESSION.closing.map((text) => (
-                    <p key={text.slice(0, 24)}>{text}</p>
-                  ))}
+          <header className="journey__head">
+            <p className="kicker">{FIRST_SESSION.kicker}</p>
+            <h2 className="display">{hand(FIRST_SESSION.title, "to")}</h2>
+          </header>
+          <ol className="journey">
+            {FIRST_SESSION.steps.map((step, i) => (
+              <li className="journey__step" key={step.title}>
+                <span className="journey__dot display" aria-hidden="true">
+                  {i + 1}
+                </span>
+                <div className="journey__copy">
+                  <h3 className="display journey__title">{step.title}</h3>
+                  <p>{step.body}</p>
                 </div>
-              </div>
-            </div>
+                {i < FIRST_SESSION.steps.length - 1 ? (
+                  <span className="journey__turn" aria-hidden="true">
+                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M4 10h12M11 5l5 5-5 5" />
+                    </svg>
+                  </span>
+                ) : null}
+              </li>
+            ))}
+          </ol>
+          <div className="journey__end">
+            <span className="journey__end-arrow" aria-hidden="true">
+              <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M10 4v12M5 11l5 5 5-5" />
+              </svg>
+            </span>
+            <p className="journey__note">{FIRST_SESSION.closing[0]}</p>
+            <p className="display journey__promise">{hand(FIRST_SESSION.closing[1], "lighter")}</p>
           </div>
         </div>
       </section>

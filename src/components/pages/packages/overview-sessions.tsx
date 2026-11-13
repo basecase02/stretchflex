@@ -1,6 +1,7 @@
 import { Marquee } from "@/components/marquee";
 import { SessionTabs, type SessionGroupView } from "@/components/session-tabs";
-import { SESSION_GROUPS, SESSIONS_TITLE, type Session } from "@/content/site";
+import { SessionFinder } from "@/components/session-finder";
+import { SESSION_GROUPS, SESSIONS, SESSIONS_TITLE, type Session } from "@/content/site";
 
 /**
  * The homepage's sessions carousel ("All" + filters, arrows), filled with the
@@ -21,6 +22,10 @@ export function OverviewSessions({ sessions }: { sessions: (Session & { group: s
       </Marquee>
       <div className="wrap">
         <SessionTabs groups={groups} />
+        {/* The finder books straight from SESSIONS (these cards only link to "Learn More"). */}
+        <SessionFinder
+          sessions={SESSIONS.map(({ id, name, duration, price, lead, learnHref, bookHref }) => ({ id, name, duration, price, lead, learnHref, bookHref }))}
+        />
       </div>
     </section>
   );

@@ -1763,3 +1763,865 @@ body:has(.bookbar[data-shown]) .quick,
     display: none;
   }
 }
+
+/* ───────────────────────── Session finder ─────────────────────────
+   Homepage, under the price cards: two rows of choices, then one pick. */
+
+.finder {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px clamp(24px, 4vw, 56px);
+  max-width: 1100px;
+  margin: clamp(28px, 5vh, 52px) auto 0;
+  padding: clamp(22px, 3vw, 40px);
+  border: 1px solid var(--rule-dark);
+  border-radius: var(--r-card);
+}
+
+.finder__intro,
+.finder__result {
+  grid-column: 1 / -1;
+}
+
+.finder__title {
+  font-size: clamp(1.6rem, 1.1rem + 1.6vw, 2.4rem);
+  line-height: 1;
+  color: var(--white);
+}
+
+.finder__intro p {
+  margin-top: 6px;
+  color: var(--on-dark-soft);
+}
+
+.finder__q {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.finder__q legend {
+  margin-bottom: 12px;
+  padding: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: var(--on-dark-soft);
+}
+
+.finder__opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.finder__opt {
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid var(--rule-dark);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--white);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+}
+
+.finder__opt:hover {
+  border-color: var(--white);
+}
+
+.finder__opt[aria-pressed="true"] {
+  border-color: var(--red);
+  background: var(--red);
+}
+
+.finder__opt:focus-visible {
+  outline: 3px solid var(--white);
+  outline-offset: 2px;
+}
+
+.finder__hint {
+  color: var(--on-dark-soft);
+  font-size: 0.92rem;
+}
+
+.finder__pick {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 4px 28px;
+  padding: clamp(18px, 2.4vw, 28px);
+  border-radius: var(--radius);
+  background: var(--white);
+  color: var(--navy);
+}
+
+.finder__pick > :not(.finder__actions) {
+  grid-column: 1;
+}
+
+.finder__kicker {
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  color: var(--red-deep);
+}
+
+.finder__name {
+  font-size: clamp(1.4rem, 1rem + 1.2vw, 2rem);
+  line-height: 1.05;
+}
+
+.finder__meta {
+  font-weight: 700;
+  color: var(--blue);
+}
+
+.finder__lead {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+  text-wrap: pretty;
+}
+
+.finder__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  grid-column: 2;
+  grid-row: 1 / span 4;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .finder__pick {
+    animation: finder-in 0.35s var(--ease);
+  }
+}
+
+@keyframes finder-in {
+  from {
+    opacity: 0;
+    translate: 0 8px;
+  }
+}
+
+@media (max-width: 759.98px) {
+  .finder {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+    padding: 20px 16px;
+  }
+
+  .finder__opt {
+    padding: 9px 14px;
+    font-size: 0.85rem;
+  }
+
+  .finder__pick {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .finder__actions {
+    grid-column: 1;
+    grid-row: auto;
+    margin-top: 12px;
+  }
+}
+
+/* ───────────────────────── Open now ───────────────────────── */
+
+.open-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 1.6em;
+  margin-top: 4px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.open-status__dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--red-deep);
+}
+
+.open-status[data-open] .open-status__dot {
+  background: var(--blue);
+  box-shadow: 0 0 0 4px rgb(15 117 188 / 0.18);
+}
+
+/* ───────────────────────── Motion ─────────────────────────
+   Sections ease in as they arrive (reveal.tsx). Opacity and translate
+   only, so scrolling stays smooth; nothing on screen at load is touched. */
+
+[data-reveal] {
+  transition:
+    opacity 0.8s var(--ease),
+    translate 0.8s var(--ease);
+}
+
+[data-reveal="wait"] {
+  opacity: 0;
+  translate: 0 26px;
+}
+
+/* Photos in cards lean in a touch under the pointer (mouse only). */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .tile__pic img {
+    transition: transform 0.8s var(--ease);
+  }
+
+  .tile:hover .tile__pic img {
+    transform: scale(1.04);
+  }
+}
+
+/* Blog posts: how far you've read, along the top edge. */
+.read-progress {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 60;
+  height: 3px;
+  background: var(--red);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  pointer-events: none;
+}
+
+@media print {
+  [data-reveal] {
+    opacity: 1 !important;
+    translate: none !important;
+  }
+
+  .quick,
+  .bookbar,
+  .read-progress {
+    display: none !important;
+  }
+}
+
+/* ───────────────────────── "What to expect": even structure ─────────────────────────
+   Numbered steps beside a photo: the heading runs across the top, then the
+   photo and the steps sit side by side, centred on each other, so neither
+   column leaves a gap. Numbers get a fixed column so every title and
+   description starts on the same line. */
+
+@media (min-width: 900px) {
+  .acc--pic:has(> .acc__list:not(.steps--plain)) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    grid-template-areas:
+      "head head"
+      "pic list";
+    align-items: center;
+    row-gap: clamp(26px, 4vh, 44px);
+  }
+
+  .acc--pic:has(> .acc__list:not(.steps--plain)) > .acc__side {
+    display: contents;
+  }
+
+  .acc--pic:has(> .acc__list:not(.steps--plain)) > .acc__side > .blk__head {
+    grid-area: head;
+  }
+
+  .acc--pic:has(> .acc__list:not(.steps--plain)) > .acc__side > .acc__pic {
+    grid-area: pic;
+  }
+
+  .acc--pic:has(> .acc__list:not(.steps--plain)) > .acc__side > .blk__actions {
+    grid-column: 1;
+    align-self: start;
+  }
+
+  .acc--pic:has(> .acc__list:not(.steps--plain)) > .acc__list {
+    grid-area: list;
+  }
+}
+
+.steps:not(.steps--plain) .step--open .step__num {
+  width: 28px;
+}
+
+.steps:not(.steps--plain) .step--open .step__body {
+  padding-left: 38px;
+}
+
+/* Phones: every split shows its words first, then its photo (like the
+   heroes), so two photos never land one after another. */
+@media (max-width: 899.98px) {
+  .split__pic,
+  .split--reverse .split__pic {
+    order: 1;
+  }
+}
+
+/* Long step lists (5+): the photo sits at the top and stays in view while
+   the steps scroll past, instead of floating in the middle. */
+@media (min-width: 900px) {
+  .acc--pic:has(> .acc__list:not(.steps--plain) > .step:nth-child(5)) {
+    align-items: start;
+  }
+
+  .acc--pic:has(> .acc__list:not(.steps--plain) > .step:nth-child(5)) > .acc__side > .acc__pic {
+    position: sticky;
+    top: calc(var(--header-h) + 32px);
+  }
+}
+
+/* ───────────────────────── Homepage: "What to Expect" path ─────────────────────────
+   Four big numbered circles, alternating sides, joined by one line that
+   turns between them (an arrow at each turn) and ends in the promise.
+   Rows share one height, so each bend meets the next circle exactly.
+   Phones: a straight timeline down the left. */
+
+.first {
+  --path: rgb(255 255 255 / 0.55);
+  --bend: 44px;
+}
+
+.journey__head {
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+.journey__head .kicker {
+  color: var(--rose);
+}
+
+.journey__head h2 {
+  font-size: clamp(2.6rem, 1rem + 5vw, 5.2rem);
+  color: var(--white);
+}
+
+.first .journey__head .hand,
+.first .journey__promise .hand {
+  color: var(--navy);
+}
+
+.journey {
+  display: grid;
+  grid-auto-rows: 1fr;
+  max-width: 1080px;
+  margin: clamp(40px, 7vh, 72px) auto 0;
+  padding: 0;
+  list-style: none;
+}
+
+.journey__step {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  min-height: clamp(230px, 28vh, 290px);
+}
+
+.journey__dot {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-row: 1;
+  justify-self: center;
+  place-items: center;
+  width: clamp(124px, 13vw, 172px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--red);
+  color: var(--white);
+  font-size: clamp(3.4rem, 2rem + 3vw, 5.2rem);
+  line-height: 1;
+  box-shadow: 0 26px 40px -24px rgb(6 49 78 / 0.75);
+}
+
+.journey__step:nth-child(4n + 2) .journey__dot {
+  background: var(--navy);
+}
+
+.journey__step:nth-child(4n + 3) .journey__dot {
+  background: var(--white);
+  color: var(--navy);
+}
+
+.journey__copy {
+  grid-row: 1;
+  max-width: 430px;
+  padding-inline: clamp(8px, 2vw, 28px);
+}
+
+.journey__title {
+  font-size: clamp(1.5rem, 1rem + 1.3vw, 2.15rem);
+  line-height: 1.02;
+  color: var(--white);
+  text-wrap: balance;
+}
+
+.journey__copy p {
+  margin-top: 10px;
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.15rem);
+  line-height: 1.5;
+  color: var(--on-dark-soft);
+  text-wrap: pretty;
+}
+
+/* Odd steps: circle left, words right. Even: mirrored. */
+.journey__step:nth-child(odd) .journey__dot {
+  grid-column: 1;
+}
+
+.journey__step:nth-child(odd) .journey__copy {
+  grid-column: 2;
+  justify-self: start;
+}
+
+.journey__step:nth-child(even) .journey__dot {
+  grid-column: 2;
+}
+
+.journey__step:nth-child(even) .journey__copy {
+  grid-column: 1;
+  justify-self: end;
+  text-align: right;
+}
+
+/* The line: from this circle down and across to the middle (::before),
+   then across and down into the next circle (::after). */
+.journey__step::before,
+.journey__step::after {
+  content: "";
+  position: absolute;
+  width: 25%;
+  height: 50%;
+  border: 0 solid var(--path);
+  pointer-events: none;
+}
+
+.journey__step::before {
+  top: 50%;
+}
+
+.journey__step::after {
+  top: 100%;
+}
+
+/* Each piece is an elbow of the path (two sides of a rounded corner). */
+.journey__step:nth-child(odd)::before {
+  left: 25%;
+  border-width: 0 0 3px 3px;
+  border-radius: 0 0 0 var(--bend);
+}
+
+.journey__step:nth-child(odd)::after {
+  left: 50%;
+  border-width: 3px 3px 0 0;
+  border-radius: 0 var(--bend) 0 0;
+}
+
+.journey__step:nth-child(even)::before {
+  left: 50%;
+  border-width: 0 3px 3px 0;
+  border-radius: 0 0 var(--bend) 0;
+}
+
+.journey__step:nth-child(even)::after {
+  left: 25%;
+  border-width: 3px 0 0 3px;
+  border-radius: var(--bend) 0 0 0;
+}
+
+/* After the last circle the line comes to the middle and drops into the end. */
+.journey__step:last-child::after {
+  left: 50%;
+  width: 0;
+  height: 44px;
+  border-width: 0 0 0 3px;
+  border-radius: 0;
+  translate: -1.5px 0;
+}
+
+.journey__turn {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--red);
+  translate: -50% -50%;
+}
+
+.journey__turn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.journey__step:nth-child(even) .journey__turn svg {
+  rotate: 180deg;
+}
+
+.journey__end {
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+  margin-top: 44px;
+  text-align: center;
+}
+
+.journey__end-arrow {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--red);
+}
+
+.journey__end-arrow svg {
+  width: 22px;
+  height: 22px;
+}
+
+.journey__note {
+  margin-top: 6px;
+  font-weight: 700;
+  color: var(--on-dark-soft);
+}
+
+.journey__promise {
+  max-width: 16em;
+  font-size: clamp(1.9rem, 1rem + 2.6vw, 3.2rem);
+  line-height: 1.02;
+  color: var(--white);
+  text-wrap: balance;
+}
+
+/* Phones and small tablets: the same winding path, turned upright.
+   Circles alternate left and right in a narrow column, the words sit
+   beside each one, and the line bends across between them. */
+@media (max-width: 759.98px) {
+  .first {
+    --dot: 64px;
+    --edge: 32px;
+    --bend: 22px;
+  }
+
+  .journey {
+    margin-top: 28px;
+  }
+
+  .journey__step {
+    grid-template-columns: var(--dot) minmax(0, 1fr);
+    gap: 0 16px;
+    min-height: 0;
+    padding-block: 30px;
+  }
+
+  .journey__step:nth-child(even) {
+    grid-template-columns: minmax(0, 1fr) var(--dot);
+  }
+
+  .journey__step:nth-child(n) .journey__dot {
+    width: var(--dot);
+    font-size: 2.1rem;
+  }
+
+  .journey__step:nth-child(odd) .journey__dot,
+  .journey__step:nth-child(even) .journey__copy {
+    grid-column: 1;
+  }
+
+  .journey__step:nth-child(even) .journey__dot,
+  .journey__step:nth-child(odd) .journey__copy {
+    grid-column: 2;
+  }
+
+  .journey__step:nth-child(n) .journey__copy {
+    max-width: none;
+    padding: 0;
+  }
+
+  .journey__title {
+    font-size: 1.3rem;
+  }
+
+  .journey__copy p {
+    margin-top: 6px;
+    font-size: 0.98rem;
+  }
+
+  /* The bends sit between the circle centres, at --edge from each side. */
+  .journey__step:nth-child(n)::before,
+  .journey__step:nth-child(n)::after {
+    width: calc(50% - var(--edge));
+  }
+
+  .journey__step:nth-child(odd)::before {
+    left: var(--edge);
+  }
+
+  .journey__step:nth-child(even)::after {
+    left: var(--edge);
+  }
+
+  .journey__step:last-child::after {
+    left: 50%;
+    width: 0;
+  }
+
+  .journey__turn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .journey__turn svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .journey__end {
+    margin-top: 44px;
+  }
+}
+
+/* Laptops and desktops: the whole path on one screen. The four steps run
+   across in a row, circles alternating high and low, and the line winds
+   between them (down, then up), with an arrow on each bend. */
+@media (min-width: 1024px) {
+  .first {
+    --tier: clamp(150px, 20vh, 185px);
+    --dot: clamp(104px, 12vh, 132px);
+    --bend: 28px;
+    padding-block: clamp(44px, 7vh, 72px);
+  }
+
+  .journey__head h2 {
+    font-size: clamp(2.6rem, 1rem + 2.8vw, 4rem);
+  }
+
+  .journey {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: auto;
+    max-width: 1180px;
+    margin-top: clamp(16px, 3vh, 32px);
+  }
+
+  .journey__step {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: var(--tier) var(--tier);
+    justify-items: center;
+    min-height: 0;
+  }
+
+  .journey__step:nth-child(n) .journey__dot {
+    grid-column: 1;
+    width: var(--dot);
+    font-size: clamp(2.8rem, 1.4rem + 2.2vh, 3.8rem);
+  }
+
+  .journey__step:nth-child(n) .journey__copy {
+    grid-column: 1;
+    justify-self: center;
+    max-width: min(260px, calc(100% - 40px));
+    padding: 0;
+    text-align: center;
+  }
+
+  .journey__step:nth-child(odd) .journey__dot {
+    grid-row: 1;
+  }
+
+  .journey__step:nth-child(odd) .journey__copy {
+    grid-row: 2;
+    align-self: start;
+    padding-top: 6px;
+  }
+
+  .journey__step:nth-child(even) .journey__dot {
+    grid-row: 2;
+  }
+
+  .journey__step:nth-child(even) .journey__copy {
+    grid-row: 1;
+    align-self: end;
+    padding-bottom: 6px;
+  }
+
+  .journey__title {
+    font-size: clamp(1.15rem, 0.7rem + 0.7vw, 1.45rem);
+  }
+
+  .journey__copy p {
+    margin-top: 6px;
+    font-size: 0.95rem;
+    line-height: 1.45;
+  }
+
+  /* The bends: high circle → down the column edge → low circle, and back up. */
+  .journey__step:nth-child(n)::before,
+  .journey__step:nth-child(n)::after {
+    width: 50%;
+    height: calc(var(--tier) / 2);
+    translate: none;
+  }
+
+  .journey__step:nth-child(odd)::before {
+    top: calc(var(--tier) / 2);
+    left: 50%;
+    border-width: 3px 3px 0 0;
+    border-radius: 0 var(--bend) 0 0;
+  }
+
+  .journey__step:nth-child(odd)::after {
+    top: var(--tier);
+    left: 100%;
+    border-width: 0 0 3px 3px;
+    border-radius: 0 0 0 var(--bend);
+  }
+
+  .journey__step:nth-child(even)::before {
+    top: var(--tier);
+    left: 50%;
+    border-width: 0 3px 3px 0;
+    border-radius: 0 0 var(--bend) 0;
+  }
+
+  .journey__step:nth-child(even)::after {
+    top: calc(var(--tier) / 2);
+    left: 100%;
+    border-width: 3px 0 0 3px;
+    border-radius: var(--bend) 0 0 0;
+  }
+
+  .journey__step:last-child::before,
+  .journey__step:last-child::after {
+    display: none;
+  }
+
+  .journey__turn {
+    top: var(--tier);
+    left: 100%;
+    width: 34px;
+    height: 34px;
+  }
+
+  .journey__step:nth-child(odd) .journey__turn svg {
+    rotate: 90deg;
+  }
+
+  .journey__step:nth-child(even) .journey__turn svg {
+    rotate: -90deg;
+  }
+
+  .journey__end {
+    gap: 2px;
+    margin-top: clamp(14px, 3vh, 30px);
+  }
+
+  .journey__end-arrow {
+    display: none;
+  }
+
+  .journey__promise {
+    max-width: none;
+    font-size: clamp(1.6rem, 0.8rem + 1.6vw, 2.5rem);
+  }
+}
+
+/* Laptops: calmer reading. The circles still step high and low along the
+   winding line, but every step's words sit directly under its circle on
+   one shared line, so the four titles read straight across. */
+@media (min-width: 1024px) {
+  .first {
+    --dot: clamp(92px, 12vh, 136px);
+    --rise: clamp(40px, 6vh, 64px);
+    --bend: calc(var(--rise) / 2);
+    padding-block: clamp(52px, 8vh, 88px);
+  }
+
+  .journey {
+    max-width: 1320px;
+    margin-top: clamp(24px, 5vh, 56px);
+  }
+
+  .journey__step {
+    grid-template-rows: calc(var(--dot) + var(--rise)) auto;
+    align-items: start;
+  }
+
+  .journey__step:nth-child(n) .journey__dot {
+    grid-row: 1;
+  }
+
+  .journey__step:nth-child(odd) .journey__dot {
+    align-self: start;
+  }
+
+  .journey__step:nth-child(even) .journey__dot {
+    align-self: end;
+  }
+
+  .journey__step:nth-child(n) .journey__copy {
+    grid-row: 2;
+    align-self: start;
+    max-width: min(290px, calc(100% - 48px));
+    padding: clamp(16px, 3vh, 28px) 0 0;
+  }
+
+  .journey__title {
+    font-size: clamp(1.2rem, 0.7rem + 0.8vw, 1.55rem);
+    line-height: 1.05;
+  }
+
+  .journey__copy p {
+    margin-top: 8px;
+    font-size: clamp(0.96rem, 0.88rem + 0.15vw, 1.06rem);
+    line-height: 1.55;
+  }
+
+  /* Bends: from a high circle across, down by --rise, into the low one,
+     and back up again. */
+  .journey__step:nth-child(n)::before,
+  .journey__step:nth-child(n)::after {
+    height: calc(var(--rise) / 2);
+  }
+
+  .journey__step:nth-child(odd)::before {
+    top: calc(var(--dot) / 2);
+  }
+
+  .journey__step:nth-child(odd)::after {
+    top: calc(var(--dot) / 2 + var(--rise) / 2);
+  }
+
+  .journey__step:nth-child(even)::before {
+    top: calc(var(--dot) / 2 + var(--rise) / 2);
+  }
+
+  .journey__step:nth-child(even)::after {
+    top: calc(var(--dot) / 2);
+  }
+
+  .journey__turn {
+    top: calc(var(--dot) / 2 + var(--rise) / 2);
+  }
+
+  .journey__end {
+    margin-top: clamp(28px, 5vh, 56px);
+    gap: 6px;
+  }
+}
