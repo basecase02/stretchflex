@@ -1,47 +1,60 @@
+import { CTA_BAND } from "@/content/site";
 import type { PageContent } from "./types";
 
 const u = (path: string) => `/wp-content/uploads/${path}`;
 
-/** /dr-joe-kosterich — our medical advisor, kept short. */
+/** /dr-joe-kosterich: our advisory board GP. */
 export const page: PageContent = {
   sessions: ["revive-stretch", "prime-mobility-stretch", "ultimate-stretch"],
   bookingTitle: "Assisted Stretching",
+  seo: {
+    title: "Dr Joe Kosterich | StretchFLEX Advisory Board",
+    description:
+      "Dr Joe Kosterich, GP, author and health commentator, advises StretchFLEX on clinical and strategic matters to keep our services safe and client-focused.",
+    ogTitle: "Dr Joe Kosterich | StretchFLEX Advisory Board",
+    ogDescription: "Doctor, author and health commentator advising StretchFLEX, Perth CBD.",
+  },
   blocks: [
     {
       type: "hero",
       crumbs: [{ label: "About", href: "/about" }],
-      kicker: "Doctor, speaker, author",
+      kicker: "Advisory board",
       title: "Dr Joe Kosterich",
-      accent: "M.B.B.S., G.A.I.C.D",
-      intro: "With 20+ years in clinical practice and medical education, Dr Joe helps people take control of their health and get the most out of life.",
-      image: { src: u("2026/03/DrJoeKosterich.webp"), alt: "Dr Joe Kosterich, GP and StretchFLEX advisor", position: "50% 30%" },
-    },
-    {
-      type: "checklist",
-      tone: "rose",
-      kicker: "Clinical leadership",
-      title: "A Trusted Voice in Australian Health",
-      hand: "Trusted",
-      items: [
-        { title: "WA State Medical Director", body: "for [IPN](https://www.ipn.com.au/)" },
-        { title: "Clinical Editor", body: "of [Medical Forum Magazine](https://mforum.com.au/)" },
-        { title: "Medical Advisor", body: "to [Little Green Pharma](https://www.littlegreenpharma.com/au/)" },
-        { title: "Vice Chairman", body: "of the [Arthritis and Osteoporosis Association of WA](https://www.arthritiswa.org.au/)" },
-        { title: "Lecturer", body: "at [UWA](https://www.uwa.edu.au/home), previously [Curtin Medical School](https://www.curtin.edu.au/)" },
-        { title: "Podcast host", body: "of [Dr Joe Unplugged](https://www.drjoetoday.com/) and author of two books" },
-        { title: "Former senior roles", body: "with the [Australian Medical Association (AMA)](https://www.ama.com.au/)" },
-      ],
+      intro: "MBBS, GAICD · Doctor, speaker and author",
+      image: { src: u("2026/03/DrJoeKosterich.webp"), alt: "Dr Joe Kosterich, member of the StretchFLEX advisory board", position: "50% 30%" },
     },
     {
       type: "text",
       tone: "navy",
-      title: "Strategic Advisor & Consultant: StretchFLEX Perth",
-      hand: "Advisor",
+      title: "A trusted voice in Australian health",
+      hand: "trusted",
       body: [
-        "Dr Joe joined StretchFLEX Perth as a Consultant and Advisor.",
-        "He provides medical oversight and strategic guidance, so our assisted stretching stays evidence-based, safe and focused on your long-term wellbeing.",
+        "Dr Joe Kosterich has spent more than 20 years in clinical practice and medical education. He is known across Australia as a doctor, author, speaker and media presenter focused on helping people take control of their own health.",
       ],
     },
-    { type: "cta", title: "Get Mobile with Assisted Stretching", hand: "Mobile" },
+    {
+      type: "checklist",
+      tone: "rose",
+      title: "Experience",
+      items: [
+        { body: "WA State Medical Director, [IPN](https://www.ipn.com.au/)" },
+        { body: "Clinical Editor, [Medical Forum Magazine](https://mforum.com.au/)" },
+        { body: "Medical Advisor, [Little Green Pharma](https://www.littlegreenpharma.com/au/)" },
+        { body: "Vice Chairman, [Arthritis and Osteoporosis Association of WA](https://www.arthritiswa.org.au/)" },
+        { body: "Lecturer at the [University of Western Australia](https://www.uwa.edu.au/home), previously [Curtin Medical School](https://www.curtin.edu.au/)" },
+        { body: "Former senior roles with the [Australian Medical Association](https://www.ama.com.au/)" },
+        { body: "Author of two books and host of the podcast [Dr Joe Unplugged](https://www.drjoetoday.com/)" },
+      ],
+    },
+    {
+      type: "text",
+      title: "His role at StretchFLEX",
+      hand: "role",
+      body: [
+        "Dr Joe sits on the StretchFLEX advisory board, providing clinical and strategic guidance to help keep our services safe, sensible and focused on clients' long-term wellbeing.",
+      ],
+    },
+    // The doc ends with a plain "Book your session" button and no heading: the site's standard booking band.
+    { type: "cta", title: CTA_BAND.title, hand: CTA_BAND.hand, body: CTA_BAND.body },
   ],
 };

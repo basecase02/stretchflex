@@ -1,0 +1,212 @@
+/* ==========================================================================
+   Contact page: details beside the map, then the message form. Inputs are
+   rounded like the blog search: pale fill, a quiet rule, blue on focus.
+   ========================================================================== */
+
+/* ───────── Details ───────── */
+
+.contact__block {
+  display: grid;
+  gap: 4px;
+  padding: 14px 0;
+  border-bottom: 1.5px solid var(--navy);
+}
+
+.contact__list {
+  width: 100%;
+  border-top: 1.5px solid var(--navy);
+}
+
+.contact__block h2 {
+  font-size: 1.3rem;
+  color: var(--navy);
+}
+
+.contact__block p {
+  line-height: 1.5;
+}
+
+.contact__block .contact__aside {
+  font-size: 0.92rem;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+.contact__block a {
+  font-weight: 600;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+}
+
+.contact__block a:hover {
+  color: var(--blue);
+}
+
+.contact__hours {
+  width: 100%;
+  max-width: 420px;
+  border-collapse: collapse;
+}
+
+.contact__hours th,
+.contact__hours td {
+  padding: 3px 0;
+  text-align: left;
+  vertical-align: top;
+}
+
+.contact__hours th {
+  padding-right: 20px;
+  font-weight: 600;
+}
+
+/* ───────── Form ───────── */
+
+.message {
+  scroll-margin-top: calc(var(--header-h) + 20px);
+}
+
+.message__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(28px, 5vw, 80px);
+  align-items: start;
+}
+
+.message__grid .blk__head {
+  margin-bottom: 0;
+}
+
+.cform {
+  display: grid;
+  gap: 16px;
+  padding: clamp(20px, 2.6vw, 36px);
+  border-radius: var(--r-card);
+  background: var(--white);
+}
+
+.cform__row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.cform__field {
+  display: grid;
+  gap: 6px;
+}
+
+.cform label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+
+.cform label span[aria-hidden] {
+  color: var(--red-deep);
+}
+
+.cform__optional {
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink-soft);
+}
+
+.cform input,
+.cform textarea {
+  width: 100%;
+  min-height: 50px;
+  padding: 12px 18px;
+  border: 1.5px solid var(--rule);
+  border-radius: 999px;
+  background: var(--rose);
+  font: inherit;
+  color: var(--navy);
+  transition: border-color 0.2s;
+}
+
+.cform textarea {
+  min-height: 150px;
+  border-radius: 22px;
+  resize: vertical;
+}
+
+.cform input:focus,
+.cform textarea:focus {
+  outline: none;
+  border-color: var(--blue);
+  background: var(--white);
+}
+
+.cform [aria-invalid="true"] {
+  border-color: var(--red-deep);
+}
+
+.cform__error {
+  padding-left: 18px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--red-deep);
+}
+
+.cform__send {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  padding-top: 4px;
+}
+
+.cform__send .btn[disabled] {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.cform__note {
+  flex: 1 1 240px;
+  font-size: 0.86rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.cform__note a,
+.cform__msg a {
+  color: inherit;
+  text-underline-offset: 3px;
+}
+
+.cform__status:empty {
+  display: none;
+}
+
+.cform__msg {
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--rose);
+  font-size: 0.94rem;
+  line-height: 1.45;
+}
+
+.cform__msg--failed {
+  border-left: 4px solid var(--red);
+}
+
+.cform__msg--sent,
+.cform__msg--mail {
+  border-left: 4px solid var(--blue);
+}
+
+@media (max-width: 899.98px) {
+  .message__grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 559.98px) {
+  .cform__row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

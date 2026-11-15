@@ -10,6 +10,11 @@ export type PageContent = {
   /** A page title that replaces the live one. */
   title?: string;
   /**
+   * SEO from the client's content document. Replaces the live page's
+   * snapshot; required for new pages that have no snapshot.
+   */
+  seo?: { title: string; description: string; ogTitle?: string; ogDescription?: string };
+  /**
    * The sessions this page sells (ids from SESSIONS in src/content/site.ts).
    * Every general booking button on the page becomes a button per session
    * (length and price), and a booking bar stays in view while people scroll.

@@ -17,6 +17,11 @@ const SITE_NAME = "Assisted Stretching Perth | StretchFLEX";
 const DEFAULT_IMAGE = "/images/team/stretchflex-team-reception.jpg";
 const entries = seo as unknown as Record<string, SeoEntry>;
 
+/** Whether a live WordPress URL has an SEO snapshot. */
+export function hasSeo(path: string): boolean {
+  return path in entries;
+}
+
 /** The SEO snapshot of a live WordPress URL (title, description, image, schema). */
 export function seoFor(path: string): SeoEntry {
   const entry = entries[path];

@@ -1,25 +1,78 @@
-import "@/styles/utility.css";
 import type { PageContent } from "./types";
 
-/** /refund-and-cancellation-policy — the policy text from the live page, unchanged. */
-const html = "<nav class=\"policy-toc\" aria-label=\"Table of Contents\"><h4>Table of Contents</h4><ol><li><a href=\"#1-appointment-cancellations\">1. APPOINTMENT CANCELLATIONS</a></li><li><a href=\"#2-package-purchases\">2. PACKAGE PURCHASES</a></li><li><a href=\"#3-cash-payments\">3. CASH PAYMENTS</a></li><li><a href=\"#4-membership-terms\">4. MEMBERSHIP TERMS</a></li><li><a href=\"#5-general-terms\">5. GENERAL TERMS</a></li><li><a href=\"#6-contact-information\">6. CONTACT INFORMATION</a></li></ol></nav>\n<h2 id=\"1-appointment-cancellations\">1. APPOINTMENT CANCELLATIONS</h2>\n<h3>1.1 Full Refund (48+ Hours Notice)</h3>\n<p>Clients who cancel their scheduled appointment at least 48 hours prior to the appointment time are entitled to a full refund of the appointment fee.</p>\n<h3>1.2 Partial Refund (24-48 Hours Notice)</h3>\n<p>Clients who cancel their scheduled appointment between 24 and 48 hours prior to the appointment time will receive a 50% refund of the appointment fee.</p>\n<h3>1.3 No Refund (Less Than 24 Hours Notice)</h3>\n<p>Cancellations made less than 24 hours prior to the scheduled appointment time, or no-shows, are not eligible for any refund.</p>\n<h2 id=\"2-package-purchases\">2. PACKAGE PURCHASES</h2>\n<h3>2.1 Non-Refundable</h3>\n<p>All service packages purchased at StretchFLEX are non-refundable once payment has been processed.</p>\n<h3>2.2 Non-Transferable</h3>\n<p>Service packages are non-transferable and cannot be transferred to another person or account.</p>\n<h2 id=\"3-cash-payments\">3. CASH PAYMENTS</h2>\n<p>All payments made in cash are final and non-refundable under any circumstances.</p>\n<h2 id=\"4-membership-terms\">4. MEMBERSHIP TERMS</h2>\n<h3>4.1 Cancellation Policy</h3>\n<p>Memberships may be cancelled at any time after the initial three (3) month commitment period. Cancellations must be submitted in writing (email or in person) and will take effect at the end of the current billing cycle.</p>\n<h3>4.2 Membership Pause/Hold</h3>\n<p>Clients may pause or place their membership on hold for a period of thirty (30) days at any time during their membership. This option is available once per membership and can be activated by providing written notice.</p>\n<h3>4.3 Hold Limitations</h3>\n<p>Each membership is entitled to one (1) thirty-day hold period only. Additional holds are not permitted.</p>\n<h2 id=\"5-general-terms\">5. GENERAL TERMS</h2>\n<h3>5.1 Notification Requirements</h3>\n<p>All cancellations, holds, and refund requests must be submitted in writing via email to [email address] or in person at our studio.</p>\n<h3>5.2 Processing Time</h3>\n<p>Approved refunds will be processed within seven (7) business days and will be credited to the original payment method.</p>\n<h3>5.3 Policy Changes</h3>\n<p>StretchFLEX reserves the right to modify this refund and cancellation policy at any time. Clients will be notified of any changes, and the updated policy will be posted on our website and displayed at our studio.</p>\n<h2 id=\"6-contact-information\">6. CONTACT INFORMATION</h2>\n<p>For questions regarding this policy or to request a cancellation or refund, please contact:</p>\n<p><strong>StretchFLEX</strong><br>Address: 111 Trinity Arcade, 72 St Georges Terrace, Perth CBD, WA 6000<br>Phone: <a href=\"tel:0432569077\">0432 569 077</a><br>Email Address: <a href=\"mailto:alan@stretchflex.au\">alan@stretchflex.au</a></p>\n<p>By scheduling an appointment, purchasing a package, or enrolling in a membership at StretchFLEX, you acknowledge that you have read, understood, and agree to abide by this Refund and Cancellation Policy.</p>";
+/** /refund-and-cancellation-policy: the policy from the client's content document, word for word. */
+const html = `
+<h2>1. Your rights under Australian Consumer Law</h2>
+<p>Our services come with guarantees that cannot be excluded under the Australian Consumer Law. Nothing in this policy limits those rights. If a service is not provided with due care and skill, or is not fit for the purpose we told you it would achieve, you may be entitled to a remedy, including a refund.</p>
+
+<h2>2. Cancelling or rescheduling an appointment</h2>
+<div class="tbl" role="region" aria-label="Cancellation notice and outcome" tabindex="0">
+<table style="display: table">
+  <thead><tr><th scope="col">Notice given</th><th scope="col">Outcome</th></tr></thead>
+  <tbody>
+    <tr><td data-label="Notice given">48 hours or more</td><td data-label="Outcome">Free reschedule or full refund</td></tr>
+    <tr><td data-label="Notice given">24 to 48 hours</td><td data-label="Outcome">Free reschedule or 50% refund</td></tr>
+    <tr><td data-label="Notice given">Less than 24 hours</td><td data-label="Outcome">No refund. The session is charged in full</td></tr>
+    <tr><td data-label="Notice given">No-show</td><td data-label="Outcome">No refund. The session is charged in full</td></tr>
+  </tbody>
+</table>
+</div>
+<p>You can cancel or reschedule online, by phone on <a href="tel:0432569077">0432 569 077</a> or by email.</p>
+
+<h2>3. Late arrival</h2>
+<p>If you arrive late, we will do our best to give you your full session, but it may need to finish at the scheduled time so the next client is not delayed. The full session price applies.</p>
+
+<h2>4. Session packs</h2>
+<ul>
+  <li>Packs are valid for 12 months from the date of purchase. Unused sessions expire after that date.</li>
+  <li>Packs are for one person and cannot be transferred or shared.</li>
+  <li>Packs are non-refundable once purchased, except as required by the Australian Consumer Law or where we are unable to provide the sessions.</li>
+  <li>Sessions booked from a pack follow the cancellation rules above. A session cancelled with less than 24 hours notice, or missed, is deducted from your pack.</li>
+</ul>
+
+<h2>5. Memberships</h2>
+<ul>
+  <li>Assisted Stretching Memberships (Revive, Prime and Ultimate) have a minimum commitment of three months (13 weekly payments). Performance &amp; Recovery Memberships (Bronze, Silver and Gold) have a minimum commitment of four weeks.</li>
+  <li>Memberships are billed weekly by direct debit and continue week to week after the minimum term until cancelled.</li>
+  <li>Membership sessions are allocated weekly and do not carry over to the following week.</li>
+  <li>Membership sessions cancelled with less than 24 hours notice, and missed appointments, are forfeited.</li>
+  <li>You may cancel at any time after your minimum commitment by giving written notice. Cancellation takes effect at the end of the current weekly billing cycle.</li>
+  <li>Each membership includes one 30-day hold, requested in writing.</li>
+  <li>Full details are in our <a href="/membership-terms">Membership Terms and Conditions</a>.</li>
+</ul>
+
+<h2>6. If we need to cancel</h2>
+<p>If we need to cancel or reschedule your appointment, we will contact you as soon as possible and offer a new time or a full refund, including for sessions booked from a pack or membership.</p>
+
+<h2>7. How to request a cancellation, hold or refund</h2>
+<p>All membership cancellations, holds and refund requests must be made in writing, by email to <a href="mailto:info@stretchflex.au">info@stretchflex.au</a> or in person at the studio.</p>
+
+<h2>8. How refunds are paid</h2>
+<p>Approved refunds are processed within 7 business days to your original payment method. Refunds for cash payments are made by bank transfer.</p>
+
+<h2>9. Changes to this policy</h2>
+<p>We may update this policy from time to time. The current version is always published on our website and available at the studio. Changes do not affect bookings, packs or memberships already purchased unless required by law.</p>
+
+<h2>10. Contact us</h2>
+<p>StretchFLEX, 111 Trinity Arcade, 72 St Georges Terrace, Perth WA 6000 · <a href="tel:0432569077">0432 569 077</a> · <a href="mailto:info@stretchflex.au">info@stretchflex.au</a></p>
+`;
 
 export const page: PageContent = {
+  seo: {
+    title: "Refund and Cancellation Policy | StretchFLEX",
+    description:
+      "How cancellations, rescheduling, refunds, session packs and memberships work at StretchFLEX, Perth CBD.",
+  },
   blocks: [
     {
       type: "hero",
-      kicker: "Effective Date: 30 January 2026",
-      title: "Refund and Cancellation",
-      accent: "Policy",
-      intro:
-        "At StretchFLEX, we are committed to providing exceptional assisted stretch and wellness services while maintaining fair and transparent policies for all our clients. Please review our refund and cancellation policy carefully.",
-      image: {
-        src: "/wp-content/uploads/2026/02/openart-image_lW2ChY4x_1770268860390_raw.webp",
-        alt: "A client checking in with a StretchFLEX therapist at reception",
-        position: "45% 45%",
-      },
+      kicker: "Policies and terms",
+      title: "Refund and Cancellation Policy",
+      intro: [
+        "Last updated: 14 November 2026",
+        'This policy explains how cancellations, rescheduling and refunds work for appointments, session packs and memberships at StretchFLEX. StretchFLEX is operated by Wellbeing Beyond Wellness Pty Ltd, ABN 42 687 612 611 ("we", "us").',
+      ],
     },
     { type: "prose", html },
-    { type: "contact" },
   ],
 };

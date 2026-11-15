@@ -384,3 +384,21 @@
     display: none;
   }
 }
+
+/* The wide featured card: a photo of another shape (a tall one) is shown
+   whole over its blurred copy on every screen, so no head is cut off. */
+.post-card--featured .post-card__pic img.post-card__backdrop {
+  display: block;
+  object-fit: cover;
+  filter: blur(18px) saturate(1.1);
+  transform: scale(1.15);
+  opacity: 0.7;
+}
+
+.post-card--featured .post-card__pic img.post-card__img--whole {
+  object-fit: contain;
+}
+
+.post-card--featured:hover .post-card__pic img.post-card__backdrop {
+  transform: scale(1.15);
+}

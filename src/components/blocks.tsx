@@ -18,6 +18,7 @@ import type {
   PeopleBlock,
   ProseBlock,
   SplitBlock,
+  TableBlock,
   TextBlock,
   Tone,
 } from "@/content/blocks";
@@ -115,6 +116,14 @@ function Hero({ block }: { block: HeroBlock }) {
           </p>
         ))}
         <Actions actions={block.actions} className="hero__actions" />
+        {block.note ? <p className="hero__note">{rich(block.note)}</p> : null}
+        {block.trust?.length ? (
+          <ul className="hero__trust">
+            {block.trust.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        ) : null}
       </div>
       {block.image ? (
         <figure className="hero__media" {...photoFrame(block.image)}>
@@ -340,6 +349,58 @@ function Offers({ block }: { block: OffersBlock }) {
           </li>
         ))}
       </ul>
+      {list(block.footnote).map((text) => (
+        <p className="blk__footnote" key={text.slice(0, 40)}>
+          {rich(text)}
+        </p>
+      ))}
+      <Actions actions={block.actions} className="blk__actions--center" />
+    </Panel>
+  );
+}
+
+/* ───────── Table: prices and comparisons ───────── */
+
+function Table({ block }: { block: TableBlock }) {
+  return (
+    <Panel tone={block.tone} id={block.id} className="blk--table">
+      <SectionHead head={block} />
+      <div className="tbl" role="region" aria-label={block.title ?? "Table"} tabIndex={0}>
+        <table>
+          <thead>
+            <tr>
+              {block.head.map((cell) => (
+                <th scope="col" key={cell}>
+                  {cell}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {block.rows.map((row, r) => (
+              <tr key={row[0] + r}>
+                {row.map((cell, c) =>
+                  c === 0 ? (
+                    <th scope="row" key={c}>
+                      {rich(cell)}
+                    </th>
+                  ) : (
+                    <td key={c} data-label={block.head[c]}>
+                      {rich(cell)}
+                    </td>
+                  ),
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {list(block.footnote).map((text) => (
+        <p className="blk__footnote" key={text.slice(0, 40)}>
+          {rich(text)}
+        </p>
+      ))}
+      <Actions actions={block.actions} className="blk__actions--center" />
     </Panel>
   );
 }
@@ -381,6 +442,21 @@ function Prose({ block }: { block: ProseBlock }) {
 
 /* ───────── People: the team ───────── */
 
+/** "Biljana Mancini" → "Biljana", "Dr Joe Kosterich" → "Dr Joe". */
+const shortName = (name: string) => {
+  const words = name.split(" ");
+  return /^(dr|prof)\.?$/i.test(words[0]) ? words.slice(0, 2).join(" ") : words[0];
+};
+
+/** "Ray Mancini" → "RM". */
+const initials = (name: string) =>
+  name
+    .split(" ")
+    .filter((word) => !/^(dr|prof)\.?$/i.test(word))
+    .map((word) => word[0])
+    .join("")
+    .slice(0, 2);
+
 function People({ block }: { block: PeopleBlock }) {
   return (
     <Panel tone={block.tone} id={block.id}>
@@ -389,13 +465,20 @@ function People({ block }: { block: PeopleBlock }) {
         {block.items.map((person) => {
           const inner = (
             <>
-              <figure className="person__pic" {...photoFrame(person.image)}>
-                {person.image ? <Image src={person.image.src} alt={person.image.alt} fill sizes="(min-width: 900px) 30vw, 90vw" /> : null}
-              </figure>
+              {person.image ? (
+                <figure className="person__pic" {...photoFrame(person.image)}>
+                  <Image src={person.image.src} alt={person.image.alt} fill sizes="(min-width: 900px) 30vw, 90vw" />
+                </figure>
+              ) : (
+                // No photo yet: their initials in the same frame, so the row stays even.
+                <figure className="person__pic person__pic--initials" aria-hidden="true">
+                  <span className="display">{initials(person.name)}</span>
+                </figure>
+              )}
               <p className="person__role caps">{person.role}</p>
               <h3 className="display person__name">{person.name}</h3>
               {person.body ? <p className="person__body">{person.body}</p> : null}
-              {person.href ? <span className="tile__more caps">Meet {person.name.split(" ")[0]} →</span> : null}
+              {person.href ? <span className="tile__more caps">Meet {shortName(person.name)} →</span> : null}
             </>
           );
           return (
@@ -469,6 +552,8 @@ export function Blocks({ blocks }: { blocks: Block[] }) {
             return <Accordion block={block} index={i} key={key} />;
           case "offers":
             return <Offers block={block} key={key} />;
+          case "table":
+            return <Table block={block} key={key} />;
           case "text":
             return <Text block={block} key={key} />;
           case "prose":

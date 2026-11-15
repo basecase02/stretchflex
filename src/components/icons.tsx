@@ -116,6 +116,13 @@ const benefitPaths: Record<BenefitIcon, ReactNode> = {
       <path d="M8 40l20-20" />
     </>
   ),
+  // A map pin: right in the CBD.
+  pin: (
+    <>
+      <path d="M24 44S10 30.5 10 19a14 14 0 0 1 28 0c0 11.5-14 25-14 25z" />
+      <circle cx="24" cy="19" r="5" />
+    </>
+  ),
 };
 
 export function BenefitGlyph({ name, className }: { name: BenefitIcon; className?: string }) {

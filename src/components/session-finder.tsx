@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PHONE } from "@/content/site";
 
 /**
  * "Not sure which to book?" Two quick choices (time and goal) point to one
@@ -97,6 +98,9 @@ export function SessionFinder({ sessions }: { sessions: FinderSession[] }) {
           <p className="finder__hint">{time || goal ? "One more tap…" : "Pick one from each row."}</p>
         )}
       </div>
+      <p className="finder__call">
+        Still unsure? Call us on <a href={PHONE.href}>{PHONE.label}</a> and we will help you choose.
+      </p>
     </div>
   );
 }

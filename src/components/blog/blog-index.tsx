@@ -31,11 +31,11 @@ export function BlogIndex({ posts, all, page, pageCount }: { posts: Card[]; all:
     <div className="blog">
       <section className="blog__finder" aria-labelledby={headingId}>
         <h2 className="display blog__finder-title" id={headingId}>
-          Search
+          Search articles
         </h2>
         <form className="blog__search" role="search" onSubmit={onSubmit}>
           <label className="sr-only" htmlFor={searchId}>
-            Search
+            Search articles
           </label>
           <input id={searchId} type="search" value={query} onChange={(event) => setQuery(event.target.value)} />
           <button type="submit" className="btn btn--caps btn--navy">
@@ -59,6 +59,9 @@ export function BlogIndex({ posts, all, page, pageCount }: { posts: Card[]; all:
         )
       ) : (
         <>
+          <header className="blk__head blk__head--center">
+            <h2 className="display blog__finder-title">Latest articles</h2>
+          </header>
           <ul className="blog__grid">
             {page === 1 ? <PostCard post={featured} featured /> : <PostCard post={featured} />}
             {rest.map((post) => (

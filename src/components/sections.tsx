@@ -4,7 +4,7 @@ import { ReviewCarousel } from "@/components/review-carousel";
 import { hand, rich, SmartLink } from "@/components/text";
 import type { Action } from "@/content/blocks";
 import { images } from "@/content/images";
-import { BOOK_URL, CONTACT, CTA_BAND, PHONE, REVIEWS } from "@/content/site";
+import { BOOK_URL, CONTACT, CTA_BAND, EMAIL, PHONE, REVIEWS } from "@/content/site";
 import { OpenStatus } from "@/components/open-status";
 
 /**
@@ -28,10 +28,10 @@ export function CtaButtons({ actions }: { actions: Action[] }) {
 
 export function CtaBand({
   title = CTA_BAND.title,
-  handWord = "for",
+  handWord = CTA_BAND.hand,
   label = CTA_BAND.cta,
   href = BOOK_URL,
-  body = [],
+  body = [CTA_BAND.body],
   actions,
 }: {
   title?: string;
@@ -60,9 +60,10 @@ export function CtaBand({
 
 export function ReviewsPanel() {
   return (
-    <section className="reviews panel on-dark" id="reviews" aria-label="Google reviews">
+    <section className="reviews panel on-dark" id="reviews" aria-label={REVIEWS.title}>
       <div className="reviews__grid wrap">
         <div className="reviews__intro">
+          <p className="kicker reviews__kicker">{REVIEWS.title}</p>
           <p className="reviews__business caps">
             <GoogleIcon className="reviews__g" />
             {REVIEWS.business}
@@ -74,7 +75,7 @@ export function ReviewsPanel() {
             href={REVIEWS.writeReview.href}
             target="_blank"
             rel="noopener"
-            aria-label="Write a review to Google"
+            aria-label={`${REVIEWS.writeReview.label} (opens Google)`}
           >
             {REVIEWS.writeReview.label}
           </a>
@@ -106,6 +107,12 @@ export function ContactPanel({ heading = "h2", actions }: { heading?: "h1" | "h2
               </dd>
             </div>
             <div>
+              <dt className="caps">Email:</dt>
+              <dd>
+                <a href={EMAIL.href}>{EMAIL.label}</a>
+              </dd>
+            </div>
+            <div>
               <dt className="caps">Opening Hours:</dt>
               <dd>
                 {CONTACT.hours.map((line) => (
@@ -131,7 +138,7 @@ export function ContactPanel({ heading = "h2", actions }: { heading?: "h1" | "h2
         <div className="contact__map">
           <iframe
             src={CONTACT.mapSrc}
-            title="StretchFlex on Google Maps"
+            title="StretchFLEX on Google Maps"
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
             allowFullScreen

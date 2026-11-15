@@ -1,0 +1,259 @@
+/* YouTube Shorts: tall 9:16 frames in a row; phones swipe. */
+
+.shorts__row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(10px, 1.4vw, 18px);
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.short__play {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 9 / 16;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  border-radius: var(--r-card);
+  background: #000;
+  cursor: pointer;
+}
+
+.short__play img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition:
+    transform 0.6s var(--ease),
+    opacity 0.3s;
+}
+
+.short__icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--red);
+  color: var(--white);
+  box-shadow: 0 12px 30px -10px rgb(0 0 0 / 0.6);
+  translate: -50% -50%;
+  transition: transform 0.3s var(--ease);
+}
+
+.short__icon svg {
+  width: 24px;
+  height: 24px;
+  margin-left: 3px;
+}
+
+@media (hover: hover) {
+  .short__play:hover img {
+    transform: scale(1.04);
+  }
+
+  .short__play:hover .short__icon {
+    transform: scale(1.08);
+  }
+}
+
+.short__play:focus-visible {
+  outline: 3px solid var(--white);
+  outline-offset: -3px;
+}
+
+.short__title {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--on-dark-soft);
+  text-wrap: pretty;
+}
+
+@media (max-width: 899.98px) {
+  .shorts__row {
+    display: flex;
+    gap: 12px;
+    margin-inline: calc(-1 * var(--gutter));
+    padding: 0 var(--gutter) 6px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+
+  .shorts__row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .short {
+    flex: 0 0 min(58%, 240px);
+    scroll-snap-align: start;
+  }
+}
+
+/* ───────── The full-screen viewer ─────────
+   A native modal dialog over a dark backdrop: the video as tall as the
+   screen allows, its title and "Open on YouTube" beneath, arrows either
+   side and a close button in the corner. Phones: edge to edge. */
+
+.viewer {
+  width: 100vw;
+  max-width: none;
+  height: 100svh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--white);
+}
+
+.viewer::backdrop {
+  background: rgb(4 18 30 / 0.97);
+}
+
+.viewer[open] {
+  display: grid;
+  place-items: center;
+}
+
+.viewer__inner {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  width: min(calc((100svh - 120px) * 9 / 16), 92vw);
+}
+
+.viewer__frame {
+  position: relative;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border-radius: var(--r-card);
+  background: #000;
+}
+
+.viewer__frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.viewer__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 16px;
+}
+
+.viewer__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.viewer__yt {
+  flex: none;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--white);
+  text-underline-offset: 3px;
+}
+
+.viewer__close,
+.viewer__nav {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--navy);
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+
+.viewer__close:hover,
+.viewer__nav:hover {
+  background: var(--red);
+  color: var(--white);
+}
+
+.viewer__close:focus-visible,
+.viewer__nav:focus-visible {
+  outline: 3px solid var(--white);
+  outline-offset: 3px;
+}
+
+.viewer__close svg,
+.viewer__nav svg {
+  width: 20px;
+  height: 20px;
+}
+
+.viewer__close {
+  position: fixed;
+  top: max(16px, env(safe-area-inset-top));
+  right: max(16px, env(safe-area-inset-right));
+}
+
+.viewer__nav {
+  position: absolute;
+  top: calc(50% - 30px);
+}
+
+.viewer__nav--prev {
+  right: calc(100% + 20px);
+}
+
+.viewer__nav--next {
+  left: calc(100% + 20px);
+}
+
+/* Phones: the video fills the width; arrows sit on its edges. */
+@media (max-width: 719.98px) {
+  .viewer__inner {
+    width: min(100vw, calc((100svh - 96px) * 9 / 16));
+    padding-inline: 0;
+  }
+
+  .viewer__frame {
+    border-radius: 0;
+  }
+
+  .viewer__bar {
+    padding-inline: 16px;
+  }
+
+  .viewer__nav {
+    width: 40px;
+    height: 40px;
+    background: rgb(255 255 255 / 0.85);
+  }
+
+  .viewer__nav--prev {
+    right: auto;
+    left: 8px;
+  }
+
+  .viewer__nav--next {
+    left: auto;
+    right: 8px;
+  }
+}

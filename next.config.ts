@@ -18,6 +18,8 @@ const nextConfig: NextConfig = {
     return [
       { source: "/biljana-stojanovic", destination: "/biljana-mancini", permanent: true },
       { source: "/alan-chapman", destination: "/about", permanent: true },
+      { source: "/our-packages/rapid-rejuvenation", destination: "/our-packages/de-compression-recovery-stack", permanent: true },
+      { source: "/our-packages/red-light-therapy-benefits", destination: "/our-packages/red-light-therapy-perth", permanent: true },
     ];
   },
   async rewrites() {

@@ -32,10 +32,14 @@ const sans = Albert_Sans({
   variable: "--font-sans",
 });
 
-const title = "Assisted Stretching Perth Near Me | StretchFlex";
+/* Homepage SEO from the client's content document (14 November 2026). */
+const title = "Assisted Stretching Perth CBD | StretchFLEX";
 const description =
-  "Experience professional assisted stretching in Perth near you with StretchFlex. Improve flexibility, mobility and recovery. Book your session today.";
-const siteName = "Assisted Stretching Perth | StretchFLEX";
+  "One-on-one assisted stretching and recovery in Perth CBD with the therapist of your choice. Sessions from $65. Book online at Trinity Arcade.";
+const socialTitle = "StretchFLEX: Assisted Stretching in Perth CBD";
+const socialDescription =
+  "Walk in tight. Walk out moving freely. Private, one-on-one assisted stretching and recovery in Trinity Arcade, Perth CBD.";
+const siteName = "StretchFLEX";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -58,10 +62,10 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    locale: "en_US",
+    locale: "en_AU",
     type: "website",
-    title,
-    description,
+    title: socialTitle,
+    description: socialDescription,
     url: "/",
     siteName,
     images: [

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { FOOTER, SOCIAL } from "@/content/site";
+import { ADDRESS, EMAIL, FOOTER, PHONE, SOCIAL, TAGLINE } from "@/content/site";
 import { images } from "@/content/images";
 import { FacebookIcon, InstagramIcon } from "./icons";
 
@@ -12,6 +12,15 @@ export function SiteFooter() {
           <Link href="/" className="footer__logo" aria-label="StretchFLEX home">
             <Image src={images.logoWhite} alt="StretchFLEX" sizes="220px" />
           </Link>
+          <p className="footer__blurb">{FOOTER.blurb}</p>
+          <p className="footer__tagline display">{TAGLINE}</p>
+          <address className="footer__contact">
+            <span>{ADDRESS}</span>
+            <span>
+              <a href={PHONE.href}>{PHONE.label}</a> · <a href={EMAIL.href}>{EMAIL.label}</a>
+            </span>
+            <span>{FOOTER.hours}</span>
+          </address>
           <ul className="footer__social">
             <li>
               <a href={SOCIAL.facebook} target="_blank" rel="noopener" aria-label="Facebook">
@@ -32,7 +41,7 @@ export function SiteFooter() {
             <ul>
               {column.links.map((link) => (
                 <li key={link.href + link.label}>
-                  {link.href === "/" ? <Link href="/">{link.label}</Link> : <a href={link.href}>{link.label}</a>}
+                  <Link href={link.href}>{link.label}</Link>
                 </li>
               ))}
             </ul>
@@ -41,12 +50,8 @@ export function SiteFooter() {
       </div>
 
       <div className="footer__base">
-        <p>
-          {FOOTER.copyright} |{" "}
-          <a href={FOOTER.credit.href} target="_blank" rel="noopener">
-            {FOOTER.credit.label}
-          </a>
-        </p>
+        <p>{FOOTER.copyright}</p>
+        <p className="footer__disclaimer">{FOOTER.disclaimer}</p>
       </div>
     </footer>
   );

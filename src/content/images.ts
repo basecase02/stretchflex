@@ -6,8 +6,8 @@
 // The team, photographed for real at the studio's front desk (landscape and portrait).
 import team from "../../public/images/team/stretchflex-team-reception.jpg";
 import teamTall from "../../public/images/team/stretchflex-team-reception-tall.jpg";
-import kneeStretch from "../../public/wp-content/uploads/2026/02/openart-image__cfe8QLq_1770268051809_raw.webp";
-import legStretch from "../../public/wp-content/uploads/2026/02/openart-image_b-UlVvty_1770267647921_raw.webp";
+import kneeStretch from "../../public/images/stretch/stretch-quad-prone.jpg";
+import legStretch from "../../public/images/stretch/stretch-neck-lying.jpg";
 import logo from "../../public/wp-content/uploads/2025/11/StretchFlex-logo.webp";
 import logoWhite from "../../public/wp-content/uploads/2026/01/StretchFlex-logo-copy.webp";
 

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
-import { BOOK_URL, NAV, PHONE, SOCIAL, type NavItem } from "@/content/site";
+import { BOOK_LABEL, BOOK_URL, NAV, PHONE, SOCIAL, type NavItem } from "@/content/site";
 import { images } from "@/content/images";
 import { ChevronIcon, FacebookIcon, InstagramIcon } from "./icons";
 
@@ -93,7 +93,7 @@ export function SiteHeader() {
           </ul>
           <div className="nav__extra">
             <a className="btn btn--lg" href={BOOK_URL}>
-              Book Appointment
+              {BOOK_LABEL}
             </a>
             <a className="nav__phone" href={PHONE.href}>
               {PHONE.label}
@@ -114,9 +114,9 @@ export function SiteHeader() {
           </li>
         </ul>
 
-        <a className="btn header__cta" href={BOOK_URL} aria-label="Book Appointment">
+        <a className="btn header__cta" href={BOOK_URL} aria-label={BOOK_LABEL}>
           <span>
-            Book<span className="header__cta-rest"> Appointment</span>
+            Book<span className="header__cta-rest"> now</span>
           </span>
         </a>
 

@@ -1,0 +1,587 @@
+/* ==========================================================================
+   Membership: two collections of three tiers. Each tier is one wide box of
+   the same size: the member card (it turns over to show its inclusions)
+   beside the name, the top three inclusions and a big weekly price, with
+   the rest under "Read more". Phones: the tier boxes swipe.
+   ========================================================================== */
+
+.mship__strap {
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.on-dark .mship__strap {
+  color: var(--white);
+}
+
+/* What a Performance & Recovery membership brings together: two chips. */
+.mship__features {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  max-width: 980px;
+  margin: 0 auto clamp(28px, 4vh, 44px);
+  padding: 0;
+  list-style: none;
+}
+
+.mship__feature {
+  display: grid;
+  gap: 4px;
+  padding: 16px 20px;
+  border: 1px solid var(--rule-dark);
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  color: var(--on-dark-soft);
+}
+
+.mship__feature strong {
+  font-size: 1.02rem;
+  color: var(--white);
+}
+
+/* ───────── The tier boxes ───────── */
+
+.tiers {
+  display: grid;
+  gap: clamp(14px, 2vh, 22px);
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.tier {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 64px);
+  min-height: 420px;
+  padding: clamp(22px, 3vw, 44px);
+  border-radius: var(--r-card);
+  background: var(--white);
+  color: var(--navy);
+  box-shadow: 0 30px 60px -48px rgb(6 49 78 / 0.6);
+  scroll-margin-top: calc(var(--header-h) + 24px);
+}
+
+.tier__card {
+  align-self: center;
+}
+
+.tier__info {
+  display: grid;
+  align-content: center;
+  justify-items: start;
+}
+
+.tier__num {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--blue);
+}
+
+.tier__name {
+  margin-top: 2px;
+  font-size: clamp(2.2rem, 1.4rem + 2vw, 3.4rem);
+  line-height: 0.95;
+}
+
+.tier__tagline {
+  margin-top: 8px;
+  font-size: clamp(1.05rem, 0.98rem + 0.3vw, 1.25rem);
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.tier__list {
+  display: grid;
+  gap: 8px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 0.97rem;
+  line-height: 1.4;
+  color: var(--ink-soft);
+}
+
+.tier__list li {
+  position: relative;
+  padding-left: 22px;
+}
+
+.tier__list li::before {
+  content: "";
+  position: absolute;
+  top: 0.5em;
+  left: 2px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+}
+
+/* The price: big, with the regular value struck through and the saving. */
+.tier__price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 14px;
+  margin-top: 22px;
+}
+
+.tier__amount {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  line-height: 1;
+}
+
+.tier__amount .display {
+  font-size: clamp(3rem, 2rem + 2.6vw, 4.4rem);
+  color: var(--navy);
+}
+
+.tier__per {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--ink-soft);
+}
+
+.tier__was {
+  font-size: 1.05rem;
+  color: var(--ink-soft);
+}
+
+.tier__save {
+  align-self: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--rose);
+  color: var(--blue);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.tier__facts {
+  margin-top: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.tier__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+  margin-top: 22px;
+}
+
+.tier__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--blue);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.tier__toggle svg {
+  width: 12px;
+  height: 12px;
+  transition: transform 0.3s var(--ease);
+}
+
+.tier__toggle[aria-expanded="true"] svg {
+  transform: rotate(180deg);
+}
+
+.tier__toggle:hover {
+  color: var(--navy);
+}
+
+.tier__toggle:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.tier__more {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule);
+  font-size: 0.96rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.tier__more[hidden] {
+  display: none;
+}
+
+.tier__more .tier__list {
+  margin-top: 0;
+}
+
+.tier__after {
+  font-weight: 700;
+  color: var(--navy);
+}
+
+/* Each tier takes the colour of its own card: the number, a short rule
+   under the name and a soft tinted pool of light behind the card. */
+.tier--revive { --metal: #b9a684; }
+.tier--prime { --metal: #7d858f; }
+.tier--ultimate { --metal: #2a2a2c; }
+.tier--bronze { --metal: #a8714f; }
+.tier--silver { --metal: #9aa1a9; }
+.tier--gold { --metal: #b8953f; }
+
+.tier__num {
+  color: var(--metal, var(--blue));
+}
+
+.tier__name::after {
+  content: "";
+  display: block;
+  width: 44px;
+  height: 3px;
+  margin-top: 12px;
+  border-radius: 3px;
+  background: var(--metal, var(--red));
+}
+
+.tier__card {
+  position: relative;
+  isolation: isolate;
+}
+
+.tier__card::before {
+  content: "";
+  position: absolute;
+  inset: 8% 4%;
+  z-index: -1;
+  border-radius: 50%;
+  background: var(--metal, var(--sky));
+  opacity: 0.22;
+  filter: blur(42px);
+}
+
+/* Laptops: the card and the details swap sides on every other tier, and
+   each tier box fits within one screen. */
+@media (min-width: 900px) {
+  .tier {
+    min-height: min(440px, calc(100svh - 160px));
+  }
+
+  .tier:nth-child(even) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.95fr);
+  }
+
+  .tier:nth-child(even) .tier__card {
+    order: 2;
+  }
+
+  .tier__card .mcard-wrap {
+    width: min(100%, 470px);
+    margin-inline: auto;
+  }
+}
+
+/* ───────── Compare (folded) and the minimum-term note ───────── */
+
+.mship__compare {
+  max-width: 1120px;
+  margin: clamp(22px, 3vh, 32px) auto 0;
+}
+
+.mship__compare summary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  margin: 0 auto;
+  width: fit-content;
+  padding: 0 22px;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  list-style: none;
+}
+
+.mship__compare summary::-webkit-details-marker {
+  display: none;
+}
+
+.mship__compare summary svg {
+  width: 12px;
+  height: 12px;
+  transition: transform 0.3s var(--ease);
+}
+
+.mship__compare[open] summary svg {
+  transform: rotate(180deg);
+}
+
+.mship__compare[open] summary {
+  margin-bottom: 18px;
+}
+
+.mship__compare summary:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 3px;
+}
+
+.mship__note {
+  max-width: 72ch;
+  margin: 16px auto 0;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+.on-dark .mship__note {
+  color: var(--on-dark-soft);
+}
+
+/* ───────── The member card ───────── */
+
+.mcard-wrap {
+  display: grid;
+  gap: 8px;
+}
+
+.mcard {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 1040 / 656;
+  padding: 0;
+  border: 0;
+  border-radius: 3% / 4.8%;
+  background: none;
+  cursor: pointer;
+  perspective: 1400px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mcard:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 4px;
+}
+
+.mcard__inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.75s var(--ease);
+}
+
+.mcard[aria-pressed="true"] .mcard__inner {
+  transform: rotateY(180deg);
+}
+
+.mcard__face {
+  position: absolute;
+  inset: 0;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  filter: drop-shadow(0 14px 16px rgb(6 49 78 / 0.22));
+}
+
+.mcard__face--back {
+  transform: rotateY(180deg);
+}
+
+.mcard__face img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.mcard__hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.mcard__hint-icon {
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--red);
+}
+
+.mcard__hint-mouse {
+  display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .mcard__hint-touch {
+    display: none;
+  }
+
+  .mcard__hint-mouse {
+    display: inline;
+  }
+}
+
+/* Reduced motion: the sides swap with a fade, no turn. */
+@media (prefers-reduced-motion: reduce) {
+  .mcard__inner,
+  .mcard[aria-pressed="true"] .mcard__inner {
+    transform: none;
+    transition: none;
+  }
+
+  .mcard__face,
+  .mcard__face--back {
+    -webkit-backface-visibility: visible;
+    backface-visibility: visible;
+    transform: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .mcard__face--back,
+  .mcard[aria-pressed="true"] .mcard__face--front {
+    opacity: 0;
+  }
+
+  .mcard[aria-pressed="true"] .mcard__face--back {
+    opacity: 1;
+  }
+}
+
+/* ───────── Below 1000px: the tiers swipe ───────── */
+
+
+/* ───────── Tablets: card above, details below, still one box each ───────── */
+@media (max-width: 899.98px) {
+  .tier {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+  }
+
+  .tier__card {
+    width: min(100%, 460px);
+    justify-self: center;
+  }
+}
+
+/* ───────── Phones: the tier boxes swipe, same height ───────── */
+@media (max-width: 719.98px) {
+  .mship__features {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tiers {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+    margin-inline: calc(-1 * var(--gutter));
+    padding: 0 var(--gutter) 8px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+
+  .tiers::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tier {
+    flex: 0 0 88%;
+    align-content: start;
+    gap: 18px;
+    padding: 18px 18px 22px;
+    scroll-snap-align: start;
+  }
+
+  .tier__info {
+    align-content: start;
+  }
+
+  .tier__name {
+    font-size: 2.3rem;
+  }
+
+  .tier__amount .display {
+    font-size: 3rem;
+  }
+}
+
+/* The small print: closer to the band above it. */
+.blk.mship-print {
+  padding-block: 8px 28px;
+}
+
+.mship-print .blk__footnote {
+  margin-top: 0;
+  font-size: 0.82rem;
+}
+
+/* ───────── Laptops: full width, bigger cards ─────────
+   The tier boxes use the page's full width; the card grows to ~600px and
+   sits in a soft pool of its own metal colour; the price gets more weight.
+   Each box still fits within one screen. */
+@media (min-width: 900px) {
+  .tiers,
+  .mship__compare {
+    max-width: none;
+  }
+
+  .tier {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    gap: clamp(32px, 5vw, 88px);
+    min-height: min(520px, calc(100svh - 140px));
+    padding: clamp(28px, 3.4vw, 56px) clamp(28px, 4.4vw, 72px);
+    background:
+      radial-gradient(60% 90% at 22% 50%, color-mix(in srgb, var(--metal, var(--sky)) 16%, transparent), transparent 70%),
+      var(--white);
+  }
+
+  .tier:nth-child(even) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    background:
+      radial-gradient(60% 90% at 78% 50%, color-mix(in srgb, var(--metal, var(--sky)) 16%, transparent), transparent 70%),
+      var(--white);
+  }
+
+  .tier__card .mcard-wrap {
+    width: min(100%, 600px, calc((100svh - 260px) * 1.585));
+  }
+
+  .tier__name {
+    font-size: clamp(2.6rem, 1.6rem + 2.4vw, 4.2rem);
+  }
+
+  .tier__amount .display {
+    font-size: clamp(3.4rem, 2rem + 3.2vw, 5.4rem);
+  }
+
+  .tier__list {
+    font-size: 1.02rem;
+  }
+}

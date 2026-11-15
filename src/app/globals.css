@@ -1121,7 +1121,7 @@ button {
 }
 
 .intro__photo--tall img {
-  object-position: 64% 50%;
+  object-position: 40% 50%;
 }
 
 .intro__photo--pill {
@@ -1131,7 +1131,7 @@ button {
 }
 
 .intro__photo--pill img {
-  object-position: 57% 42%;
+  object-position: 44% 50%;
 }
 
 /* A round red sticker where the tiles meet. */

@@ -1,14 +1,33 @@
 /**
- * All homepage content, copied from the live stretchflex.au page.
- * Edit copy, prices and links here; the components only handle presentation.
+ * Site-wide content: contact details, navigation, sessions and the homepage.
+ * Copy follows the client's content document (StretchFLEX Website Content,
+ * 14 November 2026). Edit copy, prices and links here; components only
+ * handle presentation.
  */
 
 export const SITE_URL = "https://stretchflex.au";
 
-/** Group booking widget used by every "Book Appointment" button. */
+/** Group booking widget used by every general "Book" button. */
 export const BOOK_URL = "https://api.leadconnectorhq.com/widget/groups/stretchflex";
 
 export const PHONE = { label: "0432 569 077", href: "tel:0432569077" };
+export const EMAIL = { label: "info@stretchflex.au", href: "mailto:info@stretchflex.au" };
+
+export const ADDRESS = "111 Trinity Arcade, 72 St Georges Terrace, Perth WA 6000";
+
+/** Opening hours, as [days, hours]. */
+export const HOURS: [string, string][] = [
+  ["Monday to Friday", "8:30 am to 5:30 pm"],
+  ["Saturday", "By appointment"],
+  ["Sunday", "Closed"],
+];
+
+export const TAGLINE = "Move better. Recover better. Live better.";
+
+export const COMPANY = {
+  name: "Wellbeing Beyond Wellness Pty Ltd",
+  abn: "42 687 612 611",
+};
 
 export const SOCIAL = {
   facebook: "https://www.facebook.com/profile.php?id=61583797823853",
@@ -23,61 +42,58 @@ export type NavItem = NavLink & { children?: NavLink[]; groups?: NavGroup[] };
 
 export const NAV: NavItem[] = [
   {
-    label: "Our Packages",
+    label: "Sessions",
     href: "/our-packages",
     children: [
-      { label: "Revive Stretch", href: "/our-packages/the-revive-stretch-session" },
+      { label: "The Revive Stretch", href: "/our-packages/the-revive-stretch-session" },
       { label: "Prime Mobility Stretch", href: "/our-packages/the-prime-mobility-stretch-session" },
       { label: "The Ultimate Stretch", href: "/our-packages/the-ultimate-stretch" },
-      { label: "De-Compression Recovery Stack", href: "/our-packages/rapid-rejuvenation" },
-      { label: "Photobiotic Assisted Stretching", href: "/our-packages/photobiotic-assisted-stretching" },
-      { label: "Red Light Therapy Perth", href: "/our-packages/red-light-therapy-benefits" },
+      { label: "Photobiotic Assisted Stretching™", href: "/our-packages/photobiotic-assisted-stretching" },
+      { label: "De-Compression Recovery Stack", href: "/our-packages/de-compression-recovery-stack" },
+      { label: "LED Red Light Therapy", href: "/our-packages/red-light-therapy-perth" },
+      { label: "View all sessions", href: "/our-packages" },
     ],
   },
-  {
-    label: "First Time Visitors",
-    href: "/first-time-visitors",
-    children: [{ label: "Assisted Stretching", href: "/assisted-stretching-perth" }],
-  },
+  { label: "First Time Visitors", href: "/first-time-visitors" },
+  { label: "Membership", href: "/membership" },
   {
     label: "About",
     href: "/about",
-    groups: [
-      {
-        label: "Therapist",
-        links: [{ label: "Biljana Mancini", href: "/biljana-mancini" }],
-      },
-      {
-        label: "Advisory Board",
-        links: [
-          { label: "Dr Joe Kosterich", href: "/dr-joe-kosterich" },
-        ],
-      },
+    children: [
+      { label: "About StretchFLEX", href: "/about" },
+      { label: "Biljana Mancini", href: "/biljana-mancini" },
+      { label: "Dr Joe Kosterich", href: "/dr-joe-kosterich" },
     ],
   },
-  { label: "Membership", href: "/membership" },
   { label: "FAQs", href: "/faqs" },
   { label: "Blog", href: "/blog" },
-  { label: "Contact Us", href: "/contact-us" },
+  { label: "Contact", href: "/contact-us" },
 ];
+
+/** The header's booking button. */
+export const BOOK_LABEL = "Book now";
 
 /* ───────────────────────── Hero ───────────────────────── */
 
 export const HERO = {
-  lead: "Increase your",
-  words: ["Mobility", "Strength", "Flexibility"],
-  body: "Experience personalised Assisted Stretching in Perth with one-on-one sessions designed to improve flexibility, ease pain, and help your body move with confidence and ease.",
-  cta: "Book Appointment",
+  kicker: "Assisted stretching · Perth CBD",
+  lines: ["Move better.", "Recover better.", "Live better."],
+  body: "One-on-one assisted stretching and recovery with the therapist of your choice, right in the heart of Perth CBD. Walk in tight. Walk out moving freely.",
+  cta: { label: "Book your session", href: BOOK_URL },
+  secondary: { label: "Explore sessions", href: "/our-packages" },
+  trust: ["One-on-one, private sessions", "Choose your therapist", "Trinity Arcade, Perth CBD", "No experience needed"],
 };
 
-/* ───────────────────────── Same-gender therapists ───────────────────────── */
+/* ───────────────────────── Your comfort ───────────────────────── */
 
-/** Every client is stretched by a therapist of their own gender. */
-export const SAME_GENDER = {
-  kicker: "Your comfort matters",
-  women: { lead: "Female therapists", ending: "for", hand: "women" },
-  men: { lead: "Male therapists", ending: "for", hand: "men" },
-  body: "Every session is one-on-one with a therapist of the same gender, so you can relax and feel completely at ease.",
+/** Private, one-on-one sessions with the therapist each client chooses. */
+export const COMFORT = {
+  kicker: "Your comfort comes first",
+  lines: [
+    { lead: "Private,", hand: "one-on-one" },
+    { lead: "With the therapist", hand: "you choose" },
+  ],
+  body: "Every session is private and one-on-one, and you choose the therapist you would like to see.",
 };
 
 /* ───────────────────────── Stretch & Recovery ───────────────────────── */
@@ -85,160 +101,124 @@ export const SAME_GENDER = {
 export type Session = {
   id: string;
   name: string;
+  /** The word on its booking button, e.g. "Revive" → "Book Revive · 30 min · $65". */
+  short?: string;
   price: number;
   duration: string;
-  /** Bold line under the price. */
+  /** Who it's ideal for: the line under the price. */
   lead: string;
-  /** Checklist (stretch + recovery sessions). */
+  /** Checklist on the session cards. */
   points?: string[];
-  /** Paragraph (Photobiotic sessions). */
+  /** Paragraph instead of a checklist (Photobiotic sessions). */
   body?: string;
   learnHref: string;
-  /** Without one, the card shows only "Learn More" (as on the packages overview). */
+  /** Without one, the card shows only "Learn More". */
   bookHref?: string;
-  /** Price as written on a page, e.g. "$65.00"; defaults to "$" + price. */
+  /** Price as written on a page; defaults to "$" + price. */
   priceLabel?: string;
-  /** Sticker text as written on a page, e.g. "30 minute session"; defaults to duration. */
+  /** Sticker text; defaults to duration. */
   durationLabel?: string;
 };
 
-export const SESSIONS_TITLE = "Stretch & Recovery";
+export const SESSIONS_TITLE = "Choose your session";
 
 export const SESSIONS: Session[] = [
   {
     id: "revive-stretch",
-    name: "Revive Stretch",
+    name: "The Revive Stretch",
+    short: "Revive",
     price: 65,
     duration: "30 minutes",
-    lead: "Those short on time but in need of a quick reset",
-    points: [
-      "Reduced Tension and Stiffness",
-      "Improved Posture and Alignment",
-      "Enhanced Energy Levels",
-      "Stress Reduction and Relaxation",
-      "Improved Sleep Quality",
-    ],
+    lead: "A quick reset of your tightest areas",
+    points: ["Release tension", "Move more freely", "Stand taller", "Switch off"],
     learnHref: "/our-packages/the-revive-stretch-session",
     bookHref: "https://api.leadconnectorhq.com/widget/booking/Q6ny2LRnBFnWAVBfGBqF",
   },
   {
     id: "prime-mobility-stretch",
     name: "Prime Mobility Stretch",
+    short: "Prime",
     price: 95,
     duration: "45 minutes",
-    lead: "Active individuals who want to improve their athletic performance",
-    points: [
-      "Deep Muscle Release",
-      "Improved Posture and Alignment",
-      "Enhanced Body Awareness",
-      "Stress Reduction and Relaxation",
-      "Improved Posture and Alignment",
-      "Reduce Your Risk of Injury",
-    ],
+    lead: "Working through several areas in one visit",
+    points: ["Greater range of motion", "Release deep tension", "Move with more control", "Recover between sessions"],
     learnHref: "/our-packages/the-prime-mobility-stretch-session",
     bookHref:
       "https://api.leadconnectorhq.com/widget/bookings/nutritionalinsights-afd23e59-1bbd-4671-8d29-bc2f23ade8763zqh4oe8z5iq",
   },
   {
     id: "ultimate-stretch",
-    name: "Ultimate Stretch",
+    name: "The Ultimate Stretch",
+    short: "Ultimate",
     price: 120,
     duration: "60 minutes",
-    lead: "Those seeking a comprehensive and transformative stretching experience",
-    points: [
-      "Release Chronic Tension",
-      "Unlock Your Body's Full Potential",
-      "Improve Your Posture and Alignment",
-      "Enhance Your Body Awareness",
-      "Deep Muscle Release",
-      "Improved Joint Mobility",
-      "Stress Reduction and Relaxation",
-      "Enhanced Body Awareness:",
-      "Posture and Alignment",
-    ],
+    lead: "A complete, full-body session",
+    points: ["Full-body flexibility", "Release long-held tension", "Feel taller and more balanced", "A full hour to switch off"],
     learnHref: "/our-packages/the-ultimate-stretch",
     bookHref: "https://api.leadconnectorhq.com/widget/booking/1eL0wBvy6QlrEYcrRiUL",
   },
   {
-    id: "de-compression-recovery-stack",
-    name: "The De-Compression Recovery Stack",
-    price: 120,
-    duration: "20 minutes",
-    lead: "Designed to help you feel refreshed and ready to tackle whatever comes next.",
-    points: [
-      "Deep Muscle Release",
-      "Combat Fluid Retention and Discomfort",
-      "Optimize Blood Flow",
-      "Alleviate Muscular Exhaustion",
-      "Boost Physical Capabilities",
-      "Mindful Recovery Moment",
-    ],
-    learnHref: "/our-packages/rapid-rejuvenation",
-    bookHref: "https://api.leadconnectorhq.com/widget/booking/fJB3aF0ZBoQN7J71CXSI",
-  },
-  {
-    id: "led-red-light-therapy",
-    name: "LED Red Light Therapy - Photobiomodulation",
-    price: 49,
-    duration: "14 minutes",
-    lead: "We use a 9-Wavelength Spectrum (480nm – 1060nm) delivered by 432 dual-chip LEDs",
-    points: [
-      "Medical Grade Precision",
-      "Extreme Irradiance",
-      "The 1060nm Advantage",
-      "Clinical Safety",
-    ],
-    learnHref: "/our-packages/red-light-therapy-benefits",
-    bookHref: "https://api.leadconnectorhq.com/widget/booking/MVTOqV0wwbLnoUZ06noD",
-  },
-  {
     id: "photobiotic-44",
-    name: "Photobiotic Assisted Stretching™",
+    name: "The Rapid Reset",
     price: 120,
     duration: "44 minutes",
-    lead: "14min Photobiomodulation + 30min Assisted Stretch",
-    body: "This high-efficiency session for the busy professional. This “bio-stack” delivers the mobility benefits of a 60-minute traditional stretch in nearly half the time. Perfect for targeted maintenance on specific problem areas.",
+    lead: "A 30-minute stretch with 14 minutes of light",
+    body: "A focused session for busy professionals who want maximum effect in under an hour.",
     learnHref: "/our-packages/photobiotic-assisted-stretching",
     bookHref: "https://api.leadconnectorhq.com/widget/booking/Np4aiALLxmETjKHHI9X7",
   },
   {
     id: "photobiotic-59",
-    name: "Photobiotic Assisted Stretching™",
+    name: "The Performance Protocol",
     price: 145,
     duration: "59 minutes",
-    lead: "14min Photobiomodulation + 45min Assisted Stretch",
-    body: "Our signature service for full-body structural overhaul. With 9-wavelength priming, we navigate through deep-seated tension in the posterior chain. Leave feeling taller, lighter, and biologically recharged.",
+    lead: "A 45-minute stretch with 14 minutes of light",
+    body: "Our most popular choice: time to work through several areas, with light before and after.",
     learnHref: "/our-packages/photobiotic-assisted-stretching",
     bookHref: "https://api.leadconnectorhq.com/widget/booking/g7agUXJEYdlWoNKTrNp5",
   },
   {
     id: "photobiotic-74",
-    name: "Photobiotic Assisted Stretching™",
+    name: "The Architectural Overhaul",
     price: 165,
-    duration: "1hr 14 minutes",
-    lead: "14 min Photobiomodulation + 1 hr Assisted Stretch",
-    body: "The total system reboot. This is for those who demand peak performance. 60 minutes of deep fascia work combined with our medical-grade 7/7 protocol ensures every major joint and muscle group is optimized. Zero downtime. Zero soreness.",
+    duration: "74 minutes",
+    lead: "A 60-minute stretch with 14 minutes of light",
+    body: "The complete experience: a full-body stretch with light on both sides.",
     learnHref: "/our-packages/photobiotic-assisted-stretching",
     bookHref: "https://api.leadconnectorhq.com/widget/booking/yFwfXTYH74zpcsKc2Vdv",
+  },
+  {
+    id: "de-compression-recovery-stack",
+    name: "De-Compression Recovery Stack",
+    price: 120,
+    duration: "20 minutes",
+    lead: "Compression, vagus nerve stimulation and guided mindfulness",
+    points: ["Pneumatic compression", "Vagus nerve stimulation", "Guided mindfulness"],
+    learnHref: "/our-packages/de-compression-recovery-stack",
+    bookHref: "https://api.leadconnectorhq.com/widget/booking/fJB3aF0ZBoQN7J71CXSI",
+  },
+  {
+    id: "led-red-light-therapy",
+    name: "LED Red Light Therapy",
+    price: 49,
+    duration: "14 minutes",
+    lead: "A standalone light session",
+    points: ["Nine wavelength bands", "432 dual-chip LEDs", "Twin panels, front and back"],
+    learnHref: "/our-packages/red-light-therapy-perth",
+    bookHref: "https://api.leadconnectorhq.com/widget/booking/MVTOqV0wwbLnoUZ06noD",
   },
 ];
 
 /**
- * The sessions shown in three tabbed folders. The tab shows the range of
+ * The sessions shown in the tabbed carousel. The tab shows the range of
  * session lengths; the title names the kind of session.
  */
 export const SESSION_GROUPS = [
   {
     id: "stretch",
     tab: "30 – 60 minutes",
-    title: "Assisted Stretch",
+    title: "Assisted Stretching",
     sessionIds: ["revive-stretch", "prime-mobility-stretch", "ultimate-stretch"],
-  },
-  {
-    id: "recovery",
-    tab: "14 – 20 minutes",
-    title: "Recovery",
-    sessionIds: ["de-compression-recovery-stack", "led-red-light-therapy"],
   },
   {
     id: "photobiotic",
@@ -246,63 +226,68 @@ export const SESSION_GROUPS = [
     title: "Photobiotic Assisted Stretching™",
     sessionIds: ["photobiotic-44", "photobiotic-59", "photobiotic-74"],
   },
+  {
+    id: "recovery",
+    tab: "14 – 20 minutes",
+    title: "Recovery",
+    sessionIds: ["de-compression-recovery-stack", "led-red-light-therapy"],
+  },
 ] as const;
 
-/* ───────────────────────── Intro (page H1) ───────────────────────── */
+/* ───────────────────────── Intro ───────────────────────── */
 
 export const INTRO = {
-  title: "Professional Assisted Stretching Perth",
+  title: "The stretch you can’t give yourself",
+  hand: "can’t",
   paragraphs: [
-    "Qualified stretch therapists use targeted, evidence-based techniques to boost flexibility, improve mobility and release built-up tension. Recovering from injury, tight from training or just want to move easier? We shape every session around you.",
-    "Every session is crafted to support better posture, reduce discomfort, and elevate your sense of wellbeing, leaving you feeling stronger, more relaxed, and ready to take on the day.",
+    "Hours at a desk, hard training and everyday stress all build up in your body. Stretching on your own rarely goes deep enough, and it is usually the first thing to go when life gets busy.",
+    "At StretchFLEX, a qualified therapist does the work for you. You relax while your therapist guides each muscle group through stretches you can’t reach on your own, adjusting in real time so it always feels safe. The result is a body that feels looser, lighter and easier to move.",
   ],
-  cta: { label: "Explore Packages", href: "/our-packages" },
+  cta: { label: "Explore sessions", href: "/our-packages" },
 };
 
-/* ───────────────────────── CTA band ───────────────────────── */
+/* ───────────────────────── Booking band ───────────────────────── */
 
 export const CTA_BAND = {
-  title: "Looking for Assisted Stretching?",
-  cta: "Book Appointment",
+  title: "You don’t need to be flexible. Just ready.",
+  hand: "ready",
+  body: "Book your first session today, or call us on [0432 569 077](tel:0432569077).",
+  cta: "Book your session",
 };
 
-/* ───────────────────────── Key benefits ───────────────────────── */
+/* ───────────────────────── Why clients choose StretchFLEX ───────────────────────── */
 
-export type BenefitIcon = "range" | "release" | "posture" | "performance" | "shield" | "calm";
+export type BenefitIcon = "range" | "release" | "posture" | "performance" | "shield" | "calm" | "pin";
 
 export const BENEFITS = {
-  kicker: "Key Benefits",
-  title: "Why Choose Assisted Stretching?",
+  kicker: "",
+  title: "Why clients choose StretchFLEX",
+  hand: "choose",
   items: [
     {
+      icon: "calm",
+      title: "Your comfort comes first",
+      body: "Every session is private and one-on-one, and you choose the therapist you would like to see.",
+    },
+    {
       icon: "range",
-      title: "Increased Flexibility and Range of Motion",
-      body: "Experience a significant improvement in your ability to move freely and comfortably.",
-    },
-    {
-      icon: "release",
-      title: "Reduced Muscle Tension and Stiffness",
-      body: "Release tightness and knots that can cause pain and discomfort.",
-    },
-    {
-      icon: "posture",
-      title: "Improved Posture and Alignment",
-      body: "Enhance your body’s natural alignment for better balance and stability.",
-    },
-    {
-      icon: "performance",
-      title: "Enhanced Athletic Performance",
-      body: "Increase your flexibility and range of motion to optimize your athletic performance and reduce the risk of injury.",
+      title: "Personalised every time",
+      body: "Each session starts with a check-in, so your therapist works on what your body needs that day.",
     },
     {
       icon: "shield",
-      title: "Reduced Risk of Injury",
-      body: "Improve muscle flexibility and strength, helping to prevent strains and other injuries.",
+      title: "Expert guidance",
+      body: "Our team is led by co-founder Biljana Mancini, with GP Dr Joe Kosterich on our advisory board.",
     },
     {
-      icon: "calm",
-      title: "Stress Reduction and Relaxation",
-      body: "Enjoy a calming and therapeutic experience that promotes relaxation and reduces stress.",
+      icon: "performance",
+      title: "Advanced recovery technology",
+      body: "Professional-grade photobiomodulation, pneumatic compression and vagus nerve stimulation, all under one roof.",
+    },
+    {
+      icon: "pin",
+      title: "Right in the CBD",
+      body: "Inside Trinity Arcade on St Georges Terrace, with sessions that fit around work, training or lunch.",
     },
   ] satisfies { icon: BenefitIcon; title: string; body: string }[],
 };
@@ -310,41 +295,72 @@ export const BENEFITS = {
 /* ───────────────────────── Your first session ───────────────────────── */
 
 export const FIRST_SESSION = {
-  kicker: "Your First Session",
-  title: "What to Expect",
+  kicker: "Your first session",
+  title: "Step by step",
+  hand: "by",
   steps: [
+    { title: "Check in", body: "A relaxed chat about your goals, tight spots and any past injuries." },
+    { title: "Get comfortable", body: "You stay fully clothed on a padded table. You can pause or adjust at any time." },
+    { title: "Relax and stretch", body: "Your therapist guides you through targeted stretches, adjusting the pressure as you go." },
+    { title: "Leave with a plan", body: "Simple stretches to keep the benefits going between visits." },
+  ],
+  cta: { label: "Read the first time visitors guide", href: "/first-time-visitors" },
+};
+
+/* ───────────────────────── Membership band ───────────────────────── */
+
+export const MEMBERSHIP_BAND = {
+  kicker: "Make it part of your week",
+  title: "Results come from consistency",
+  hand: "consistency",
+  body: "Our memberships include two sessions every week from $89, with savings of up to $120 a week.",
+  cta: { label: "Explore memberships", href: "/membership" },
+  /** The six member cards, each linking to its tier on the Membership page. */
+  collections: [
     {
-      title: "Quick Chat to Understand Your Needs",
-      body: "Your goals, tight spots and past injuries, so the session fits your body.",
+      title: "Assisted Stretching",
+      tiers: [
+        { slug: "revive", name: "Revive", price: "$89" },
+        { slug: "prime", name: "Prime", price: "$139" },
+        { slug: "ultimate", name: "Ultimate", price: "$180" },
+      ],
     },
     {
-      title: "Guided Stretching with Expert Support",
-      body: "A certified therapist takes you through assisted stretches to release tension and restore balance.",
-    },
-    {
-      title: "Real-Time Adjustments for Safety and Results",
-      body: "Constant tweaks for alignment, so you feel safe and relaxed throughout.",
-    },
-    {
-      title: "Personalised Aftercare Tips",
-      body: "Simple stretches to do at home and keep your results between sessions.",
+      title: "Performance & Recovery",
+      tiers: [
+        { slug: "bronze", name: "Bronze", price: "$250" },
+        { slug: "silver", name: "Silver", price: "$295" },
+        { slug: "gold", name: "Gold", price: "$330" },
+      ],
     },
   ],
-  closing: [
-    "All fitness levels welcome, no experience needed.",
-    "You’ll walk out looser, lighter and more mobile.",
+};
+
+/* ───────────────────────── Quick answers ───────────────────────── */
+
+export const QUICK_FAQS = {
+  kicker: "Questions?",
+  title: "Quick answers",
+  hand: "Quick",
+  items: [
+    { q: "Do I need to be flexible?", a: "No. Sessions suit every body and every fitness level." },
+    { q: "What should I wear?", a: "Comfortable activewear and a clean, unworn pair of socks (compulsory for hygiene and grip)." },
+    { q: "Will it hurt?", a: "You will feel a stretch, but it should never be painful. Your therapist works within your comfort level." },
+    { q: "How often should I come?", a: "Many clients come once or twice a week to maintain their results." },
   ],
+  cta: { label: "See all FAQs", href: "/faqs" },
 };
 
 /* ───────────────────────── Google reviews ───────────────────────── */
 
 export const REVIEWS = {
-  business: "StretchFlex",
+  title: "What our clients say",
+  business: "StretchFLEX",
   rating: 5,
   countLabel: "Google reviews",
   writeReview: {
-    label: "Write a review",
-    href: "https://search.google.com/local/writereview?placeid=ChIJeVqjE9GlMioRGoEGr-Y4_WI",
+    label: "Read our Google reviews",
+    href: "https://search.google.com/local/reviews?placeid=ChIJeVqjE9GlMioRGoEGr-Y4_WI",
   },
   items: [
     {
@@ -374,51 +390,61 @@ export const REVIEWS = {
   ],
 };
 
+
+
 /* ───────────────────────── Contact ───────────────────────── */
 
 export const CONTACT = {
   title: "Contact Us",
-  body: "Right in Perth CBD, with times that fit around work, the gym or your lunch break.",
-  address: "111 Trinity Arcade, 72 St Georges Terrace, Perth CBD, WA 6000",
-  hours: ["Mon-Fri, 8:30 am–5.30 pm", "Sat, By Appointment Only", "Sun, Closed"],
-  cta: "Book Appointment",
+  body: "Have a question, or not sure which session to book? We would love to hear from you.",
+  address: ADDRESS,
+  directions:
+    "Trinity Arcade runs between St Georges Terrace and Hay Street Mall, a short walk from Perth Underground and Elizabeth Quay stations.",
+  hours: HOURS.map(([days, time]) => `${days}: ${time}`),
+  cta: "Book your session",
   mapSrc: "https://maps.google.com/maps?q=StretchFlex&t=m&z=12&output=embed&iwloc=near",
 };
 
 /* ───────────────────────── Footer ───────────────────────── */
 
 export const FOOTER = {
+  blurb: "One-on-one assisted stretching and recovery in the heart of Perth CBD.",
+  hours: "Monday to Friday 8:30 am to 5:30 pm · Saturday by appointment · Sunday closed",
   columns: [
     {
-      title: "Quick Links",
+      title: "Sessions",
       links: [
-        { label: "Home", href: "/" },
-        { label: "About", href: "/about" },
-        { label: "Blog", href: "/blog" },
-        { label: "Contact Us", href: "/contact-us" },
-      ],
-    },
-    {
-      title: "Other Links",
-      links: [
-        { label: "Book Your Sessions", href: "/book-your-session" },
-        { label: "First Time Visitors", href: "/first-time-visitors" },
-        { label: "Membership", href: "/membership" },
-        { label: "Refund and Cancellation Policy", href: "/refund-and-cancellation-policy" },
-      ],
-    },
-    {
-      title: "Our Packages",
-      links: [
-        { label: "Revive Stretch", href: "/our-packages/the-revive-stretch-session" },
+        { label: "The Revive Stretch", href: "/our-packages/the-revive-stretch-session" },
         { label: "Prime Mobility Stretch", href: "/our-packages/the-prime-mobility-stretch-session" },
         { label: "The Ultimate Stretch", href: "/our-packages/the-ultimate-stretch" },
-        { label: "De-Compression Recovery Stack", href: "/our-packages/rapid-rejuvenation" },
-        { label: "Photobiotic Assisted Stretching", href: "/our-packages/photobiotic-assisted-stretching" },
-        { label: "Red Light Therapy Perth", href: "/our-packages/red-light-therapy-benefits" },
+        { label: "Photobiotic Assisted Stretching™", href: "/our-packages/photobiotic-assisted-stretching" },
+        { label: "De-Compression Recovery Stack", href: "/our-packages/de-compression-recovery-stack" },
+        { label: "LED Red Light Therapy", href: "/our-packages/red-light-therapy-perth" },
+      ],
+    },
+    {
+      title: "Explore",
+      links: [
+        { label: "First Time Visitors", href: "/first-time-visitors" },
+        { label: "Membership", href: "/membership" },
+        { label: "Assisted Stretching Perth", href: "/assisted-stretching-perth" },
+        { label: "About", href: "/about" },
+        { label: "FAQs", href: "/faqs" },
+        { label: "Blog", href: "/blog" },
+        { label: "Contact Us", href: "/contact-us" },
+        { label: "Book Your Session", href: "/book-your-session" },
+      ],
+    },
+    {
+      title: "Legal",
+      links: [
+        { label: "Refund and Cancellation Policy", href: "/refund-and-cancellation-policy" },
+        { label: "Membership Terms and Conditions", href: "/membership-terms" },
+        { label: "Privacy Policy", href: "/privacy-policy" },
+        { label: "Website Terms of Use", href: "/terms-of-use" },
       ],
     },
   ],
-  copyright: "© 2026 StretchFLEX. All Rights Reserved",
-  credit: { label: "Made with ❤️", href: "https://dmhq.au/" },
+  copyright: `© 2026 StretchFLEX. StretchFLEX is operated by ${COMPANY.name}, ABN ${COMPANY.abn}.`,
+  disclaimer: "Our services support general mobility, recovery and wellbeing and are not a substitute for medical advice.",
 };

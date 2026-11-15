@@ -46,6 +46,10 @@ export type HeroBlock = {
   /** Short facts shown as pills, e.g. "30 minutes", "$65". */
   facts?: string[];
   actions?: Action[];
+  /** A small rich line under the buttons, e.g. "[Save up to $85 with a pack](#packs)". */
+  note?: string;
+  /** Reassurances shown as a quiet dotted line, e.g. "One-on-one session". */
+  trust?: string[];
   image?: Img;
 };
 
@@ -108,6 +112,9 @@ export type OffersBlock = Head & {
     quote?: string;
     action: Action;
   }[];
+  /** Rich paragraph(s) under the cards, e.g. pack terms. */
+  footnote?: string | string[];
+  actions?: Action[];
 };
 
 export type TextBlock = Head & {
@@ -130,6 +137,17 @@ export type PeopleBlock = Head & {
 
 export type EmbedBlock = Head & { type: "embed"; tone?: Tone; src: string; label: string; height?: number };
 
+/** A comparison or price table. The first cell of each row is its label. */
+export type TableBlock = Head & {
+  type: "table";
+  tone?: Tone;
+  head: string[];
+  rows: string[][];
+  /** Rich paragraph(s) under the table. */
+  footnote?: string | string[];
+  actions?: Action[];
+};
+
 export type CtaBlock = { type: "cta"; title?: string; hand?: string; /** Rich paragraph(s) under the title. */ body?: string | string[]; action?: Action; actions?: Action[] };
 
 /** A one-off section built in the page's own .tsx content file. */
@@ -147,6 +165,7 @@ export type Block =
   | PeopleBlock
   | EmbedBlock
   | CtaBlock
+  | TableBlock
   | NodeBlock
   | { type: "sessions" }
   | { type: "reviews" }

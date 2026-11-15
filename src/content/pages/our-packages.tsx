@@ -1,153 +1,98 @@
 import { OverviewSessions } from "@/components/pages/packages/overview-sessions";
+import { BOOK_URL, SESSION_GROUPS, SESSIONS } from "@/content/site";
 import type { PageContent } from "./types";
 
-const P = "/our-packages";
+/** Each session's line on this page (the client's content document). */
+const LINES: Record<string, string> = {
+  "revive-stretch": "Your quick reset. Focused work on your tightest areas, perfect for a lunch break.",
+  "prime-mobility-stretch": "More time to work through several areas and improve how you move.",
+  "ultimate-stretch": "Our deepest stretch session, covering every major muscle group.",
+  "de-compression-recovery-stack": "Pneumatic compression, non-invasive vagus nerve stimulation and guided mindfulness in one session.",
+  "led-red-light-therapy": "A standalone session in our twin-panel, nine-wavelength light system.",
+};
 
-/** /our-packages — the live overview's heading, line, photo and session cards. */
+/** Every session from SESSIONS, in its group, with this page's lines and "Learn More" only. */
+const sessions = SESSION_GROUPS.flatMap((group) =>
+  group.sessionIds.map((id) => {
+    const session = SESSIONS.find((s) => s.id === id)!;
+    return { ...session, group: group.id, lead: LINES[id] ?? session.lead, bookHref: undefined };
+  }),
+);
+
+/** /our-packages — every session and price, then packs, memberships and a booking band. */
 export const page: PageContent = {
+  seo: {
+    title: "Stretching & Recovery Sessions Perth | StretchFLEX",
+    description:
+      "Compare every StretchFLEX session: assisted stretching from $65, Photobiotic Assisted Stretching™, red light therapy and recovery. Perth CBD.",
+    ogTitle: "All Sessions and Prices | StretchFLEX Perth",
+    ogDescription: "Assisted stretching, light therapy and recovery sessions in Perth CBD. Find the one that fits your body and your schedule.",
+  },
   blocks: [
     {
       type: "hero",
-      title: "Our",
-      accent: "Packages",
-      intro: "Take a look at our sessions below",
+      kicker: "Sessions and prices",
+      title: "Find your",
+      accent: "session",
+      intro:
+        "Every session at StretchFLEX is private, one-on-one and tailored to you. Choose by the time you have and how far you want to go.",
+      actions: [{ label: "Book your session", href: BOOK_URL }],
+      trust: [
+        "Assisted stretching from $65",
+        "Photobiotic Assisted Stretching™ from $120",
+        "Recovery from $49",
+      ],
       image: {
-        src: "/wp-content/uploads/2026/06/SF75.jpg",
-        alt: "A StretchFLEX therapist stretching a smiling client’s leg on the treatment table",
-        position: "55% 50%",
+        src: "/images/stretch/stretch-hip-logo.jpg",
+        alt: "A StretchFLEX therapist stretching a client’s leg on the treatment table",
+        position: "45% 50%",
       },
     },
     {
       type: "node",
-      node: (
-        <OverviewSessions
-          sessions={[
-            {
-              group: "stretch",
-              id: "revive",
-              name: "The Revive Stretch Session",
-              price: 65,
-              priceLabel: "$65.00",
-              duration: "30 minutes",
-              durationLabel: "30 minute session",
-              lead: "Those short on time but in need of a quick reset",
-              points: [
-                "Reduced Tension and Stiffness",
-                "Improved Posture and Alignment",
-                "Enhanced Energy Levels",
-                "Stress Reduction and Relaxation",
-                "Improved Sleep Quality",
-              ],
-              learnHref: `${P}/the-revive-stretch-session`,
-            },
-            {
-              group: "stretch",
-              id: "prime",
-              name: "The Prime Mobility Stretch Session",
-              price: 95,
-              priceLabel: "$95.00",
-              duration: "45 minutes",
-              durationLabel: "45 minute session",
-              lead: "Active individuals who want to improve their athletic performance",
-              points: [
-                "Deep Muscle Release",
-                "Improved Posture and Alignment",
-                "Enhanced Body Awareness",
-                "Stress Reduction and Relaxation",
-                "Improved Posture and Alignment",
-                "Reduce Your Risk of Injury",
-              ],
-              learnHref: `${P}/the-prime-mobility-stretch-session`,
-            },
-            {
-              group: "stretch",
-              id: "ultimate",
-              name: "The Ultimate Stretch session",
-              price: 120,
-              priceLabel: "$120.00",
-              duration: "60 minutes",
-              durationLabel: "60 minute session",
-              lead: "Those seeking a comprehensive and transformative stretching experience",
-              points: [
-                "Release Chronic Tension",
-                "Unlock Your Body's Full Potential",
-                "Improve Your Posture and Alignment",
-                "Enhance Your Body Awareness",
-                "Deep Muscle Release",
-                "Improved Joint Mobility",
-                "Stress Reduction and Relaxation",
-                "Enhanced Body Awareness:",
-                "Posture and Alignment",
-              ],
-              learnHref: `${P}/the-ultimate-stretch`,
-            },
-            {
-              group: "recovery",
-              id: "rapid",
-              name: "Rapid Rejuvenation",
-              price: 120,
-              priceLabel: "$120.00",
-              duration: "20 minutes",
-              durationLabel: "20 minute session",
-              lead: "Designed to help you feel refreshed and ready to tackle whatever comes next.",
-              points: [
-                "Deep Muscle Release",
-                "Combat Fluid Retention and Discomfort",
-                "Optimize Blood Flow",
-                "Alleviate Muscular Exhaustion",
-                "Boost Physical Capabilities",
-                "Mindful Recovery Moment",
-              ],
-              learnHref: `${P}/rapid-rejuvenation`,
-            },
-            {
-              group: "recovery",
-              id: "led",
-              name: "LED Red Light Therapy - Photobiomodulation",
-              price: 49,
-              duration: "14 minutes",
-              durationLabel: "14 minute session",
-              lead: "We use a 9-Wavelength Spectrum (480nm – 1060nm) delivered by 432 dual-chip LEDs",
-              points: ["Medical Grade Precision", "Extreme Irradiance", "The 1060nm Advantage", "Clinical Safety"],
-              learnHref: `${P}/red-light-therapy-benefits`,
-            },
-            {
-              group: "photobiotic",
-              id: "photobiotic-44",
-              name: "Photobiotic Assisted Stretching™",
-              price: 120,
-              duration: "44 minutes",
-              durationLabel: "44 minute session",
-              lead: "14min Photobiomodulation + 30min Assisted Stretch",
-              body: "This high-efficiency session for the busy professional. This “bio-stack” delivers the mobility benefits of a 60-minute traditional stretch in nearly half the time. Perfect for targeted maintenance on specific problem areas.",
-              learnHref: `${P}/photobiotic-assisted-stretching`,
-            },
-            {
-              group: "photobiotic",
-              id: "photobiotic-59",
-              name: "Photobiotic Assisted Stretching™",
-              price: 145,
-              duration: "59 minutes",
-              durationLabel: "59 minute session",
-              lead: "14min Photobiomodulation + 45min Assisted Stretch",
-              body: "Our signature service for full-body structural overhaul. With 9-wavelength priming, we navigate through deep-seated tension in the posterior chain. Leave feeling taller, lighter, and biologically recharged.",
-              learnHref: `${P}/photobiotic-assisted-stretching`,
-            },
-            {
-              group: "photobiotic",
-              id: "photobiotic-74",
-              name: "Photobiotic Assisted Stretching™",
-              price: 165,
-              duration: "74 minutes",
-              durationLabel: "1hr 14 minute session",
-              lead: "14 min Photobiomodulation + 1 hr Assisted Stretch",
-              body: "The total system reboot. This is for those who demand peak performance. 60 minutes of deep fascia work combined with our medical-grade 7/7 protocol ensures every major joint and muscle group is optimized. Zero downtime. Zero soreness.",
-              learnHref: `${P}/photobiotic-assisted-stretching`,
-            },
-          ]}
-        />
-      ),
+      node: <OverviewSessions sessions={sessions} />,
     },
-    { type: "cta" },
+    {
+      type: "cards",
+      tone: "rose",
+      kicker: "By type",
+      title: "Stretching, light and recovery",
+      hand: "light",
+      items: [
+        {
+          title: "Assisted Stretching",
+          meta: "30, 45 or 60 min · from $65",
+          body: "Your therapist guides you through targeted stretches you can’t reach on your own.",
+          href: "/our-packages/the-revive-stretch-session",
+        },
+        {
+          title: "Photobiotic Assisted Stretching™",
+          meta: "44, 59 or 74 min · from $120",
+          body: "Assisted stretching with 14 minutes of professional-grade photobiomodulation: a 7-minute light prime before your stretch and a 7-minute light flush after.",
+          href: "/our-packages/photobiotic-assisted-stretching",
+        },
+        {
+          title: "Recovery",
+          meta: "14 or 20 min · from $49",
+          body: "The De-Compression Recovery Stack (20 min, $120) and LED Red Light Therapy (14 min, $49).",
+          href: "/our-packages/de-compression-recovery-stack",
+        },
+      ],
+    },
+    {
+      type: "text",
+      kicker: "Save with a pack or membership",
+      title: "Come more often, pay less",
+      hand: "less",
+      body: ["Session packs save you up to $201. Memberships include two sessions every week from $89."],
+      actions: [{ label: "Explore memberships", href: "/membership" }],
+    },
+    {
+      type: "cta",
+      title: "Not sure where to start?",
+      hand: "start",
+      body: "Most first-time clients start with The Revive Stretch or Prime Mobility Stretch. Call us on [0432 569 077](tel:0432569077) and we will help you choose.",
+      action: { label: "Book your session", href: BOOK_URL },
+    },
   ],
 };

@@ -14,7 +14,7 @@ import { SESSIONS } from "@/content/site";
 /** A link to the booking system (HighLevel today, Acuity next). */
 const BOOKING_LINK = /leadconnectorhq\.com\/widget|acuityscheduling\.com/i;
 
-export type BookOption = { id: string; name: string; length: string; price: string; href: string };
+export type BookOption = { id: string; name: string; short?: string; length: string; price: string; href: string };
 
 /** "30 minutes" → "30 min", "1hr 14 minutes" → "1 hr 14 min". */
 function shortLength(duration: string) {
@@ -31,6 +31,7 @@ export function bookOptions(ids: string[]): BookOption[] {
     return {
       id,
       name: session.name,
+      short: session.short,
       length: shortLength(session.duration),
       price: `$${session.price}`,
       href: session.bookHref,
@@ -38,11 +39,11 @@ export function bookOptions(ids: string[]): BookOption[] {
   });
 }
 
-/** Buttons for a page's sessions: "Book now · 30 min · $65", or one per length when there are several. */
+/** Buttons for a page's sessions: "Book Revive · 30 min · $65", or one per length when there are several. */
 export function bookActions(options: BookOption[]): Action[] {
   if (options.length === 1) {
     const [o] = options;
-    return [{ label: `Book now · ${o.length} · ${o.price}`, href: o.href }];
+    return [{ label: `Book ${o.short ?? "now"} · ${o.length} · ${o.price}`, href: o.href }];
   }
   return options.map((o) => ({ label: `Book ${o.length} · ${o.price}`, href: o.href }));
 }
@@ -97,10 +98,10 @@ export function withSessionButtons(blocks: Block[], actions: Action[]): Block[] 
     if (block.type === "cta" && !block.action && !block.actions) return { ...block, actions };
     if (block.type === "contact") return { ...block, actions };
     // The first screen offers the sessions as buttons, which already carry the
-    // length and price, so the hero doesn't repeat them as pills.
+    // length and price.
     if (block.type === "hero") {
       const hero = rewrite(block) as typeof block;
-      return { ...hero, facts: undefined, actions: hero.actions?.length ? hero.actions : actions };
+      return { ...hero, actions: hero.actions?.length ? hero.actions : actions };
     }
     return rewrite(block) as Block;
   });

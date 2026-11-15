@@ -16,11 +16,11 @@ export const yoastGraph = {
       primaryImageOfPage: { "@id": "https://stretchflex.au/#primaryimage" },
       image: { "@id": "https://stretchflex.au/#primaryimage" },
       thumbnailUrl:
-        "https://stretchflex.au/wp-content/uploads/2026/02/openart-image_-Cb-sXPh_1770269064583_raw-1024x765.webp",
+        "https://stretchflex.au/images/team/stretchflex-team-reception.jpg",
       datePublished: "2026-02-03T23:07:28+00:00",
-      dateModified: "2026-06-23T06:50:13+00:00",
+      dateModified: "2026-11-14T00:00:00+08:00",
       description:
-        "Experience professional assisted stretching in Perth near you with StretchFlex. Improve flexibility, mobility and recovery. Book your session today.",
+        "One-on-one assisted stretching and recovery in Perth CBD with the therapist of your choice. Sessions from $65. Book online at Trinity Arcade.",
       breadcrumb: { "@id": "https://stretchflex.au/#breadcrumb" },
       inLanguage: "en-AU",
       potentialAction: [{ "@type": "ReadAction", target: ["https://stretchflex.au/"] }],
@@ -29,11 +29,11 @@ export const yoastGraph = {
       "@type": "ImageObject",
       inLanguage: "en-AU",
       "@id": "https://stretchflex.au/#primaryimage",
-      url: "https://stretchflex.au/wp-content/uploads/2026/02/openart-image_-Cb-sXPh_1770269064583_raw.webp",
+      url: "https://stretchflex.au/images/team/stretchflex-team-reception.jpg",
       contentUrl:
-        "https://stretchflex.au/wp-content/uploads/2026/02/openart-image_-Cb-sXPh_1770269064583_raw.webp",
-      width: 1200,
-      height: 896,
+        "https://stretchflex.au/images/team/stretchflex-team-reception.jpg",
+      width: 2000,
+      height: 1499,
     },
     {
       "@type": "BreadcrumbList",
@@ -87,21 +87,36 @@ export const yoastGraph = {
   ],
 };
 
+/** The studio's business details for search (content document, 14 November 2026). */
 export const localBusiness = {
   "@context": "https://schema.org",
-  "@type": "LocalBusiness",
-  "@id": "https://stretchflex.au",
-  name: "Assisted Stretching Perth Near Me",
+  "@type": "HealthAndBeautyBusiness",
+  "@id": "https://stretchflex.au/#business",
+  name: "StretchFLEX",
+  legalName: "Wellbeing Beyond Wellness Pty Ltd",
+  url: "https://stretchflex.au",
   description:
-    "Experience professional assisted stretching in Perth near you with StretchFlex. Improve flexibility, mobility and recovery. Book your session today.",
-  image: "https://stretchflex.au/wp-content/uploads/2025/11/StretchFlex-logo.webp",
-  priceRange: "$0.00",
+    "One-on-one assisted stretching and recovery in Perth CBD with the therapist of your choice. Sessions from $65. Book online at Trinity Arcade.",
+  image: "https://stretchflex.au/images/team/stretchflex-team-reception.jpg",
+  logo: "https://stretchflex.au/wp-content/uploads/2025/11/StretchFlex-logo.webp",
+  priceRange: "$49 – $165",
+  telephone: "+61 432 569 077",
+  email: "info@stretchflex.au",
   address: {
     "@type": "PostalAddress",
-    addressLocality: "111 Trinity Arcade, 72 St Georges Terrace, Perth WA 6000, Australia",
+    streetAddress: "111 Trinity Arcade, 72 St Georges Terrace",
+    addressLocality: "Perth",
     addressRegion: "WA",
     postalCode: "6000",
-    streetAddress: "111 Trinity Arcade, 72 St Georges Terrace",
+    addressCountry: "AU",
   },
-  telephone: "+61 432 569 077",
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "08:30",
+      closes: "17:30",
+    },
+  ],
+  sameAs: ["https://www.facebook.com/profile.php?id=61583797823853", "https://www.instagram.com/stretchflexperth/"],
 };

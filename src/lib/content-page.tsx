@@ -4,7 +4,8 @@ import { BookingBar } from "@/components/booking-bar";
 import { bookActions, bookOptions, withSessionButtons } from "@/lib/booking";
 import { JsonLd } from "@/components/text";
 import { PAGES } from "@/content/pages";
-import { pageMetadata, seoFor } from "@/lib/seo";
+import { hasSeo, pageMetadata, seoFor } from "@/lib/seo";
+import type { PageContent } from "@/content/pages/types";
 
 /**
  * A rebuilt WordPress page: the live page's title, description and
@@ -15,11 +16,12 @@ import { pageMetadata, seoFor } from "@/lib/seo";
  *   export default Page;
  */
 export function contentPage(path: keyof typeof PAGES): { metadata: Metadata; Page: () => React.JSX.Element } {
-  const content = PAGES[path];
+  const content: PageContent = PAGES[path];
   const source = content.seoFrom ?? path;
-  const seo = seoFor(source);
+  // New pages have no live snapshot; their SEO comes from content.seo.
+  const snapshot = hasSeo(source) ? seoFor(source) : null;
   // A moved page's structured data names its old URL, so it is left out.
-  const schema = content.seoFrom ? null : seo.schema;
+  const schema = content.seoFrom ? null : (snapshot?.schema ?? null);
   const options = content.sessions ? bookOptions(content.sessions) : null;
   const blocks = options ? withSessionButtons(content.blocks, bookActions(options)) : content.blocks;
   function Page() {
@@ -31,12 +33,31 @@ export function contentPage(path: keyof typeof PAGES): { metadata: Metadata; Pag
       </>
     );
   }
-  const base = pageMetadata(source);
+  const base: Metadata = snapshot
+    ? pageMetadata(source)
+    : {
+        openGraph: {
+          locale: "en_AU",
+          type: "website",
+          siteName: "StretchFLEX",
+          images: [{ url: "/images/team/stretchflex-team-reception.jpg", width: 2000, height: 1499 }],
+        },
+        twitter: { card: "summary_large_image" },
+      };
+  const seo = content.seo;
+  const title = seo?.title ?? content.title;
+  const description = seo?.description;
   const metadata: Metadata = {
     ...base,
-    ...(content.title ? { title: content.title } : {}),
+    ...(title ? { title: { absolute: title } } : {}),
+    ...(description ? { description } : {}),
     alternates: { ...base.alternates, canonical: path },
-    openGraph: { ...base.openGraph, url: path, ...(content.title ? { title: content.title } : {}) },
+    openGraph: {
+      ...base.openGraph,
+      url: path,
+      ...(title ? { title: seo?.ogTitle ?? title } : {}),
+      ...(description ? { description: seo?.ogDescription ?? description } : {}),
+    },
     ...(content.noindex ? { robots: { index: false, follow: false } } : {}),
   };
   return { metadata, Page };

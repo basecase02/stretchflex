@@ -1,60 +1,77 @@
-import { SESSIONS } from "@/content/site";
+import { BOOK_URL, SESSIONS } from "@/content/site";
 import type { PageContent } from "./types";
 
 const u = (path: string) => `/wp-content/uploads/${path}`;
 /** A session's own booking link (SESSIONS in src/content/site.ts). */
 const book = (id: string) => SESSIONS.find((s) => s.id === id)!.bookHref!;
+/** A general booking button: swapped for this page's session button ("Book Ultimate · 60 min · $120"). */
+const BOOK = { label: "Book now", href: BOOK_URL };
 
 /**
  * /our-packages/the-ultimate-stretch
- * Short and scannable on the shared service-page template: hook, why it works,
- * the session in three steps, sessions and packages, who it's for, quick
- * answers, booking band. Facts and prices are the live page's.
+ * Copy from the client's content document (November 2026). Client reviews are
+ * left to the homepage, at the owner's request.
  */
 export const page: PageContent = {
-  sessions: [
-    "ultimate-stretch",
-  ],
+  seo: {
+    title: "The Ultimate Stretch: 60-Min Full-Body Stretch Perth | StretchFLEX",
+    description:
+      "Our deepest assisted stretch: 60 minutes, one-on-one, through every major muscle group. Perth CBD. $120, or save up to $150 with a pack.",
+    ogTitle: "The Ultimate Stretch: Our Deepest Session",
+    ogDescription: "Sixty minutes, every major muscle group, one-on-one in Perth CBD. Leave open, aligned and refreshed.",
+  },
+  sessions: ["ultimate-stretch"],
   blocks: [
     {
       type: "hero",
-      crumbs: [
-        {
-          label: "Our Packages",
-          href: "/our-packages",
-        },
-      ],
-      kicker: "Our deepest dive",
+      crumbs: [{ label: "Our Packages", href: "/our-packages" }],
+      kicker: "Our deepest session",
       title: "The Ultimate",
       accent: "Stretch",
-      intro: "An immersive session through every major muscle group, leaving you open, aligned and primed for performance.",
+      intro:
+        "Sixty minutes, one-on-one, working through every major muscle group from head to toe. Leave feeling open, aligned and completely reset.",
+      note: "[Save up to $150 with a pack](#packs)",
+      trust: ["One-on-one session", "Choose your therapist", "Trinity Arcade, Perth CBD", "No experience needed"],
       image: {
-        src: u("2026/02/openart-image_rc3Bir-V_1770268184130_raw.webp"),
-        alt: "A StretchFLEX therapist guiding a client through a lying hamstring stretch",
-        position: "50% 45%",
+        src: "/images/stretch/stretch-forward-fold.jpg",
+        alt: "StretchFLEX therapist guiding a client through a full-body assisted forward fold",
+        position: "55% 45%",
       },
     },
     {
+      type: "split",
+      title: "For when your whole body needs it",
+      hand: "whole",
+      image: {
+        src: "/images/stretch/stretch-hip-logo.jpg",
+        alt: "A StretchFLEX therapist stretching a client’s leg on the treatment table",
+        position: "38% 50%",
+      },
+      body: [
+        "Some weeks, everything feels tight. The Ultimate Stretch gives your therapist a full hour to work through your entire body without rushing, so nothing gets missed.",
+        "It is our most complete stretch session, and the one clients book when they want to feel properly looked after.",
+      ],
+    },
+    {
       type: "cards",
-      kicker: "Benefits of the session",
       title: "The full-body payoff",
       hand: "payoff",
       items: [
         {
-          title: "Unlock your potential",
-          body: "A significant increase in flexibility and range of motion.",
+          title: "Flexibility",
+          body: "Work gradually into a fuller range of motion across your whole body.",
         },
         {
-          title: "Tension melts away",
-          body: "Release chronic muscular tension and stiffness.",
+          title: "Tension release",
+          body: "Time to ease long-held tightness in your neck, shoulders, back, hips and legs.",
         },
         {
-          title: "Better alignment",
-          body: "Support your body’s natural posture and alignment.",
+          title: "Alignment",
+          body: "Clients often tell us they feel taller and more balanced afterwards.",
         },
         {
-          title: "Deep calm",
-          body: "Stress reduction and relaxation as you let go.",
+          title: "Calm",
+          body: "A full hour in a quiet, private room to breathe, slow down and let go.",
         },
       ],
     },
@@ -65,114 +82,150 @@ export const page: PageContent = {
       kicker: "What to expect",
       title: "Your 60 minutes",
       hand: "minutes",
+      lead: "**What to bring:** comfortable activewear and a clean, unworn pair of socks (compulsory for hygiene and grip). Grip socks are $15 at reception.",
       image: {
-        src: u("2026/02/openart-image_dUV856pq_1770268180039_raw.webp"),
-        alt: "A therapist guiding a smiling client through a side-lying leg stretch",
-        position: "45% 55%",
+        src: "/images/stretch/stretch-strap.jpg",
+        alt: "A therapist using a strap to guide a client's legs through an assisted stretch",
+        position: "50% 45%",
       },
       items: [
         {
-          title: "Every muscle group",
-          body: "The session works through every major muscle group and limb.",
+          title: "Check in",
+          body: "Your therapist asks about your goals, tight spots and any injuries, and looks at how you move.",
         },
         {
-          title: "Deep, guided stretches",
-          body: "Your Stretch & Flexologist takes you through a series of deep stretches.",
+          title: "Head-to-toe stretching",
+          body: "A guided sequence through every major muscle group, adjusted in real time to your body.",
         },
         {
-          title: "Leave renewed",
-          body: "Walk out feeling open, aligned and refreshed.",
-        },
-      ],
-    },
-    {
-      type: "offers",
-      id: "sessions",
-      kicker: "Go all in",
-      title: "Book once or save with a pack",
-      hand: "save",
-      items: [
-        {
-          name: "Ultimate Stretch",
-          badge: "60 min",
-          price: "$120",
-          detail: "One-on-one deep-dive session",
-          action: {
-            label: "Book now",
-            href: book("ultimate-stretch"),
-          },
-        },
-        {
-          name: "The 5 Ultimate Package",
-          tag: "Premium Experience",
-          badge: "Save $30",
-          price: "$570.00",
-          was: "$600",
-          detail: "5 × Ultimate Stretch Sessions (60 min each)",
-          quote: "“It’s like a spa day that actually fixes your body problems.”",
-          action: {
-            label: "Order Now",
-            href: "https://link.fastpaydirect.com/payment-link/6a1fc64203b17c94f5714505",
-          },
-        },
-        {
-          name: "The 10 Ultimate Package",
-          tag: "Maximum Value",
-          badge: "Save $150",
-          price: "$1050.00",
-          was: "$1200",
-          detail: "10 × Ultimate Stretch Sessions (60 min each)",
-          action: {
-            label: "Order Now",
-            href: "https://link.fastpaydirect.com/payment-link/6a1fc72203b17c94f5714506",
-          },
+          title: "Leave reset",
+          body: "Walk out feeling open and refreshed, with simple stretches to keep it going.",
         },
       ],
     },
     {
       type: "checklist",
-      title: "Who it’s for",
-      hand: "for",
+      title: "Perfect for you if you",
+      hand: "you",
       items: [
-        {
-          body: "Anyone wanting a complete reset",
-        },
-        {
-          body: "People with chronic tension or stiffness",
-        },
-        {
-          body: "Athletes preventing injuries",
-        },
-        {
-          body: "Executives who demand excellence",
-        },
+        { body: "Want a complete, full-body reset" },
+        { body: "Carry long-held tension or stiffness in several areas" },
+        { body: "Train hard and want thorough recovery" },
+        { body: "Have a demanding schedule and want one hour that is entirely yours" },
+      ],
+      actions: [BOOK],
+    },
+    {
+      type: "text",
+      tone: "sky",
+      title: "Your comfort comes first",
+      hand: "comfort",
+      body: [
+        "Every session is private and one-on-one, and you choose your therapist when you book. Our team is led by co-founder [Biljana Mancini](/biljana-mancini), with GP [Dr Joe Kosterich](/dr-joe-kosterich) on our advisory board.",
       ],
     },
     {
-      type: "accordion",
-      tone: "rose",
-      title: "Quick answers",
-      hand: "answers",
+      type: "offers",
+      id: "packs",
+      title: "Book once, or save with a pack",
+      hand: "save",
       items: [
         {
-          title: "What does the session cover?",
-          body: "Every major muscle group and limb, in one immersive 60-minute session.",
+          name: "Single session",
+          price: "$120",
+          detail: "$120 per session",
+          action: { label: "Book now", href: book("ultimate-stretch") },
         },
         {
-          title: "Who guides me?",
-          body: "Our experienced Stretch & Flexologists, in a safe and supportive one-on-one setting.",
+          name: "5-Session Pack",
+          tag: "Premium experience",
+          badge: "Save $30",
+          price: "$570",
+          was: "$600",
+          detail: "$114 per session",
+          action: {
+            label: "Order now",
+            href: "https://link.fastpaydirect.com/payment-link/6a1fc64203b17c94f5714505",
+          },
         },
         {
-          title: "Which package saves the most?",
-          body: "The 10 Ultimate Package: 10 sessions for $1050, saving $150.",
+          name: "10-Session Pack",
+          tag: "Best value",
+          badge: "Save $150",
+          price: "$1,050",
+          was: "$1,200",
+          detail: "$105 per session",
+          action: {
+            label: "Order now",
+            href: "https://link.fastpaydirect.com/payment-link/6a1fc72203b17c94f5714506",
+          },
+        },
+      ],
+      footnote:
+        "Packs are valid for 12 months from purchase, are for one person and are non-refundable and non-transferable, except as required by law. Cancellations follow our [Refund and Cancellation Policy](/refund-and-cancellation-policy).",
+    },
+    {
+      type: "text",
+      title: "Want this every week? Become a member.",
+      hand: "every",
+      body: ["The Ultimate Membership includes two 60-minute sessions every week for $180, just $90 per session."],
+      actions: [{ label: "Explore memberships", href: "/membership" }],
+    },
+    {
+      // One next step: a centred statement reads better than a lone half-width tile.
+      type: "text",
+      tone: "rose",
+      title: "Ready to go further?",
+      hand: "further",
+      body: [
+        "**The Architectural Overhaul** · 74 min · $165",
+        "The Ultimate Stretch with 14 minutes of photobiomodulation light before and after.",
+      ],
+      actions: [{ label: "Learn more", href: "/our-packages/photobiotic-assisted-stretching", tone: "navy" }],
+    },
+    {
+      type: "accordion",
+      title: "Your questions, answered",
+      hand: "answered",
+      items: [
+        {
+          title: "What does The Ultimate Stretch cover?",
+          body: "Every major muscle group and limb in one 60-minute session, tailored to where you need it most.",
+        },
+        {
+          title: "Who does the stretching?",
+          body: "A qualified assisted stretching therapist of your choice, in a private one-on-one session.",
+        },
+        {
+          title: "Is it too much for a first session?",
+          body: "Not at all. Your therapist adjusts every stretch to your comfort level. Many clients choose it for their first visit.",
+        },
+        {
+          title: "How often should I come?",
+          body: "Weekly or fortnightly suits most clients. Your therapist can suggest a routine after your first session.",
+        },
+        {
+          title: "What do I need to bring or wear?",
+          body: "Comfortable, flexible activewear and a clean, unworn pair of socks. Fresh socks are compulsory for hygiene and grip. Grip socks are available at reception for $15.",
+        },
+        {
+          title: "What is the best value option?",
+          body: "The 10-Session Pack saves you $150. If you come every week, the Ultimate Membership works out at $90 per session.",
+        },
+        {
+          title: "What if I need to cancel?",
+          body: "Cancel or reschedule with at least 48 hours notice for a full refund. Cancellations with 24 to 48 hours notice receive a 50% refund. Cancellations with less than 24 hours notice, and missed appointments, are not refundable.",
         },
       ],
     },
     {
       type: "cta",
-      title: "Give your body the full hour",
-      hand: "hour",
-      body: "60 minutes, one-on-one, $120.",
+      title: "One hour. Your whole body.",
+      hand: "whole",
+      body: [
+        "One-on-one. Your choice of therapist. Right in the heart of Perth CBD.",
+        "Questions first? Call [0432 569 077](tel:0432569077)",
+      ],
     },
   ],
 };
