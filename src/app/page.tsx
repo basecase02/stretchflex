@@ -19,6 +19,7 @@ import {
   SESSIONS,
   SESSIONS_TITLE,
 } from "@/content/site";
+import { SwipeDots } from "@/components/swipe-dots";
 
 /** Note colours for the benefits, so no two neighbours match. */
 const NOTE_TONES = ["rose", "navy", "sky", "navy", "rose"] as const;
@@ -260,6 +261,7 @@ export default function HomePage() {
                     </li>
                   ))}
                 </ul>
+                <SwipeDots count={set.tiers.length} label="memberships" />
               </div>
             ))}
           </div>
@@ -281,6 +283,7 @@ export default function HomePage() {
               </div>
             ))}
           </dl>
+          <SwipeDots count={QUICK_FAQS.items.length} label="answers" />
           <div className="blk__actions blk__actions--center">
             <a className="btn btn--caps btn--outline" href={QUICK_FAQS.cta.href}>
               {QUICK_FAQS.cta.label}

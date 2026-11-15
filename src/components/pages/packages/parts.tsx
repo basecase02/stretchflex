@@ -6,6 +6,7 @@ import type { Action, Img, Tone } from "@/content/blocks";
 import "@/styles/packages.css";
 import { photoFrame } from "@/lib/photo";
 import { CtaButtons } from "@/components/sections";
+import { SwipeDots } from "@/components/swipe-dots";
 
 /**
  * Package-page sections that need the live page's exact heading structure
@@ -333,6 +334,7 @@ export function PackageOffers({ id, items, image }: { id?: string; items: Offer[
             </li>
           ))}
         </ul>
+        <SwipeDots count={items.length} label="options" />
       </div>
     </section>
   );

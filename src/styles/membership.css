@@ -280,7 +280,7 @@
 
 /* Laptops: the card and the details swap sides on every other tier, and
    each tier box fits within one screen. */
-@media (min-width: 900px) {
+@media (min-width: 720px) {
   .tier {
     min-height: min(440px, calc(100svh - 160px));
   }
@@ -476,7 +476,7 @@
 
 
 /* ───────── Tablets: card above, details below, still one box each ───────── */
-@media (max-width: 899.98px) {
+@media (max-width: 719.98px) {
   .tier {
     grid-template-columns: minmax(0, 1fr);
     min-height: 0;
@@ -546,7 +546,7 @@
    The tier boxes use the page's full width; the card grows to ~600px and
    sits in a soft pool of its own metal colour; the price gets more weight.
    Each box still fits within one screen. */
-@media (min-width: 900px) {
+@media (min-width: 720px) {
   .tiers,
   .mship__compare {
     max-width: none;
@@ -583,5 +583,51 @@
 
   .tier__list {
     font-size: 1.02rem;
+  }
+}
+
+/* ───────── Phones: each collection close to one screen ───────── */
+.tier__list--all,
+.mship__note--inside {
+  display: none;
+}
+
+@media (max-width: 719.98px) {
+  .tier__list--top,
+  .tier__list--rest,
+  .mship__note--outside,
+  .tier .mcard__hint {
+    display: none;
+  }
+
+  .tier__more .tier__list--all,
+  .mship__compare[open] .mship__note--inside {
+    display: grid;
+  }
+
+  .mship__compare[open] .mship__note--inside {
+    display: block;
+    margin-top: 14px;
+  }
+
+  .mship__features {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mship__feature span {
+    display: none;
+  }
+
+  .mship__feature strong {
+    font-size: 0.9rem;
+    line-height: 1.25;
+  }
+
+  .tier__price {
+    margin-top: 14px;
+  }
+
+  .tier__actions {
+    margin-top: 14px;
   }
 }

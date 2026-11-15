@@ -3,6 +3,7 @@
 import "@/styles/shorts.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { hand } from "@/components/text";
+import { SwipeDots } from "@/components/swipe-dots";
 
 export type Short = { id: string; title: string };
 
@@ -60,6 +61,7 @@ export function Shorts({ kicker, title, handWord, lead, items }: { kicker?: stri
             </li>
           ))}
         </ul>
+        <SwipeDots count={items.length} label="videos" />
       </div>
 
       {/* The full-screen viewer. Esc (or the back gesture) closes it; clicking the dark backdrop does too. */}

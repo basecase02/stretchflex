@@ -2,6 +2,7 @@ import "@/styles/membership.css";
 import { hand, rich } from "@/components/text";
 import { MemberCard } from "./member-card";
 import { TierMore } from "./tier-more";
+import { SwipeDots } from "@/components/swipe-dots";
 
 export type Tier = {
   /** Card artwork name in /public/images/membership, e.g. "revive". */
@@ -81,7 +82,7 @@ export function Collection(props: CollectionProps) {
                 <p className="tier__num">{String(i + 1).padStart(2, "0")}</p>
                 <h3 className="display tier__name">{tier.name}</h3>
                 <p className="tier__tagline">{tier.tagline}</p>
-                <ul className="tier__list">
+                <ul className="tier__list tier__list--top">
                   {tier.includes.slice(0, SHOWN).map((item) => (
                     <li key={item}>{item}</li>
                   ))}
@@ -102,8 +103,14 @@ export function Collection(props: CollectionProps) {
                   {tier.body.map((text) => (
                     <p key={text.slice(0, 40)}>{rich(text)}</p>
                   ))}
+                  {/* Phones list every inclusion here (the top three are hidden above); laptops just the rest. */}
+                  <ul className="tier__list tier__list--all">
+                    {tier.includes.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
                   {tier.includes.length > SHOWN ? (
-                    <ul className="tier__list">
+                    <ul className="tier__list tier__list--rest">
                       {tier.includes.slice(SHOWN).map((item) => (
                         <li key={item}>{item}</li>
                       ))}
@@ -115,6 +122,7 @@ export function Collection(props: CollectionProps) {
             </li>
           ))}
         </ol>
+        <SwipeDots count={props.tiers.length} label="memberships" />
 
         <details className="mship__compare">
           <summary>
@@ -153,8 +161,9 @@ export function Collection(props: CollectionProps) {
               </tbody>
             </table>
           </div>
+          <p className="mship__note mship__note--inside">{props.note}</p>
         </details>
-        <p className="mship__note">{props.note}</p>
+        <p className="mship__note mship__note--outside">{props.note}</p>
       </div>
     </section>
   );

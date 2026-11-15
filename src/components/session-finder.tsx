@@ -43,13 +43,18 @@ const PICK: Record<Time, Record<Goal, string>> = {
 export function SessionFinder({ sessions }: { sessions: FinderSession[] }) {
   const [time, setTime] = useState<Time | null>(null);
   const [goal, setGoal] = useState<Goal | null>(null);
+  // Phones: the questions stay folded under "Help me choose" until asked for.
+  const [open, setOpen] = useState(false);
   const pick = time && goal ? sessions.find((s) => s.id === PICK[time][goal]) : undefined;
 
   return (
-    <div className="finder">
+    <div className="finder" data-open={open || undefined}>
       <div className="finder__intro">
         <h3 className="display finder__title">Not sure which to book?</h3>
         <p>Two taps and we’ll point you to the right session.</p>
+        <button type="button" className="btn btn--caps btn--light finder__start" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+          {open ? "Close" : "Help me choose"}
+        </button>
       </div>
 
       <fieldset className="finder__q">

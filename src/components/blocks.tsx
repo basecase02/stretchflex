@@ -25,6 +25,8 @@ import type {
 import { SESSION_GROUPS, SESSIONS, SESSIONS_TITLE } from "@/content/site";
 export { photoFrame } from "@/lib/photo";
 import { photoFrame } from "@/lib/photo";
+import { SwipeDots } from "@/components/swipe-dots";
+import { ShowAll } from "@/components/show-all";
 
 
 const list = (value?: string | string[]) => (value === undefined ? [] : Array.isArray(value) ? value : [value]);
@@ -261,6 +263,7 @@ function Cards({ block }: { block: CardsBlock }) {
           );
         })}
       </ul>
+      <SwipeDots count={block.items.length} />
       <Actions actions={block.actions} className="blk__actions--center" />
     </Panel>
   );
@@ -296,6 +299,7 @@ function Accordion({ block, index }: { block: AccordionBlock; index: number }) {
             </div>
           ))}
         </div>
+        {block.numbered ? null : <ShowAll count={block.items.length} />}
       </div>
     </Panel>
   );
@@ -349,6 +353,7 @@ function Offers({ block }: { block: OffersBlock }) {
           </li>
         ))}
       </ul>
+      <SwipeDots count={block.items.length} label="options" />
       {list(block.footnote).map((text) => (
         <p className="blk__footnote" key={text.slice(0, 40)}>
           {rich(text)}
@@ -494,6 +499,7 @@ function People({ block }: { block: PeopleBlock }) {
           );
         })}
       </ul>
+      <SwipeDots count={block.items.length} label="people" />
     </Panel>
   );
 }

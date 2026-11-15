@@ -53,6 +53,14 @@ export function ContactDetails() {
             </div>
           </div>
         </div>
+        <a
+          className="btn btn--caps btn--outline contact__directions"
+          href="https://www.google.com/maps/dir/?api=1&destination=StretchFLEX%2C%20111%20Trinity%20Arcade%2C%2072%20St%20Georges%20Terrace%2C%20Perth%20WA%206000"
+          target="_blank"
+          rel="noopener"
+        >
+          Get directions ↗
+        </a>
         <div className="contact__map">
           <iframe
             src={CONTACT.mapSrc}

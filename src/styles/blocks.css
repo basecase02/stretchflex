@@ -1332,7 +1332,7 @@
 }
 
 /* Phones: full width, the service on top and the choices side by side. */
-@media (max-width: 759.98px) {
+@media (max-width: 899.98px) {
   .bookbar {
     right: 8px;
     bottom: 8px;
@@ -2314,7 +2314,7 @@ body:has(.bookbar[data-shown]) .quick,
 /* Phones and small tablets: the same winding path, turned upright.
    Circles alternate left and right in a narrow column, the words sit
    beside each one, and the line bends across between them. */
-@media (max-width: 759.98px) {
+@media (max-width: 1023.98px) {
   .first {
     --dot: 64px;
     --edge: 32px;
@@ -3224,5 +3224,346 @@ section[id],
   .home-members__cards > li {
     flex: 0 0 56%;
     scroll-snap-align: start;
+  }
+}
+
+/* ───────────────────────── Swipe dots ─────────────────────────
+   Under every row of cards that scrolls sideways (swipe-dots.tsx): a
+   "Swipe" cue and one dot per card, the current one a red bar. */
+
+.swipe-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  margin-top: 14px;
+}
+
+.swipe-dots[hidden] {
+  display: none;
+}
+
+.swipe-dots__hint {
+  margin-right: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.on-dark .swipe-dots__hint {
+  color: var(--on-dark-soft);
+}
+
+.swipe-dots__dot {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.swipe-dots__dot::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--rule);
+  transition:
+    width 0.3s var(--ease),
+    background-color 0.3s;
+}
+
+.on-dark .swipe-dots__dot::before {
+  background: var(--rule-dark);
+}
+
+.swipe-dots__dot[aria-current]::before {
+  width: 20px;
+  background: var(--red);
+}
+
+.swipe-dots__dot:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: -2px;
+  border-radius: 6px;
+}
+
+/* ───────────────────────── Tablets (700–899px) ─────────────────────────
+   Between phone and laptop: the hero keeps its words beside the photo
+   (one screen, not two), and the homepage intro uses two columns. */
+
+@media (min-width: 700px) and (max-width: 899.98px) {
+  .hero,
+  .hero--page:has(> .hero__media[data-shape]) {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: none;
+    height: auto;
+    min-height: min(76svh, 720px);
+  }
+
+  .hero__card {
+    padding: 40px 28px 32px;
+  }
+
+  .hero__title {
+    font-size: clamp(2rem, 5.4vw, 3rem);
+  }
+
+  .hero__title--lines {
+    font-size: clamp(1.8rem, 4.4vw, 2.4rem);
+  }
+
+  .hero--home .hero__media,
+  .hero--page .hero__media[data-shape],
+  .hero__media {
+    justify-self: stretch;
+    align-self: stretch;
+    width: 100%;
+    min-height: 360px;
+    max-height: none;
+    aspect-ratio: auto;
+  }
+
+  .hero__media[data-shape="tall"] img,
+  .hero__photo {
+    object-position: 50% 35%;
+  }
+
+  .intro__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .intro__head {
+    grid-column: 1 / -1;
+  }
+
+  .intro__photo--tall {
+    grid-column: 1;
+    aspect-ratio: 4 / 5;
+  }
+
+  .intro__text {
+    grid-column: 2;
+    order: 0;
+  }
+}
+
+/* Very small phones: long note titles wrap instead of spilling out. */
+@media (max-width: 374.98px) {
+  .benefits .note h3 {
+    font-size: 0.92rem;
+    overflow-wrap: anywhere;
+    hyphens: auto;
+  }
+}
+
+/* ───────────────────────── Phones: one screen per section ─────────────────────────
+   Sections trimmed to about one screen on phones: a shorter hero photo,
+   the session picker folded under "Help me choose", a tighter path, a
+   "Get directions" button instead of the map, long question lists showing
+   five with "Show all", and smaller member cards. Laptops are unchanged. */
+
+.finder__start,
+.contact__directions,
+.show-all {
+  display: none;
+}
+
+@media (max-width: 719.98px) {
+  /* Heroes: words first, then a photo no taller than about a third of the screen. */
+  .hero--home .hero__media,
+  .hero--page .hero__media,
+  .hero--page .hero__media[data-shape] {
+    width: 100%;
+    max-height: 34svh;
+    aspect-ratio: auto;
+    min-height: 200px;
+  }
+
+  .hero {
+    grid-template-rows: auto auto;
+  }
+
+  .hero__card {
+    gap: 14px;
+    padding: 40px 22px 26px;
+  }
+
+  .hero--home .hero__trust,
+  .hero__trust {
+    gap: 4px 0;
+    margin-top: 2px;
+    font-size: 0.78rem;
+  }
+
+  .hero__trust li {
+    margin-right: 14px;
+  }
+
+  /* Session picker: one button until asked for. */
+  .finder__start {
+    display: inline-flex;
+    margin-top: 12px;
+  }
+
+  .finder:not([data-open]) .finder__q,
+  .finder:not([data-open]) .finder__result {
+    display: none;
+  }
+
+  .finder {
+    gap: 16px;
+  }
+
+  /* The path: closer rows. */
+  .journey__step {
+    padding-block: 18px;
+  }
+
+  .journey__copy p {
+    font-size: 0.95rem;
+  }
+
+  /* Contact: a directions button instead of the map. */
+  .contact__directions {
+    display: inline-flex;
+    justify-self: start;
+  }
+
+  .contact__map {
+    display: none;
+  }
+
+  /* Long question lists: the first five, then "Show all". */
+  .show-all {
+    display: flex;
+    justify-content: center;
+    margin-top: 18px;
+  }
+
+  [data-clamped="5"] > :nth-child(n + 6) {
+    display: none;
+  }
+
+  /* Membership tiers: a smaller card and no hover hint. */
+  .tier__card .mcard-wrap {
+    width: 78%;
+    margin-inline: auto;
+  }
+
+  .mcard__hint {
+    display: none;
+  }
+
+  .tier {
+    gap: 12px;
+  }
+
+  .mship__features {
+    gap: 8px;
+  }
+
+  .mship__feature {
+    padding: 12px 14px;
+    font-size: 0.88rem;
+  }
+}
+
+/* Phones: less empty space above and below each section, so more of each
+   one fits on a screen. */
+@media (max-width: 719.98px) {
+  :root {
+    --section-y: 48px;
+  }
+}
+
+/* Phones: a long numbered list (5+ steps) drops its photo, so the steps
+   themselves fit the screen. */
+@media (max-width: 719.98px) {
+  .acc--pic:has(> .acc__list:not(.steps--plain) > .step:nth-child(5)) .acc__pic {
+    display: none;
+  }
+}
+
+/* Tablets too: long question lists show five, then "Show all". */
+@media (min-width: 720px) and (max-width: 899.98px) {
+  .show-all {
+    display: flex;
+    justify-content: center;
+    margin-top: 18px;
+  }
+
+  [data-clamped="5"] > :nth-child(n + 6) {
+    display: none;
+  }
+}
+
+/* Phones: the round length sticker sits clear of the session name. */
+@media (max-width: 719.98px) {
+  .plan__badge {
+    top: -16px;
+    right: -6px;
+    width: 64px;
+    padding: 8px;
+    font-size: 0.5rem;
+  }
+
+  .plan__name {
+    padding-inline: 34px;
+  }
+}
+
+/* ───────────────────────── "Your comfort comes first": always centred ─────────────────────────
+   The section never grows wider than the screen; on phones each handwritten
+   phrase drops under its line, centred, instead of pushing everything right. */
+
+.promise__inner,
+.promise__title {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.promise__kicker {
+  max-width: 100%;
+  white-space: normal;
+}
+
+@media (max-width: 599.98px) {
+  .promise__line {
+    display: grid;
+    justify-items: center;
+    white-space: normal;
+  }
+
+  .promise .hand {
+    display: block;
+    margin: 0.12em 0 0;
+    line-height: 1;
+    font-size: 1.35em;
+  }
+
+  .promise__title {
+    gap: 0.35em;
+  }
+}
+
+@media (min-width: 600px) {
+  .promise__title {
+    gap: 0.22em;
+    font-size: clamp(2rem, 4.6vw, 3.9rem);
+  }
+
+  .promise .hand {
+    font-size: 1.22em;
+    transform: translateY(-0.04em) rotate(-5deg);
+  }
+
+  .promise__body {
+    margin-top: 0.6em;
   }
 }
