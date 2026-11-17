@@ -1,0 +1,180 @@
+/* ───────────────────────── Booking (/book-your-session) ─────────────────────────
+   The Acuity scheduler sits in a white card on the pale brand panel, with a
+   bar above it saying which session is being booked. */
+
+/* The page starts with the scheduler: the section clears the fixed header
+   and keeps its own heading short so the booking is in view straight away. */
+.blk.booking {
+  margin-top: var(--frame);
+  padding-top: calc(var(--header-h) + var(--frame) + clamp(20px, 3.5vh, 36px));
+  background: var(--rose);
+}
+
+.booking__wrap {
+  max-width: 920px;
+}
+
+.booking__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin-bottom: clamp(14px, 2.2vh, 22px);
+}
+
+.booking__title {
+  margin: 4px 0 0;
+  font-family: var(--font-display), "Arial Black", sans-serif;
+  font-weight: 400;
+  font-size: clamp(1.9rem, 3.6vw, 2.8rem);
+  line-height: 0.95;
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+
+.booking__note {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+.booking__picked--hint {
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.booking__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 20px;
+  margin-bottom: 16px;
+}
+
+.booking__picked {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin: 0;
+  color: var(--navy);
+}
+
+.booking__label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
+
+.booking__picked strong {
+  font-family: var(--font-display), "Arial Black", sans-serif;
+  font-weight: 400;
+  font-size: clamp(1.2rem, 2.2vw, 1.5rem);
+  letter-spacing: 0.005em;
+  text-transform: uppercase;
+}
+
+.booking__meta {
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+
+.booking__all {
+  min-height: 40px;
+  padding: 0 18px;
+  border: 1.5px solid var(--navy);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--navy);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.booking__all:hover {
+  background: var(--navy);
+  color: var(--white);
+}
+
+.booking__frame {
+  overflow: hidden;
+  border-radius: clamp(18px, 2.4vw, 28px);
+  background: var(--white);
+  box-shadow: 0 18px 50px -28px rgb(6 49 78 / 0.35);
+}
+
+.booking__frame iframe {
+  display: block;
+  width: 100%;
+  min-height: 720px;
+  border: 0;
+}
+
+/* Holds the space while the scheduler loads, so the page doesn't jump. */
+.booking__loading {
+  min-height: 720px;
+  background: linear-gradient(100deg, var(--white) 40%, var(--rose) 50%, var(--white) 60%) 0 0 / 200% 100%;
+  animation: booking-shimmer 1.4s linear infinite;
+}
+
+@keyframes booking-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .booking__loading {
+    animation: none;
+  }
+}
+
+.booking__help {
+  margin: 16px 0 0;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 0.95rem;
+}
+
+.booking__help a {
+  color: var(--navy);
+  font-weight: 700;
+}
+
+@media (max-width: 719.98px) {
+  /* The scheduler needs every pixel on a phone: the bar keeps the gutter,
+     the frame runs almost edge to edge. */
+  .booking__wrap {
+    padding-inline: 4px;
+  }
+
+  .booking__head,
+  .booking__bar,
+  .booking__help {
+    padding-inline: 12px;
+  }
+
+  .booking__frame {
+    border-radius: 16px;
+  }
+
+  /* The scheduler's own "Select appointment" says the same thing. */
+  .booking__bar:has(.booking__picked--hint) {
+    display: none;
+  }
+}
+
+/* On the booking page the floating "Book" button would only cover the
+   scheduler, so just the call button stays. */
+body:has(.booking) .quick__book {
+  display: none;
+}

@@ -7,8 +7,18 @@
 
 export const SITE_URL = "https://stretchflex.au";
 
-/** Group booking widget used by every general "Book" button. */
-export const BOOK_URL = "https://api.leadconnectorhq.com/widget/groups/stretchflex";
+/**
+ * Booking happens on the site: /book-your-session embeds the Acuity scheduler.
+ * Every general "Book" button goes there; each session's button adds
+ * ?session=<id> so the scheduler opens straight on that session.
+ */
+export const BOOK_URL = "/book-your-session";
+
+/** The Acuity scheduling page that /book-your-session embeds. */
+export const ACUITY_URL = "https://app.acuityscheduling.com/schedule.php?owner=40885174";
+
+/** A session's booking link: the booking page, opened on that session. */
+const book = (id: string) => `${BOOK_URL}?session=${id}`;
 
 export const PHONE = { label: "0432 569 077", href: "tel:0432569077" };
 export const EMAIL = { label: "info@stretchflex.au", href: "mailto:info@stretchflex.au" };
@@ -114,6 +124,8 @@ export type Session = {
   learnHref: string;
   /** Without one, the card shows only "Learn More". */
   bookHref?: string;
+  /** The session's appointment type in Acuity (Appointment Types → Edit, the number in the URL). */
+  acuityId?: number;
   /** Price as written on a page; defaults to "$" + price. */
   priceLabel?: string;
   /** Sticker text; defaults to duration. */
@@ -132,7 +144,8 @@ export const SESSIONS: Session[] = [
     lead: "A quick reset of your tightest areas",
     points: ["Release tension", "Move more freely", "Stand taller", "Switch off"],
     learnHref: "/our-packages/the-revive-stretch-session",
-    bookHref: "https://api.leadconnectorhq.com/widget/booking/Q6ny2LRnBFnWAVBfGBqF",
+    bookHref: book("revive-stretch"),
+    acuityId: 100593536,
   },
   {
     id: "prime-mobility-stretch",
@@ -143,8 +156,8 @@ export const SESSIONS: Session[] = [
     lead: "Working through several areas in one visit",
     points: ["Greater range of motion", "Release deep tension", "Move with more control", "Recover between sessions"],
     learnHref: "/our-packages/the-prime-mobility-stretch-session",
-    bookHref:
-      "https://api.leadconnectorhq.com/widget/bookings/nutritionalinsights-afd23e59-1bbd-4671-8d29-bc2f23ade8763zqh4oe8z5iq",
+    bookHref: book("prime-mobility-stretch"),
+    acuityId: 100598223,
   },
   {
     id: "ultimate-stretch",
@@ -155,7 +168,8 @@ export const SESSIONS: Session[] = [
     lead: "A complete, full-body session",
     points: ["Full-body flexibility", "Release long-held tension", "Feel taller and more balanced", "A full hour to switch off"],
     learnHref: "/our-packages/the-ultimate-stretch",
-    bookHref: "https://api.leadconnectorhq.com/widget/booking/1eL0wBvy6QlrEYcrRiUL",
+    bookHref: book("ultimate-stretch"),
+    acuityId: 100598234,
   },
   {
     id: "photobiotic-44",
@@ -165,7 +179,8 @@ export const SESSIONS: Session[] = [
     lead: "A 30-minute stretch with 14 minutes of light",
     body: "A focused session for busy professionals who want maximum effect in under an hour.",
     learnHref: "/our-packages/photobiotic-assisted-stretching",
-    bookHref: "https://api.leadconnectorhq.com/widget/booking/Np4aiALLxmETjKHHI9X7",
+    bookHref: book("photobiotic-44"),
+    acuityId: 100598276,
   },
   {
     id: "photobiotic-59",
@@ -175,7 +190,8 @@ export const SESSIONS: Session[] = [
     lead: "A 45-minute stretch with 14 minutes of light",
     body: "Our most popular choice: time to work through several areas, with light before and after.",
     learnHref: "/our-packages/photobiotic-assisted-stretching",
-    bookHref: "https://api.leadconnectorhq.com/widget/booking/g7agUXJEYdlWoNKTrNp5",
+    bookHref: book("photobiotic-59"),
+    acuityId: 100598282,
   },
   {
     id: "photobiotic-74",
@@ -185,7 +201,8 @@ export const SESSIONS: Session[] = [
     lead: "A 60-minute stretch with 14 minutes of light",
     body: "The complete experience: a full-body stretch with light on both sides.",
     learnHref: "/our-packages/photobiotic-assisted-stretching",
-    bookHref: "https://api.leadconnectorhq.com/widget/booking/yFwfXTYH74zpcsKc2Vdv",
+    bookHref: book("photobiotic-74"),
+    acuityId: 100598286,
   },
   {
     id: "de-compression-recovery-stack",
@@ -195,7 +212,8 @@ export const SESSIONS: Session[] = [
     lead: "Compression, vagus nerve stimulation and guided mindfulness",
     points: ["Pneumatic compression", "Vagus nerve stimulation", "Guided mindfulness"],
     learnHref: "/our-packages/de-compression-recovery-stack",
-    bookHref: "https://api.leadconnectorhq.com/widget/booking/fJB3aF0ZBoQN7J71CXSI",
+    bookHref: book("de-compression-recovery-stack"),
+    acuityId: 100598302,
   },
   {
     id: "led-red-light-therapy",
@@ -205,7 +223,8 @@ export const SESSIONS: Session[] = [
     lead: "A standalone light session",
     points: ["Nine wavelength bands", "432 dual-chip LEDs", "Twin panels, front and back"],
     learnHref: "/our-packages/red-light-therapy-perth",
-    bookHref: "https://api.leadconnectorhq.com/widget/booking/MVTOqV0wwbLnoUZ06noD",
+    bookHref: book("led-red-light-therapy"),
+    acuityId: 100598308,
   },
 ];
 
@@ -448,3 +467,15 @@ export const FOOTER = {
   copyright: `© 2026 StretchFLEX. StretchFLEX is operated by ${COMPANY.name}, ABN ${COMPANY.abn}.`,
   disclaimer: "Our services support general mobility, recovery and wellbeing and are not a substitute for medical advice.",
 };
+
+/* ───────────────────────── Client stories ───────────────────────── */
+
+/**
+ * Client testimonial Shorts on the StretchFLEX YouTube channel, shown on the
+ * homepage and the Revive, Prime and Ultimate pages. Add a new one here and
+ * it appears everywhere (the row becomes a carousel when they don't all fit).
+ */
+export const CLIENT_VIDEOS = [
+  { id: "wCuBT7hnRRA", title: "Real people, real experiences, real results" },
+  { id: "3coj8g2Tuo0", title: "Discover the StretchFLEX difference" },
+];

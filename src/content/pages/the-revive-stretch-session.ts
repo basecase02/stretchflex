@@ -1,3 +1,5 @@
+import { createElement } from "react";
+import { ClientStories } from "@/components/pages/video/client-stories";
 import { BOOK_URL, SESSIONS } from "@/content/site";
 import type { PageContent } from "./types";
 
@@ -124,6 +126,11 @@ export const page: PageContent = {
         "Every session is private and one-on-one, and you choose your therapist when you book. Our team is led by co-founder Biljana Mancini, a certified personal trainer with specialist training in assisted stretching, who has developed stretching protocols and mentored other practitioners.",
       ],
       actions: [{ label: "Meet Biljana", href: "/biljana-mancini", tone: "navy" }],
+    },
+    {
+      // Client testimonial videos (site.ts, CLIENT_VIDEOS), just before the prices.
+      type: "node",
+      node: createElement(ClientStories, { id: "client-stories" }),
     },
     {
       type: "offers",

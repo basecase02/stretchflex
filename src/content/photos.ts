@@ -29,4 +29,4 @@ export const PHOTOS = {
 } satisfies Record<string, Img>;
 
 /** The general booking link most pages use. */
-export const BOOK_GROUP = "https://api.leadconnectorhq.com/widget/group/h2hOi4gQos4P5NH6z4Dz";
+export { BOOK_URL as BOOK_GROUP } from "./site";

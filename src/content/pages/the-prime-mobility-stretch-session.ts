@@ -1,3 +1,5 @@
+import { createElement } from "react";
+import { ClientStories } from "@/components/pages/video/client-stories";
 import { BOOK_URL, SESSIONS } from "@/content/site";
 import type { PageContent } from "./types";
 
@@ -123,6 +125,11 @@ export const page: PageContent = {
       body: [
         "Every session is private and one-on-one, and you choose your therapist when you book. Our team is led by co-founder [Biljana Mancini](/biljana-mancini), with GP [Dr Joe Kosterich](/dr-joe-kosterich) on our advisory board.",
       ],
+    },
+    {
+      // Client testimonial videos (site.ts, CLIENT_VIDEOS), just before the prices.
+      type: "node",
+      node: createElement(ClientStories, { id: "client-stories" }),
     },
     {
       type: "offers",

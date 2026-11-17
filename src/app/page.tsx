@@ -4,6 +4,7 @@ import { Marquee } from "@/components/marquee";
 import { ContactPanel, CtaBand, ReviewsPanel } from "@/components/sections";
 import { SessionTabs } from "@/components/session-tabs";
 import { SessionFinder } from "@/components/session-finder";
+import { ClientStories } from "@/components/pages/video/client-stories";
 import { hand, JsonLd } from "@/components/text";
 import { images } from "@/content/images";
 import { localBusiness, yoastGraph } from "@/content/schema";
@@ -218,6 +219,9 @@ export default function HomePage() {
 
       {/* ───────── Google reviews: rating on the left, the reviews on the right ───────── */}
       <ReviewsPanel />
+
+      {/* ───────── Client stories: video testimonials (tap to watch, full screen) ───────── */}
+      <ClientStories />
 
       {/* ───────── Memberships: the six member cards, each linking to its tier ───────── */}
       <section className="blk blk--rose panel home-members" aria-labelledby="home-members-title">

@@ -8,11 +8,11 @@ import { SESSIONS } from "@/content/site";
  * length and price, and each button goes straight to that session's booking.
  *
  * The booking links live in SESSIONS (src/content/site.ts), one per session,
- * so moving from HighLevel to Acuity is one edit there.
+ * all pointing at the on-site booking page (Acuity, embedded).
  */
 
-/** A link to the booking system (HighLevel today, Acuity next). */
-const BOOKING_LINK = /leadconnectorhq\.com\/widget|acuityscheduling\.com/i;
+/** A link to booking: the on-site booking page, or Acuity / HighLevel directly. */
+const BOOKING_LINK = /^\/book-your-session\b|leadconnectorhq\.com\/widget|acuityscheduling\.com/i;
 
 export type BookOption = { id: string; name: string; short?: string; length: string; price: string; href: string };
 
