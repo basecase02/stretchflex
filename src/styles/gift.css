@@ -533,3 +533,6 @@
   .gco__dl > div { grid-template-columns: minmax(0, 1fr) auto; }
   .gco__dl dt { grid-column: 1 / -1; }
 }
+
+/* Continue / Back scroll here: the steps line, clear of the fixed header. */
+#gco-steps { scroll-margin-top: calc(var(--header-h) + var(--frame) + 14px); }

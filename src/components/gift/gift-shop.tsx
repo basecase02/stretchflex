@@ -74,13 +74,23 @@ export function GiftShop() {
         if (p) {
           setStep(i);
           setError(p);
+          toTop();
           return;
         }
       }
     }
     setError("");
     setStep(to);
-    body.current?.scrollTo({ top: 0 });
+    toTop();
+  }
+
+  /** Brings the start of the new step into view: the steps line on phones (the page scrolls), the top of the column on laptops. */
+  function toTop() {
+    requestAnimationFrame(() => {
+      body.current?.scrollTo({ top: 0 });
+      const crumbs = document.getElementById("gco-steps");
+      if (crumbs && Math.abs(crumbs.getBoundingClientRect().top) > 4) crumbs.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   }
 
   async function pay(e: FormEvent) {
@@ -90,6 +100,7 @@ export function GiftShop() {
       if (p) {
         setStep(i);
         setError(p);
+        toTop();
         return;
       }
     }
@@ -131,7 +142,7 @@ export function GiftShop() {
               Give the gift of <span className="hand">movement</span>
             </h1>
           </div>
-          <ol className="gco__crumbs" aria-label="Checkout steps">
+          <ol className="gco__crumbs" id="gco-steps" aria-label="Checkout steps">
             {STEPS.map((name, i) => (
               <li key={name}>
                 <button type="button" className={`gco__crumb${i === step ? " gco__crumb--on" : ""}${i < step ? " gco__crumb--done" : ""}`} aria-current={i === step ? "step" : undefined} onClick={() => go(i)}>
