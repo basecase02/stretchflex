@@ -1,0 +1,333 @@
+/* ==========================================================================
+   Gift certificates. The page uses the site's own panels, headings, cards,
+   form fields and buttons; only the certificate itself is black and gold.
+   The certificate fonts below are the ones the gift API renders the PDF and
+   email image with, so the live preview is exactly what arrives.
+   ========================================================================== */
+
+@font-face { font-family: "Albert Sans"; font-weight: 400; font-display: swap; src: url("/fonts/gift/albert-sans-latin-400-normal.woff2") format("woff2"); }
+@font-face { font-family: "Albert Sans"; font-weight: 600; font-display: swap; src: url("/fonts/gift/albert-sans-latin-600-normal.woff2") format("woff2"); }
+@font-face { font-family: "Cormorant Garamond Light"; font-weight: 500; font-display: swap; src: url("/fonts/gift/cormorant-garamond-latin-500-normal.woff2") format("woff2"); }
+@font-face { font-family: "Cormorant Garamond Light"; font-weight: 500; font-style: italic; font-display: swap; src: url("/fonts/gift/cormorant-garamond-latin-500-italic.woff2") format("woff2"); }
+@font-face { font-family: "Qwitcher Grypen"; font-weight: 400; font-display: swap; src: url("/fonts/gift/qwitcher-grypen-latin-400-normal.woff2") format("woff2"); }
+
+#gift-experiences,
+#gift-values,
+#buy { scroll-margin-top: calc(var(--header-h) + 8px); }
+
+/* ───────── Choosing: one clean card per gift, in three columns ───────── */
+
+.gcols {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: start;
+  gap: clamp(16px, 2vw, 28px);
+}
+
+.gcol { display: grid; gap: 10px; }
+
+.gcol__title {
+  padding-bottom: 10px;
+  border-bottom: 1.5px solid var(--navy);
+  font-size: 0.76rem;
+  color: var(--navy);
+}
+
+/* A gift option: a white card that is a radio button. */
+.gopt { position: relative; display: block; cursor: pointer; }
+
+.gopt > input { position: absolute; opacity: 0; pointer-events: none; }
+
+.gopt__box {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  height: 100%;
+  padding: 18px 20px;
+  border: 1.5px solid var(--rule);
+  border-radius: 20px;
+  background: var(--white);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.gopt:hover .gopt__box { border-color: var(--navy); }
+
+.gopt > input:checked + .gopt__box,
+.gval--on .gopt__box {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 1.5px var(--blue), 0 12px 28px -14px rgb(15 117 188 / 0.55);
+}
+
+.gopt > input:focus-visible + .gopt__box { outline: 3px solid var(--blue); outline-offset: 3px; }
+
+.gopt__radio {
+  width: 22px;
+  height: 22px;
+  border: 2px solid var(--rule);
+  border-radius: 50%;
+  background: var(--white);
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.gopt > input:checked + .gopt__box .gopt__radio,
+.gval--on .gopt__radio {
+  border-color: var(--blue);
+  background: var(--blue) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4 8-9' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 14px no-repeat;
+}
+
+.gopt__main { display: grid; gap: 4px; }
+
+.gopt__meta { font-size: 0.66rem; color: var(--red-deep); }
+
+.gopt__name { font-size: 1.18rem; line-height: 1.02; color: var(--navy); }
+
+.gopt__lead { font-size: 0.88rem; line-height: 1.4; color: var(--ink-soft); }
+
+.gopt__price { font-size: 1.9rem; line-height: 1; color: var(--blue); }
+
+.gopt__hint {
+  display: grid;
+  gap: 6px;
+  padding: 18px 20px;
+  border: 1.5px dashed var(--rule);
+  border-radius: 20px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+  text-decoration: none !important;
+}
+
+.gopt__hint strong { font-size: 1rem; color: var(--navy); }
+.gopt__hint .caps { margin-top: 4px; color: var(--blue); }
+.gopt__hint:hover { border-color: var(--blue); }
+
+/* Gift values: five equal cards, the amount centred. */
+.gvals { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: clamp(10px, 1.4vw, 18px); }
+
+.gval .gopt__box {
+  position: relative;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  align-content: center;
+  gap: 10px;
+  min-height: 150px;
+  padding: 26px 16px 22px;
+  text-align: center;
+}
+
+.gval .gopt__radio { position: absolute; top: 14px; right: 14px; }
+
+.gval .gopt__price { font-size: clamp(2.1rem, 1.5rem + 1.5vw, 2.8rem); }
+
+.gval .gopt__meta { color: var(--ink-soft); }
+
+.gval--custom { cursor: default; }
+
+/* The panel must not clip the open dropdown. */
+.giftValuesPanel { overflow: visible; }
+
+/* ───────── Custom-amount dropdown (amount-select.tsx) ───────── */
+
+.gsel { position: relative; width: 100%; max-width: 190px; }
+
+.gsel__btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  min-height: 50px;
+  padding: 0 14px 0 20px;
+  border: 1.5px solid var(--rule);
+  border-radius: 999px;
+  background: var(--rose);
+  font: inherit;
+  font-family: var(--font-display), "Arial Black", sans-serif;
+  font-size: 1.45rem;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--blue);
+  cursor: pointer;
+  transition: border-color 0.2s, background-color 0.2s;
+}
+
+.gsel__btn--empty { color: var(--navy); }
+
+.gsel__btn:hover,
+.gsel--open .gsel__btn { border-color: var(--blue); background: var(--white); }
+
+.gsel__btn:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+
+.gsel__chev { flex: none; width: 20px; height: 20px; color: var(--navy); transition: transform 0.25s var(--ease); }
+
+.gsel--open .gsel__chev { transform: rotate(180deg); }
+
+.gsel__list {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  width: max(100%, 230px);
+  margin: 0;
+  padding: 8px;
+  border: 1.5px solid var(--rule);
+  border-radius: 20px;
+  background: var(--white);
+  box-shadow: 0 22px 48px -18px rgb(6 49 78 / 0.45);
+  list-style: none;
+  translate: -50% 0;
+  animation: gsel-in 0.18s var(--ease);
+}
+
+.gsel__list:focus { outline: none; }
+
+.gsel__opt {
+  padding: 11px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--navy);
+  cursor: pointer;
+}
+
+.gsel__opt--active { background: var(--rose); }
+
+.gsel__opt[aria-selected="true"] { background: var(--blue); color: var(--white); }
+
+@keyframes gsel-in {
+  from { opacity: 0; translate: -50% -6px; }
+}
+
+/* The chosen gift, and the way on to the form. */
+.gpick {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px 24px;
+  margin-top: clamp(18px, 3vh, 28px);
+  padding: 16px 18px 16px 26px;
+  border-radius: 24px;
+  background: var(--navy);
+  color: var(--white);
+}
+
+.gpick__text { display: grid; gap: 2px; }
+.gpick__text .caps { color: var(--on-dark-soft); }
+.gpick__text strong { font-size: 1.15rem; }
+.gpick__detail { font-size: 0.9rem; color: var(--on-dark-soft); }
+.gpick__price { font-size: 2.2rem; line-height: 1; color: var(--white); }
+
+/* ───────── Personalise + live preview ───────── */
+
+.giftMake {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  align-items: start;
+  gap: clamp(24px, 3.5vw, 48px);
+}
+
+.giftForm__legend { margin: 6px 0 -4px; color: var(--red-deep); }
+
+.giftWhen { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+.cform .giftWhen__opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--rule);
+  border-radius: 18px;
+  background: var(--rose);
+  font-size: 0.92rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.35;
+  text-transform: none;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.cform .giftWhen__opt strong { display: block; font-size: 1rem; color: var(--navy); }
+
+.cform .giftWhen__opt input { width: 18px; min-height: 0; height: 18px; margin-top: 2px; padding: 0; accent-color: var(--blue); }
+
+.cform .giftWhen__opt:has(input:checked) { border-color: var(--blue); background: var(--white); }
+
+.giftSummary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1.5px solid var(--navy);
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.giftSummary strong { font-size: 2.4rem; line-height: 1; color: var(--red); }
+
+.giftPreview { position: sticky; top: calc(var(--header-h) + 20px); display: grid; gap: 12px; }
+
+.giftPreview__face { overflow: hidden; border-radius: 14px; box-shadow: 0 24px 60px rgb(6 49 78 / 0.28); }
+
+.giftPreview__face svg { display: block; width: 100%; height: auto; }
+
+.giftPreview__note { text-align: center; font-size: 0.9rem; color: var(--ink-soft); }
+
+/* ───────── Formats ───────── */
+
+.giftFormats { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); align-items: center; gap: clamp(16px, 2.4vw, 32px); }
+
+.giftFormats__pic { margin: 0; overflow: hidden; border-radius: var(--r-card); }
+
+.giftFormats__pic img { display: block; width: 100%; height: auto; }
+
+.giftFormats__list { display: grid; gap: 12px; margin: 0; padding: 0; list-style: none; }
+
+.giftFormats__list .tile__copy { gap: 6px; padding: 20px 24px; }
+
+/* ───────── Thank-you and mobile certificate ───────── */
+
+.giftTop { padding-top: calc(var(--header-h) + var(--frame) + clamp(28px, 5vh, 56px)); }
+
+.giftNarrow { max-width: 760px; margin: 0 auto; text-align: center; }
+
+.giftNarrow .blk__head { margin-bottom: 18px; }
+
+.giftCode { display: inline-block; margin-top: 6px; padding: 8px 18px; border-radius: 999px; background: var(--white); font-weight: 700; letter-spacing: 0.08em; color: var(--navy); }
+
+.giftCert { max-width: 440px; margin: 24px auto 0; }
+
+.giftCert svg { display: block; width: 100%; height: auto; border-radius: 16px; box-shadow: 0 24px 60px rgb(6 49 78 / 0.3); }
+
+.giftActions { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 24px; }
+
+@media (max-width: 1000px) {
+  .giftMake,
+  .giftFormats { grid-template-columns: 1fr; }
+  .giftPreview { position: static; order: -1; }
+}
+
+@media (max-width: 1000px) {
+  .gcols { grid-template-columns: 1fr; }
+  .gvals { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 620px) {
+  .gvals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gval--custom { grid-column: 1 / -1; }
+  .gval--custom .gopt__box { min-height: 0; }
+  .gpick { grid-template-columns: minmax(0, 1fr) auto; padding: 18px; }
+  .gpick .btn { grid-column: 1 / -1; }
+  .giftWhen { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gopt__box,
+  .gsel__chev { transition: none; }
+  .gsel__list { animation: none; }
+}

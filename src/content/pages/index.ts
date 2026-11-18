@@ -28,6 +28,8 @@ import { page as stretchflexGoodlife } from "./stretchflex-goodlife";
 import { page as membershipTerms } from "./membership-terms";
 import { page as privacyPolicy } from "./privacy-policy";
 import { page as termsOfUse } from "./terms-of-use";
+import { page as giftCertificates } from "./gift-certificates";
+import { giftThanks, giftView } from "./gift-certificates-after";
 
 export const PAGES = {
   "/our-packages": ourPackages,
@@ -56,4 +58,7 @@ export const PAGES = {
   "/membership-terms": membershipTerms,
   "/privacy-policy": privacyPolicy,
   "/terms-of-use": termsOfUse,
+  "/gift-certificates": giftCertificates,
+  "/gift-certificates/thank-you": giftThanks,
+  "/gift-certificates/view": giftView,
 };

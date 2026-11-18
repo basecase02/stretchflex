@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: StretchFLEX website (static, S3 + CloudFront)
+Description: StretchFLEX website (static, S3 + CloudFront) and gift certificates (Square, Acuity, SES)
 
 # infra/build.mjs writes template.yaml from this file (the CloudFront function
 # code comes from infra/edge.template.js + redirects.mjs). Deploy with
@@ -33,10 +33,23 @@ Parameters:
   RoleBoundaryName:
     Type: String
     Default: AppRoleBoundary
+  SiteOrigin:
+    Type: String
+    Default: https://stretchflex.au
+    Description: Where the site is served (links in gift emails, Square return links).
+  MailDomain:
+    Type: String
+    Default: stretchflex.au
+    Description: Gift emails are sent with SES from this domain (DKIM records go in HostedZoneId).
+  MailFrom:
+    Type: String
+    Default: StretchFLEX <gifts@stretchflex.au>
+
 Conditions:
   HasDomain: !Not [!Equals [!Ref DomainName, ""]]
   HasZone: !And [!Condition HasDomain, !Not [!Equals [!Ref HostedZoneId, ""]]]
   HasBoundary: !Not [!Equals [!Ref RoleBoundaryName, ""]]
+  HasZoneId: !Not [!Equals [!Ref HostedZoneId, ""]]
 
 Resources:
   # ------------------------------------------------------------------------- website
@@ -142,6 +155,9 @@ __EDGE_CODE__
           - { AcmCertificateArn: !Ref CertificateArn, SslSupportMethod: sni-only, MinimumProtocolVersion: TLSv1.2_2021 }
           - { CloudFrontDefaultCertificate: true }
         Origins:
+          - Id: api
+            DomainName: !Sub ${GiftApi}.execute-api.${AWS::Region}.amazonaws.com
+            CustomOriginConfig: { OriginProtocolPolicy: https-only, OriginSSLProtocols: [TLSv1.2] }
           - Id: site
             DomainName: !GetAtt SiteBucket.RegionalDomainName
             OriginAccessControlId: !GetAtt OriginAccessControl.Id
@@ -157,6 +173,14 @@ __EDGE_CODE__
             - EventType: viewer-request
               FunctionARN: !GetAtt UrlFunction.FunctionMetadata.FunctionARN
         CacheBehaviors:
+          - PathPattern: /api/*
+            TargetOriginId: api
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods: [GET, HEAD, OPTIONS, PUT, POST, PATCH, DELETE]
+            Compress: true
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad          # Managed-CachingDisabled
+            OriginRequestPolicyId: b689b0a8-53d0-40ab-baf2-68738e2966ac  # Managed-AllViewerExceptHostHeader
+            ResponseHeadersPolicyId: !Ref SecurityHeadersPolicy
           - PathPattern: /_next/*
             TargetOriginId: site
             ViewerProtocolPolicy: redirect-to-https
@@ -175,6 +199,142 @@ __EDGE_CODE__
           - { ErrorCode: 403, ResponseCode: 404, ResponsePagePath: /404.html, ErrorCachingMinTTL: 60 }
           - { ErrorCode: 404, ResponseCode: 404, ResponsePagePath: /404.html, ErrorCachingMinTTL: 60 }
 
+  # ------------------------------------------------------------------------- gift certificates
+  # Paid with Square (Ray's StretchFLEX account, the one Acuity uses), issued as
+  # codes in Acuity so they can be redeemed online, emailed with SES.
+  # Keys: SSM SecureStrings /raymancini/<env>/stretchflex/{square-token,acuity-user,acuity-key}.
+  GiftTable:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      TableName: !Sub raymancini-stretchflex-gifts-${Env}
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions: [{ AttributeName: code, AttributeType: S }]
+      KeySchema: [{ AttributeName: code, KeyType: HASH }]
+      PointInTimeRecoverySpecification: { PointInTimeRecoveryEnabled: true }
+      SSESpecification: { SSEEnabled: true }
+
+  GiftRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub app-raymancini-stretchflex-${Env}-gift
+      PermissionsBoundary: !If [HasBoundary, !Sub "arn:aws:iam::${AWS::AccountId}:policy/${RoleBoundaryName}", !Ref AWS::NoValue]
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement: [{ Effect: Allow, Principal: { Service: lambda.amazonaws.com }, Action: sts:AssumeRole }]
+      Policies:
+        - PolicyName: gift
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: [logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents]
+                Resource: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/raymancini-stretchflex-${Env}-gift:*
+              - Effect: Allow
+                Action: [dynamodb:GetItem, dynamodb:PutItem, dynamodb:UpdateItem, dynamodb:Scan]
+                Resource: !GetAtt GiftTable.Arn
+              - Effect: Allow
+                Action: [ssm:GetParameter]
+                Resource: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/raymancini/${Env}/stretchflex/*
+              - Effect: Allow
+                Action: [kms:Decrypt]
+                Resource: "*"
+                Condition: { StringEquals: { "kms:ViaService": !Sub "ssm.${AWS::Region}.amazonaws.com" } }
+              - Effect: Allow
+                Action: [ses:SendEmail, ses:SendRawEmail]
+                Resource: !Sub arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/*
+              - Effect: Allow
+                Action: [scheduler:CreateSchedule]
+                Resource: !Sub arn:aws:scheduler:${AWS::Region}:${AWS::AccountId}:schedule/default/stretchflex-gift-*
+              - Effect: Allow
+                Action: [iam:PassRole]
+                Resource: !GetAtt GiftSchedulerRole.Arn
+
+  GiftSchedulerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub app-raymancini-stretchflex-${Env}-scheduler
+      PermissionsBoundary: !If [HasBoundary, !Sub "arn:aws:iam::${AWS::AccountId}:policy/${RoleBoundaryName}", !Ref AWS::NoValue]
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement: [{ Effect: Allow, Principal: { Service: scheduler.amazonaws.com }, Action: sts:AssumeRole }]
+      Policies:
+        - PolicyName: invoke
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: lambda:InvokeFunction
+                Resource: !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:raymancini-stretchflex-${Env}-gift
+
+  GiftFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub raymancini-stretchflex-${Env}-gift
+      CodeUri: ../.aws-sam/gift
+      Handler: index.handler
+      Runtime: nodejs24.x
+      Architectures: [arm64]
+      MemorySize: 512
+      Timeout: 30
+      Role: !GetAtt GiftRole.Arn
+      Environment:
+        Variables:
+          GIFT_TABLE: !Ref GiftTable
+          SITE_ORIGIN: !Ref SiteOrigin
+          MAIL_FROM: !Ref MailFrom
+          SQUARE_TOKEN_PARAM: !Sub /raymancini/${Env}/stretchflex/square-token
+          ACUITY_USER_PARAM: !Sub /raymancini/${Env}/stretchflex/acuity-user
+          ACUITY_KEY_PARAM: !Sub /raymancini/${Env}/stretchflex/acuity-key
+          SCHEDULER_ROLE_ARN: !GetAtt GiftSchedulerRole.Arn
+      Events:
+        Api:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref GiftApi
+            Path: /api/gift/{proxy+}
+            Method: ANY
+  GiftLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/raymancini-stretchflex-${Env}-gift
+      RetentionInDays: 90
+
+  GiftApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      Name: !Sub raymancini-stretchflex-${Env}-api
+      DefaultRouteSettings: { ThrottlingBurstLimit: 50, ThrottlingRateLimit: 20 }
+
+  # Every 10 minutes: completes gifts paid in Square whose buyer never came back to the thank-you page.
+  GiftSweep:
+    Type: AWS::Scheduler::Schedule
+    Properties:
+      Name: !Sub raymancini-stretchflex-${Env}-gift-sweep
+      ScheduleExpression: rate(10 minutes)
+      FlexibleTimeWindow: { Mode: "OFF" }
+      Target:
+        Arn: !GetAtt GiftFunction.Arn
+        RoleArn: !GetAtt GiftSchedulerRole.Arn
+        Input: '{"action":"sweep"}'
+
+  # Email from stretchflex.au. DKIM records go in the Route 53 zone; SES verifies them once the domain's name servers point there.
+  MailIdentity:
+    Type: AWS::SES::EmailIdentity
+    Properties:
+      EmailIdentity: !Ref MailDomain
+      DkimSigningAttributes: { NextSigningKeyLength: RSA_2048_BIT }
+  MailDkimRecords:
+    Type: AWS::Route53::RecordSetGroup
+    Condition: HasZoneId
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      RecordSets:
+        - { Name: !GetAtt MailIdentity.DkimDNSTokenName1, Type: CNAME, TTL: "1800", ResourceRecords: [!GetAtt MailIdentity.DkimDNSTokenValue1] }
+        - { Name: !GetAtt MailIdentity.DkimDNSTokenName2, Type: CNAME, TTL: "1800", ResourceRecords: [!GetAtt MailIdentity.DkimDNSTokenValue2] }
+        - { Name: !GetAtt MailIdentity.DkimDNSTokenName3, Type: CNAME, TTL: "1800", ResourceRecords: [!GetAtt MailIdentity.DkimDNSTokenValue3] }
+
   SiteRecords:
     Type: AWS::Route53::RecordSetGroup
     Condition: HasZone
@@ -190,3 +350,5 @@ Outputs:
   SiteBucketName: { Value: !Ref SiteBucket }
   DistributionId: { Value: !Ref Distribution }
   CloudFrontDomain: { Value: !GetAtt Distribution.DomainName }
+  GiftFunctionName: { Value: !Ref GiftFunction }
+  GiftTableName: { Value: !Ref GiftTable }
