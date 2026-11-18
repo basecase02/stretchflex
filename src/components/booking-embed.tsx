@@ -32,7 +32,7 @@ export function BookingEmbed() {
   const src = `${ACUITY_URL}${session ? `&appointmentType=${session.acuityId}` : ""}&ref=embedded_csp`;
 
   const showAll = () => {
-    window.history.pushState(null, "", window.location.pathname + "#book");
+    window.history.pushState(null, "", window.location.pathname);
     setSessionId(null);
   };
 
@@ -76,6 +76,8 @@ export function BookingEmbed() {
               height="1000"
               allow="payment"
               loading="eager"
+              // Acuity scrolls the page to the top of the scheduler at each step; this keeps that top clear of the fixed header.
+              data-offset-top="-96"
             />
           ) : (
             <div className="booking__loading" aria-hidden="true" />

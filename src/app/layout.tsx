@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { QuickActions } from "@/components/quick-actions";
 import { Reveal } from "@/components/reveal";
+import { ScrollReset } from "@/components/scroll-reset";
 import { SITE_URL } from "@/content/site";
 import { FEEDS, ROBOTS_INDEX, SITE_NAME } from "@/lib/seo";
 import "./globals.css";
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to content
         </a>
         <SiteHeader />
+        <ScrollReset />
         <main id="content">{children}</main>
         <SiteFooter />
         <QuickActions />
