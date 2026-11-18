@@ -34,6 +34,7 @@ export function GiftShop() {
   const [error, setError] = useState("");
   const [preview, setPreview] = useState(false);
   const body = useRef<HTMLDivElement>(null);
+  const dialog = useRef<HTMLDialogElement>(null);
 
   // What they have chosen and typed is kept for this browser tab, so leaving the
   // page (to read a policy, or by mistake) and coming back loses nothing.
@@ -426,12 +427,38 @@ export function GiftShop() {
               </dl>
               <div className="gco__face">
                 <p className="caps">Certificate preview</p>
-                <CertificateFace fields={fields} qrUrl="https://stretchflex.au/gift-certificates" label={`Preview of the gift certificate for ${fields.recipient}: ${fields.title}`} />
+                <button type="button" className="gco__zoom" onClick={() => dialog.current?.showModal()} aria-label="Preview your card full screen">
+                  <CertificateFace fields={fields} qrUrl="https://stretchflex.au/gift-certificates" label="" />
+                </button>
+                <button type="button" className="btn btn--caps btn--outline gco__zoombtn" onClick={() => dialog.current?.showModal()}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  Preview your card
+                </button>
               </div>
             </div>
           </aside>
         </form>
       </div>
+
+      {/* Full-screen preview of the card. Escape, the Close button or a click outside closes it. */}
+      <dialog className="gprev" ref={dialog} aria-label="Your gift card preview" onClick={(e) => e.target === e.currentTarget && dialog.current?.close()}>
+        <div className="gprev__bar">
+          <p>
+            <strong>Preview your card</strong>
+            <span>This is what {form.recipientName.trim() || "they"} will receive. The redemption code is added after payment.</span>
+          </p>
+          <button type="button" className="btn btn--caps btn--light" onClick={() => dialog.current?.close()}>
+            Close ✕
+          </button>
+        </div>
+        <div className="gprev__stage" onClick={(e) => e.target === e.currentTarget && dialog.current?.close()}>
+          <div className="gprev__cert">
+            <CertificateFace fields={fields} qrUrl="https://stretchflex.au/gift-certificates" label={`Preview of the gift certificate for ${fields.recipient}: ${fields.title}`} />
+          </div>
+        </div>
+      </dialog>
     </section>
   );
 }

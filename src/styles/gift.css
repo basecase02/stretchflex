@@ -539,3 +539,41 @@
 
 /* The message is short (it has to fit on the certificate), so its box is too. */
 .gco__form textarea { min-height: 84px; }
+
+/* ───────── "Preview your card": the certificate, full screen ───────── */
+
+.gco__zoom { display: block; width: 100%; padding: 0; border: 0; border-radius: 10px; background: none; cursor: zoom-in; }
+.gco__zoom:focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; }
+
+.gco__zoombtn { justify-self: start; gap: 8px; margin-top: 4px; }
+.gco__zoombtn svg { width: 16px; height: 16px; }
+
+.gprev {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgb(4 20 33 / 0.96);
+  color: var(--white);
+}
+
+.gprev[open] { display: grid; grid-template-rows: auto minmax(0, 1fr); }
+.gprev::backdrop { background: rgb(4 20 33 / 0.9); }
+
+.gprev__bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px clamp(16px, 3vw, 32px); }
+.gprev__bar p { display: grid; gap: 2px; }
+.gprev__bar strong { font-size: 1.1rem; }
+.gprev__bar span { font-size: 0.88rem; color: var(--on-dark-soft); }
+
+.gprev__stage { display: grid; place-items: center; min-height: 0; padding: 0 clamp(12px, 3vw, 40px) clamp(16px, 3vh, 40px); overflow: hidden; }
+
+/* As large as fits: limited by the width, or by the height (the card is 2752 × 1536). */
+.gprev__cert { width: min(100%, calc((100dvh - 150px) * 1.79)); }
+.gprev__cert svg { display: block; width: 100%; height: auto; border-radius: 12px; box-shadow: 0 30px 80px rgb(0 0 0 / 0.6); }
+
+@media (max-width: 1000px) {
+  .gco__zoombtn { justify-self: center; }
+}
