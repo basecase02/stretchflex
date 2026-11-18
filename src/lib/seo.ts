@@ -98,6 +98,33 @@ function withRealImages(node: unknown): unknown {
   return swapped ? `${SITE_URL}${swapped.url}` : node;
 }
 
+/* ───────── Blog author ─────────
+   WordPress credits every post to "iqadvertising", the previous agency's
+   login. The posts are credited to StretchFLEX instead: the author tag, the
+   "Written by" label and, in the schema, the business (its Organization). */
+
+const OLD_AUTHOR = "iqadvertising";
+const AUTHOR = "StretchFLEX";
+
+function withAuthor(entry: SeoEntry): SeoEntry {
+  if (entry.author !== OLD_AUTHOR) return entry;
+  const graph = (entry.schema as { "@graph"?: Record<string, unknown>[] } | null)?.["@graph"];
+  const schema = graph
+    ? {
+        ...entry.schema,
+        "@graph": graph
+          .filter((node) => !(node["@type"] === "Person" && node.name === OLD_AUTHOR))
+          .map((node) => (node["@type"] === "Article" ? { ...node, author: { "@id": `${SITE_URL}/#organization` } } : node)),
+      }
+    : entry.schema;
+  return {
+    ...entry,
+    author: AUTHOR,
+    twitter: entry.twitter.map(([label, data]) => [label, data === OLD_AUTHOR ? AUTHOR : data]),
+    schema,
+  };
+}
+
 /** Whether a live URL has an SEO snapshot. */
 export function hasSeo(path: string): boolean {
   return path in entries;
@@ -115,9 +142,9 @@ export function seoPaths(): string[] {
 export function seoFor(path: string, rename: [string, string][] = []): SeoEntry {
   const entry = entries[path];
   if (!entry) throw new Error(`No SEO snapshot for ${path}`);
-  const renamed: SeoEntry = rename.length
-    ? JSON.parse(rename.reduce((text, [from, to]) => text.replaceAll(from, to), JSON.stringify(entry)))
-    : entry;
+  const renamed = withAuthor(
+    rename.length ? JSON.parse(rename.reduce((text, [from, to]) => text.replaceAll(from, to), JSON.stringify(entry))) : entry,
+  );
   return {
     ...renamed,
     ogImage: renamed.ogImage ? (replacement(renamed.ogImage.url) ?? renamed.ogImage) : null,
