@@ -15,13 +15,6 @@ const BOOK = { label: "Book now", href: BOOK_URL };
  * left to the homepage, at the owner's request.
  */
 export const page: PageContent = {
-  seo: {
-    title: "Prime Mobility Stretch: 45-Min Assisted Stretch Perth | StretchFLEX",
-    description:
-      "A 45-minute, one-on-one assisted stretch in Perth CBD that works through several areas to help you move more freely. $95, or save up to $80 with a pack.",
-    ogTitle: "Prime Mobility Stretch: 45 Minutes to Move Freely",
-    ogDescription: "More time, more attention, better movement. One-on-one assisted stretching in Perth CBD.",
-  },
   sessions: ["prime-mobility-stretch"],
   blocks: [
     {
@@ -82,8 +75,8 @@ export const page: PageContent = {
       tone: "rose",
       numbered: true,
       kicker: "What to expect",
-      title: "Your 45 minutes",
-      hand: "minutes",
+      title: "Your 45-minute Prime Mobility Stretch",
+      hand: "minute",
       lead: "**What to bring:** comfortable activewear and a clean, unworn pair of socks (compulsory for hygiene and grip). Grip socks are $15 at reception.",
       image: {
         src: "/images/stretch/stretch-quad-prone.jpg",
@@ -200,7 +193,8 @@ export const page: PageContent = {
     },
     {
       type: "accordion",
-      title: "Your questions, answered",
+      faq: true,
+      title: "Prime Mobility Stretch questions, answered",
       hand: "answered",
       items: [
         {

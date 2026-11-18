@@ -6,8 +6,10 @@ import { SessionTabs } from "@/components/session-tabs";
 import { SessionFinder } from "@/components/session-finder";
 import { ClientStories } from "@/components/pages/video/client-stories";
 import { hand, JsonLd } from "@/components/text";
+import { SeoTags } from "@/components/seo-tags";
 import { images } from "@/content/images";
-import { localBusiness, yoastGraph } from "@/content/schema";
+import { localBusiness } from "@/content/schema";
+import { pageMetadata, seoFor } from "@/lib/seo";
 import {
   BENEFITS,
   COMFORT,
@@ -21,6 +23,10 @@ import {
   SESSIONS_TITLE,
 } from "@/content/site";
 import { SwipeDots } from "@/components/swipe-dots";
+
+/** The live homepage's SEO (title, description, Open Graph, schema), as Yoast prints it. */
+const seo = seoFor("/");
+export const metadata = pageMetadata(seo, "/");
 
 /** Note colours for the benefits, so no two neighbours match. */
 const NOTE_TONES = ["rose", "navy", "sky", "navy", "rose"] as const;
@@ -36,23 +42,22 @@ const SESSION_TABS = SESSION_GROUPS.map((group) => ({
 export default function HomePage() {
   return (
     <>
-      {/* Open Graph article tags from the live page (React hoists these into <head>). */}
-      <meta property="article:publisher" content="https://www.facebook.com/profile.php?id=61583797823853" />
-      <meta property="article:modified_time" content="2026-06-23T06:50:13+00:00" />
-      <JsonLd data={yoastGraph} />
+      <SeoTags entry={seo} path="/" />
+      {seo.schema ? <JsonLd data={seo.schema} /> : null}
       <JsonLd data={localBusiness} />
 
       {/* ───────── Hero: the promise on a rose tile beside the team photo ───────── */}
       <section className="hero hero--home panel">
         <div className="hero__card">
-          <p className="kicker hero__kicker">{HERO.kicker}</p>
-          <h1 className="hero__title hero__title--lines">
+          {/* The live page's main heading, so the homepage keeps ranking for it; the promise is the big line under it. */}
+          <h1 className="kicker hero__kicker">{HERO.kicker}</h1>
+          <p className="hero__title hero__title--lines">
             {HERO.lines.map((line, i) => (
               <span className={i === HERO.lines.length - 1 ? "hero__accent" : undefined} key={line}>
                 {line}
               </span>
             ))}
-          </h1>
+          </p>
           <p className="hero__intro">{HERO.body}</p>
           <div className="hero__ctas">
             <a className="btn hero__cta" href={HERO.cta.href}>

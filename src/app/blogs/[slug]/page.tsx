@@ -6,6 +6,7 @@ import { PostCard } from "@/components/blog/post-card";
 import { formatDate, getPost, POSTS, toCard } from "@/components/blog/posts";
 import { CtaBand } from "@/components/sections";
 import { ReadProgress } from "@/components/read-progress";
+import { SeoTags } from "@/components/seo-tags";
 import { JsonLd } from "@/components/text";
 import { BOOK_URL } from "@/content/site";
 import { pageMetadata, seoFor } from "@/lib/seo";
@@ -19,22 +20,24 @@ export function generateStaticParams() {
   return POSTS.map((post) => ({ slug: post.slug }));
 }
 
+/** The live post's SEO, exactly as Yoast prints it. */
 export async function generateMetadata({ params }: Props) {
   const post = getPost((await params).slug);
-  return post ? pageMetadata(post.path) : {};
+  return post ? pageMetadata(seoFor(post.path), post.path) : {};
 }
 
 /** /blogs/<slug> — one article: title and date, the photo, the text, then three more. */
 export default async function PostPage({ params }: Props) {
   const post = getPost((await params).slug);
   if (!post) notFound();
-  const schema = seoFor(post.path).schema;
+  const seo = seoFor(post.path);
   const index = POSTS.indexOf(post);
   const more = [...POSTS.slice(index + 1), ...POSTS.slice(0, index)].slice(0, 3);
 
   return (
     <>
-      {schema ? <JsonLd data={schema} /> : null}
+      <SeoTags entry={seo} path={post.path} />
+      {seo.schema ? <JsonLd data={seo.schema} /> : null}
       {post.jsonLd.map((data, i) => (
         <JsonLd data={data} key={i} />
       ))}

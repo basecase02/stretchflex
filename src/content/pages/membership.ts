@@ -8,16 +8,11 @@ const POLICY = "[Refund and Cancellation Policy](/refund-and-cancellation-policy
 
 /** /membership: the client's content document (Membership). */
 export const page: PageContent = {
-  seo: {
-    title: "Stretching & Recovery Memberships Perth | StretchFLEX",
-    description: "Weekly assisted stretching and recovery memberships in Perth CBD. Two sessions every week from $89, saving up to $120 a week.",
-    ogTitle: "StretchFLEX Memberships | Move Better Every Week",
-    ogDescription: "Two sessions every week from $89. Assisted stretching, light therapy and recovery in Perth CBD.",
-  },
   blocks: [
     {
       type: "hero",
       kicker: "StretchFLEX membership",
+      heading: "Stretching memberships in Perth",
       title: "Your body is your greatest asset.",
       accent: "Invest in it.",
       intro: "Two professional sessions every week from $89, saving up to $120 a week compared with booking each session individually.",
@@ -226,9 +221,10 @@ export const page: PageContent = {
     },
     {
       type: "accordion",
+      faq: true,
       id: "faqs",
-      title: "Frequently asked questions",
-      hand: "asked",
+      title: "Membership questions, answered",
+      hand: "answered",
       items: [
         {
           title: "What is the difference between the two collections?",

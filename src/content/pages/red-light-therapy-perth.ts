@@ -12,13 +12,9 @@ const u = (path: string) => `/wp-content/uploads/${path}`;
  * src/content/site.ts.
  */
 export const page: PageContent = {
-  seo: {
-    title: "Red Light Therapy Perth CBD | 14-Min LED Session | StretchFLEX",
-    description:
-      "Professional-grade LED red light therapy in Perth CBD. Twin panels, nine wavelengths, 14-minute sessions for $49. Book online at Trinity Arcade.",
-    ogTitle: "Red Light Therapy in Perth CBD | StretchFLEX",
-    ogDescription: "Fourteen minutes in our professional-grade twin-panel light system. $49, right in Perth CBD.",
-  },
+  // The live page's SEO, at the new address.
+  seoFrom: "/our-packages/red-light-therapy-benefits",
+  seoRename: [["red-light-therapy-benefits", "red-light-therapy-perth"]],
   sessions: ["led-red-light-therapy"],
   bookingTitle: "LED Red Light Therapy",
   blocks: [
@@ -122,8 +118,9 @@ export const page: PageContent = {
     },
     {
       type: "accordion",
+      faq: true,
       tone: "rose",
-      title: "Your questions, answered",
+      title: "Red light therapy questions, answered",
       hand: "answered",
       items: [
         {

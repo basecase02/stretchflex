@@ -95,7 +95,7 @@ export function SessionFinder({ sessions }: { sessions: FinderSession[] }) {
                 </a>
               ) : null}
               <a className="btn btn--caps btn--light" href={pick.learnHref}>
-                Learn more
+                Learn more<span className="sr-only"> about {pick.name}</span>
               </a>
             </div>
           </div>

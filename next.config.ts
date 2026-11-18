@@ -13,13 +13,27 @@ const nextConfig: NextConfig = {
   images: {
     formats: ["image/avif", "image/webp"],
   },
-  // Pages that moved or were removed keep their old links working.
+  // Old addresses keep working, with a 301 as WordPress sends, so their
+  // rankings and links pass to the new page.
   async redirects() {
+    const moved = (source: string, destination: string) => ({ source, destination, statusCode: 301 as const });
     return [
-      { source: "/biljana-stojanovic", destination: "/biljana-mancini", permanent: true },
-      { source: "/alan-chapman", destination: "/about", permanent: true },
-      { source: "/our-packages/rapid-rejuvenation", destination: "/our-packages/de-compression-recovery-stack", permanent: true },
-      { source: "/our-packages/red-light-therapy-benefits", destination: "/our-packages/red-light-therapy-perth", permanent: true },
+      // Pages renamed or removed in the rebuild.
+      moved("/biljana-stojanovic", "/biljana-mancini"),
+      moved("/alan-chapman", "/about"),
+      moved("/our-packages/rapid-rejuvenation", "/our-packages/de-compression-recovery-stack"),
+      moved("/our-packages/red-light-therapy-benefits", "/our-packages/red-light-therapy-perth"),
+      // Redirects the live site already has (WordPress's Redirection plugin).
+      moved("/blogs/assisted-stretching-perth-2", "/blogs/assisted-stretching-perth"),
+      // As on the live site, /sitemap.xml leads to Yoast's sitemap index.
+      moved("/sitemap.xml", "/sitemap_index.xml"),
+      // WordPress archive pages (all kept out of search on the live site): the blog.
+      moved("/blogs", "/blog"),
+      moved("/:year(\\d{4})", "/blog"),
+      moved("/:year(\\d{4})/:month(\\d{2})", "/blog"),
+      moved("/:year(\\d{4})/:month(\\d{2})/:day(\\d{2})", "/blog"),
+      moved("/category/:slug*", "/blog"),
+      moved("/author/:slug*", "/blog"),
     ];
   },
   async rewrites() {

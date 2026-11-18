@@ -21,21 +21,15 @@ const sessions = SESSION_GROUPS.flatMap((group) =>
 
 /** /our-packages — every session and price, then packs, memberships and a booking band. */
 export const page: PageContent = {
-  seo: {
-    title: "Stretching & Recovery Sessions Perth | StretchFLEX",
-    description:
-      "Compare every StretchFLEX session: assisted stretching from $65, Photobiotic Assisted Stretching™, red light therapy and recovery. Perth CBD.",
-    ogTitle: "All Sessions and Prices | StretchFLEX Perth",
-    ogDescription: "Assisted stretching, light therapy and recovery sessions in Perth CBD. Find the one that fits your body and your schedule.",
-  },
   blocks: [
     {
       type: "hero",
       kicker: "Sessions and prices",
+      heading: "Stretching sessions in Perth",
       title: "Find your",
       accent: "session",
       intro:
-        "Every session at StretchFLEX is private, one-on-one and tailored to you. Choose by the time you have and how far you want to go.",
+        "Every assisted stretching, light therapy and recovery session at StretchFLEX is private, one-on-one and tailored to you, right in Perth CBD. Choose by the time you have and how far you want to go.",
       actions: [{ label: "Book your session", href: BOOK_URL }],
       trust: [
         "Assisted stretching from $65",

@@ -4,13 +4,6 @@ import type { PageContent } from "./types";
 
 /** /book-your-session: the Acuity scheduler, embedded, then what to bring and how to reach us. */
 export const page: PageContent = {
-  seo: {
-    title: "Book Assisted Stretching Perth CBD | StretchFLEX",
-    description:
-      "Book your StretchFLEX session online. Assisted stretching from $65, light therapy and recovery in Trinity Arcade, Perth CBD. Choose a time that suits you.",
-    ogTitle: "Book Your Session | StretchFLEX Perth",
-    ogDescription: "Choose your session and time online. Private, one-on-one sessions in Perth CBD.",
-  },
   blocks: [
     { type: "node", node: <BookingEmbed /> },
     {

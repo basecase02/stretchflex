@@ -86,7 +86,8 @@ export const BOOK_LABEL = "Book now";
 /* ───────────────────────── Hero ───────────────────────── */
 
 export const HERO = {
-  kicker: "Assisted stretching · Perth CBD",
+  /** The page's H1, word for word from the live homepage. */
+  kicker: "Professional Assisted Stretching Perth",
   lines: ["Move better.", "Recover better.", "Live better."],
   body: "One-on-one assisted stretching and recovery with the therapist of your choice, right in the heart of Perth CBD. Walk in tight. Walk out moving freely.",
   cta: { label: "Book your session", href: BOOK_URL },
@@ -280,7 +281,7 @@ export type BenefitIcon = "range" | "release" | "posture" | "performance" | "shi
 
 export const BENEFITS = {
   kicker: "",
-  title: "Why clients choose StretchFLEX",
+  title: "Why Perth clients choose StretchFLEX",
   hand: "choose",
   items: [
     {

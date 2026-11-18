@@ -29,13 +29,6 @@ const FAQS = [
 export const page: PageContent = {
   sessions: ["revive-stretch", "prime-mobility-stretch", "ultimate-stretch"],
   bookingTitle: "Assisted Stretching",
-  seo: {
-    title: "Assisted Stretching Perth: How It Works & Who It Helps",
-    description:
-      "What is assisted stretching, how does it work and is it right for you? A plain-English guide from StretchFLEX, Perth CBD's assisted stretching studio.",
-    ogTitle: "Assisted Stretching Explained | StretchFLEX Perth",
-    ogDescription: "How assisted stretching works, who it helps and how it compares with massage and physiotherapy.",
-  },
   blocks: [
     faqJsonLd(FAQS),
     {

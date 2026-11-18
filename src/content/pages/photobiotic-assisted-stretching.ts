@@ -10,14 +10,6 @@ const u = (path: string) => `/wp-content/uploads/${path}`;
  * src/content/site.ts: one per session length.
  */
 export const page: PageContent = {
-  seo: {
-    title: "Photobiotic Assisted Stretching™ | Stretching + Red Light Perth",
-    description:
-      "Assisted stretching combined with professional-grade red and near-infrared light. 44, 59 or 74 minutes, one-on-one in Perth CBD. From $120.",
-    ogTitle: "Photobiotic Assisted Stretching™ | StretchFLEX Perth",
-    ogDescription:
-      "Light, then stretch, then light. Our signature session pairs assisted stretching with professional-grade photobiomodulation.",
-  },
   sessions: ["photobiotic-44", "photobiotic-59", "photobiotic-74"],
   bookingTitle: "Photobiotic Assisted Stretching™",
   blocks: [
@@ -130,8 +122,9 @@ export const page: PageContent = {
     },
     {
       type: "accordion",
+      faq: true,
       tone: "rose",
-      title: "Your questions, answered",
+      title: "Photobiotic stretching questions, answered",
       hand: "answered",
       items: [
         {

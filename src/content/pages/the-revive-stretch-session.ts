@@ -15,13 +15,6 @@ const BOOK = { label: "Book now", href: BOOK_URL };
  * left to the homepage, at the owner's request.
  */
 export const page: PageContent = {
-  seo: {
-    title: "Revive Stretch: 30-Min Assisted Stretching Perth | StretchFLEX",
-    description:
-      "A 30-minute, one-on-one assisted stretch in Perth CBD with the therapist of your choice. Release tension and move more freely. $65, or save with a pack.",
-    ogTitle: "The Revive Stretch: Your 30-Minute Reset",
-    ogDescription: "Thirty minutes, one-on-one, in Perth CBD. Walk in tight. Walk out moving freely.",
-  },
   sessions: ["revive-stretch"],
   blocks: [
     {
@@ -82,8 +75,8 @@ export const page: PageContent = {
       tone: "rose",
       numbered: true,
       kicker: "What to expect",
-      title: "Your 30 minutes",
-      hand: "minutes",
+      title: "Your 30-minute Revive Stretch",
+      hand: "minute",
       lead: "**What to bring:** comfortable activewear and a clean, unworn pair of socks (compulsory for hygiene and grip). Forgot yours? StretchFLEX grip socks are $15 at reception.",
       image: {
         src: "/images/stretch/stretch-neck-lying.jpg",
@@ -201,7 +194,8 @@ export const page: PageContent = {
     },
     {
       type: "accordion",
-      title: "Your questions, answered",
+      faq: true,
+      title: "Revive Stretch questions, answered",
       hand: "answered",
       items: [
         {

@@ -6,6 +6,7 @@ import { SiteHeader } from "@/components/site-header";
 import { QuickActions } from "@/components/quick-actions";
 import { Reveal } from "@/components/reveal";
 import { SITE_URL } from "@/content/site";
+import { FEEDS, ROBOTS_INDEX, SITE_NAME } from "@/lib/seo";
 import "./globals.css";
 import "@/styles/blocks.css";
 
@@ -32,52 +33,17 @@ const sans = Albert_Sans({
   variable: "--font-sans",
 });
 
-/* Homepage SEO from the client's content document (14 November 2026). */
-const title = "Assisted Stretching Perth CBD | StretchFLEX";
-const description =
-  "One-on-one assisted stretching and recovery in Perth CBD with the therapist of your choice. Sessions from $65. Book online at Trinity Arcade.";
-const socialTitle = "StretchFLEX: Assisted Stretching in Perth CBD";
-const socialDescription =
-  "Walk in tight. Walk out moving freely. Private, one-on-one assisted stretching and recovery in Trinity Arcade, Perth CBD.";
-const siteName = "StretchFLEX";
-
+/**
+ * Site-wide tags, as the live site prints them on every page. Each page sets
+ * its own title, description and canonical from the live SEO (src/lib/seo.ts)
+ * and prints its Open Graph tags with <SeoTags>; these are the defaults.
+ */
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title,
-  description,
-  robots: {
-    index: true,
-    follow: true,
-    "max-image-preview": "large",
-    "max-snippet": -1,
-    "max-video-preview": -1,
-  },
-  alternates: {
-    canonical: "/",
-    types: {
-      "application/rss+xml": [
-        { url: "/feed", title: `${siteName} » Feed` },
-        { url: "/comments/feed", title: `${siteName} » Comments Feed` },
-      ],
-    },
-  },
-  openGraph: {
-    locale: "en_AU",
-    type: "website",
-    title: socialTitle,
-    description: socialDescription,
-    url: "/",
-    siteName,
-    images: [
-      {
-        url: "/images/team/stretchflex-team-reception.jpg",
-        width: 2000,
-        height: 1499,
-        type: "image/jpeg",
-      },
-    ],
-  },
-  twitter: { card: "summary_large_image" },
+  title: SITE_NAME,
+  robots: ROBOTS_INDEX,
+  alternates: { types: FEEDS },
+  other: { "twitter:card": "summary_large_image" },
   verification: { google: "mBJIrwfq77wL7IHAYfGOxoqPCjV_o8_2-mjOQ0lBZO8" },
 };
 

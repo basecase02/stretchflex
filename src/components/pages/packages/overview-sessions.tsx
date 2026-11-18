@@ -17,7 +17,7 @@ export function OverviewSessions({ sessions }: { sessions: (Session & { group: s
   }));
   return (
     <section className="sessions panel on-dark" id="packages">
-      <Marquee as="p" className="sessions__title display">
+      <Marquee as="h2" className="sessions__title display">
         {SESSIONS_TITLE}
       </Marquee>
       <div className="wrap">

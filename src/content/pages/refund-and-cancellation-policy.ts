@@ -58,11 +58,6 @@ const html = `
 `;
 
 export const page: PageContent = {
-  seo: {
-    title: "Refund and Cancellation Policy | StretchFLEX",
-    description:
-      "How cancellations, rescheduling, refunds, session packs and memberships work at StretchFLEX, Perth CBD.",
-  },
   blocks: [
     {
       type: "hero",

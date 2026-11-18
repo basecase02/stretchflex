@@ -7,20 +7,13 @@ const u = (path: string) => `/wp-content/uploads/${path}`;
 export const page: PageContent = {
   sessions: ["revive-stretch", "prime-mobility-stretch", "ultimate-stretch"],
   bookingTitle: "Assisted Stretching",
-  seo: {
-    title: "Dr Joe Kosterich | StretchFLEX Advisory Board",
-    description:
-      "Dr Joe Kosterich, GP, author and health commentator, advises StretchFLEX on clinical and strategic matters to keep our services safe and client-focused.",
-    ogTitle: "Dr Joe Kosterich | StretchFLEX Advisory Board",
-    ogDescription: "Doctor, author and health commentator advising StretchFLEX, Perth CBD.",
-  },
   blocks: [
     {
       type: "hero",
       crumbs: [{ label: "About", href: "/about" }],
       kicker: "Advisory board",
       title: "Dr Joe Kosterich",
-      intro: "MBBS, GAICD · Doctor, speaker and author",
+      intro: "MBBS, GAICD · Doctor, speaker and author · StretchFLEX advisory board",
       image: { src: u("2026/03/DrJoeKosterich.webp"), alt: "Dr Joe Kosterich, member of the StretchFLEX advisory board", position: "50% 30%" },
     },
     {

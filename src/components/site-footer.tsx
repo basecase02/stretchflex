@@ -50,8 +50,14 @@ export function SiteFooter() {
       </div>
 
       <div className="footer__base">
-        <p>{FOOTER.copyright}</p>
-        <p className="footer__disclaimer">{FOOTER.disclaimer}</p>
+        <div className="footer__legal">
+          <p>{FOOTER.copyright}</p>
+          <p className="footer__disclaimer">{FOOTER.disclaimer}</p>
+        </div>
+        {/* A followed link with the brand as its text (Google treats keyword-stuffed footer links as link schemes). */}
+        <a className="footer__credit" href="https://www.basecasetech.com.au" target="_blank" rel="noopener">
+          Technology by <strong>Basecase Tech</strong>
+        </a>
       </div>
     </footer>
   );

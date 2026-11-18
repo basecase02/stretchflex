@@ -152,11 +152,11 @@ export function SessionTabs({ groups, maxPoints }: { groups: SessionGroupView[];
                 <div className="plan__actions">
                   {session.bookHref ? (
                     <a className="btn btn--caps btn--ink" href={session.bookHref}>
-                      Book Now
+                      Book Now<span className="sr-only"> {session.name}</span>
                     </a>
                   ) : null}
                   <a className="btn btn--caps btn--line" href={session.learnHref}>
-                    Learn More
+                    Learn More<span className="sr-only"> about {session.name}</span>
                   </a>
                 </div>
               </li>

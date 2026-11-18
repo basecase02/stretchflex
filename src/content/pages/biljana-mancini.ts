@@ -6,15 +6,12 @@ const u = (path: string) => `/wp-content/uploads/${path}`;
 export const page: PageContent = {
   sessions: ["revive-stretch", "prime-mobility-stretch", "ultimate-stretch"],
   bookingTitle: "a session with Biljana",
-  // Renamed from Biljana Stojanović (the old URL redirects here); `seo` below takes priority over the old page's snapshot.
+  // Renamed from Biljana Stojanović (the old URL redirects here): the live page's SEO, with her new name and address.
   seoFrom: "/biljana-stojanovic",
-  seo: {
-    title: "Biljana Mancini | Lead Assisted Stretching Therapist Perth",
-    description:
-      "Meet Biljana Mancini, co-founder and lead assisted stretching therapist at StretchFLEX, Perth CBD. Personalised one-on-one mobility care.",
-    ogTitle: "Meet Biljana Mancini | StretchFLEX",
-    ogDescription: "Co-founder and lead therapist at StretchFLEX, Perth CBD.",
-  },
+  seoRename: [
+    ["biljana-stojanovic", "biljana-mancini"],
+    ["Biljana Stojanović", "Biljana Mancini"],
+  ],
   blocks: [
     {
       type: "hero",

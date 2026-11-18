@@ -72,6 +72,8 @@
 .hero__kicker {
   margin-bottom: -0.2em;
   color: var(--red-deep);
+  /* Long lines (the page's search heading) wrap evenly, never leaving one word alone. */
+  text-wrap: balance;
 }
 
 .hero__actions {
@@ -3565,5 +3567,52 @@ section[id],
 
   .promise__body {
     margin-top: 0.6em;
+  }
+}
+
+/* Developer credit, quiet like on the Tribe site (still 5:1 contrast on navy). */
+.footer__credit {
+  display: inline-block;
+  margin-top: 10px;
+  color: rgb(255 255 255 / 0.6);
+  font-size: 0.78rem;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer__credit strong {
+  font-weight: 700;
+  color: rgb(255 255 255 / 0.82);
+  transition: color 0.2s;
+}
+
+.footer__base .footer__credit:hover,
+.footer__credit:hover strong {
+  color: var(--white);
+}
+
+/* Copyright on the left, the credit on the right (stacked on phones). */
+.footer__base {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px 32px;
+}
+
+.footer__legal {
+  flex: 1 1 420px;
+  min-width: 0;
+}
+
+.footer__base .footer__credit {
+  margin-top: 0;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 719.98px) {
+  .footer__base .footer__credit {
+    margin-left: 0;
   }
 }

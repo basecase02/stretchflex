@@ -8,13 +8,6 @@ import type { PageContent } from "./types";
  * then the message form (src/components/contact-form.tsx), then booking.
  */
 export const page: PageContent = {
-  seo: {
-    title: "Contact StretchFLEX | Trinity Arcade, Perth CBD",
-    description:
-      "Contact StretchFLEX at 111 Trinity Arcade, 72 St Georges Terrace, Perth CBD. Call 0432 569 077 or book online. Open Monday to Friday, 8:30 am to 5:30 pm.",
-    ogTitle: "Contact StretchFLEX | Perth CBD",
-    ogDescription: "Find us in Trinity Arcade, St Georges Terrace. Call, email or book online.",
-  },
   blocks: [
     {
       type: "hero",

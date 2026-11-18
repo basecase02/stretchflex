@@ -39,6 +39,12 @@ export type HeroBlock = {
   /** Breadcrumb trail, not including the current page. Home is added for you. */
   crumbs?: { label: string; href: string }[];
   kicker?: string;
+  /**
+   * The page's main heading (H1) for search, worded with the page's keyword.
+   * It is shown in place of the kicker, and the big title below it stays as
+   * it is, set as a paragraph, so the design and the headline copy don't change.
+   */
+  heading?: string;
   title: string;
   /** A last line of the title in red, like "Mobility" on the homepage. */
   accent?: string;
@@ -87,6 +93,8 @@ export type AccordionBlock = Head & {
   type: "accordion";
   tone?: Tone;
   numbered?: boolean;
+  /** The items are questions and answers: also described for search as FAQPage structured data. */
+  faq?: boolean;
   items: { title: string; body: string | string[] }[];
   actions?: Action[];
   image?: Img;

@@ -6,13 +6,6 @@ const u = (path: string) => `/wp-content/uploads/${path}`;
 export const page: PageContent = {
   sessions: ["revive-stretch", "prime-mobility-stretch", "ultimate-stretch"],
   bookingTitle: "Assisted Stretching",
-  seo: {
-    title: "About StretchFLEX | Assisted Stretching Studio Perth CBD",
-    description:
-      "StretchFLEX is a private assisted stretching and recovery studio in Perth CBD, founded on one belief: movement is medicine. Meet the team behind it.",
-    ogTitle: "About StretchFLEX | Perth CBD",
-    ogDescription: "A private assisted stretching and recovery studio in Trinity Arcade. Meet the people and philosophy behind it.",
-  },
   blocks: [
     {
       type: "hero",

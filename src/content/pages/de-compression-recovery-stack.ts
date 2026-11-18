@@ -30,7 +30,7 @@ export const page: PageContent = {
       title: "De-Compression",
       accent: "Recovery Stack",
       intro:
-        "Three recovery tools in one 20-minute session: pneumatic compression for your legs, non-invasive vagus nerve stimulation and guided mindfulness. Lie back, breathe and let the technology do the work.",
+        "Three recovery tools in one 20-minute session in Perth CBD: pneumatic compression for your legs, non-invasive vagus nerve stimulation and guided mindfulness. Lie back, breathe and let the technology do the work.",
       note: "[Save up to $201 with a pack](#packs)",
       image: {
         src: u("2026/03/StretchFlex-47.jpg"),
@@ -61,7 +61,7 @@ export const page: PageContent = {
       type: "accordion",
       tone: "rose",
       numbered: true,
-      title: "Your 20 minutes",
+      title: "Your 20-minute De-Compression session",
       hand: "minutes",
       items: [
         {
@@ -141,8 +141,9 @@ export const page: PageContent = {
     },
     {
       type: "accordion",
+      faq: true,
       tone: "rose",
-      title: "Your questions, answered",
+      title: "De-Compression questions, answered",
       hand: "answered",
       items: [
         {

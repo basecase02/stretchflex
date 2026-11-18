@@ -129,21 +129,15 @@ const plain = (a: string | string[]) =>
 export const page: PageContent = {
   sessions: ["revive-stretch", "prime-mobility-stretch", "ultimate-stretch"],
   bookingTitle: "Assisted Stretching",
-  seo: {
-    title: "Assisted Stretching FAQs | StretchFLEX Perth",
-    description:
-      "Answers to common questions about assisted stretching, light therapy, memberships, booking and cancellations at StretchFLEX, Perth CBD.",
-    ogTitle: "Your Questions, Answered | StretchFLEX",
-    ogDescription: "Everything you need to know before your first session.",
-  },
   blocks: [
     faqJsonLd(GROUPS.flatMap((group) => group.items.map((item) => ({ q: item.q, a: plain(item.a) })))),
     {
       type: "hero",
       kicker: "Your questions, answered",
+      heading: "Assisted stretching FAQs",
       title: "Frequently asked",
       accent: "questions",
-      intro: "Can't find what you're looking for? Call us on [0432\u00a0569\u00a0077](tel:0432569077).",
+      intro: "Everything you need to know about assisted stretching, light therapy and recovery at StretchFLEX in Perth CBD. Can't find what you're looking for? Call us on [0432\u00a0569\u00a0077](tel:0432569077).",
       image: {
         src: "/images/stretch/stretch-side-reach.jpg",
         alt: "A StretchFLEX therapist guiding a client through an assisted side reach",

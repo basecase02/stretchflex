@@ -4,7 +4,7 @@ import { Fragment, type ReactNode } from "react";
 import { Marquee } from "@/components/marquee";
 import { ContactPanel, CtaBand, ReviewsPanel } from "@/components/sections";
 import { SessionTabs } from "@/components/session-tabs";
-import { hand, rich, SmartLink } from "@/components/text";
+import { hand, JsonLd, rich, SmartLink } from "@/components/text";
 import type {
   AccordionBlock,
   Action,
@@ -30,6 +30,22 @@ import { ShowAll } from "@/components/show-all";
 
 
 const list = (value?: string | string[]) => (value === undefined ? [] : Array.isArray(value) ? value : [value]);
+
+/** Plain text for structured data: "[label](/link)" → "label", without "**". */
+const plain = (text: string) => text.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/\*\*/g, "");
+
+/** FAQPage structured data from the questions and answers shown on the page (Google requires them visible). */
+function faqData(items: { title: string; body: string | string[] }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.title,
+      acceptedAnswer: { "@type": "Answer", text: plain(list(item.body).join(" ")) },
+    })),
+  };
+}
 
 function Actions({ actions, className = "" }: { actions?: Action[]; className?: string }) {
   if (!actions?.length) return null;
@@ -83,6 +99,8 @@ function Ticks({ items }: { items: string[] }) {
 
 function Hero({ block }: { block: HeroBlock }) {
   const crumbs = [{ label: "Home", href: "/" }, ...(block.crumbs ?? [])];
+  // With a search heading, that is the H1 and the big title is a paragraph.
+  const Title = block.heading ? "p" : "h1";
   return (
     <section className={`hero hero--page panel${block.image ? "" : " hero--solo"}${block.image?.portrait ? " hero--portrait" : ""}`}>
       <div className="hero__card">
@@ -95,8 +113,12 @@ function Hero({ block }: { block: HeroBlock }) {
             ))}
           </ol>
         </nav>
-        {block.kicker ? <p className="kicker hero__kicker">{block.kicker}</p> : null}
-        <h1 className="hero__title">
+        {block.heading ? (
+          <h1 className="kicker hero__kicker">{block.heading}</h1>
+        ) : block.kicker ? (
+          <p className="kicker hero__kicker">{block.kicker}</p>
+        ) : null}
+        <Title className="hero__title">
           {block.title}
           {block.accent ? (
             <>
@@ -104,7 +126,7 @@ function Hero({ block }: { block: HeroBlock }) {
               <span className="hero__accent">{block.accent}</span>
             </>
           ) : null}
-        </h1>
+        </Title>
         {block.facts?.length ? (
           <ul className="facts">
             {block.facts.map((fact) => (
@@ -274,6 +296,7 @@ function Cards({ block }: { block: CardsBlock }) {
 function Accordion({ block, index }: { block: AccordionBlock; index: number }) {
   return (
     <Panel tone={block.tone} id={block.id} className="blk--accordion">
+      {block.faq ? <JsonLd data={faqData(block.items)} /> : null}
       <div className={`acc${block.image ? " acc--pic" : ""}`}>
         <div className="acc__side">
           <SectionHead head={block} align="left" />
@@ -310,6 +333,8 @@ function Accordion({ block, index }: { block: AccordionBlock; index: number }) {
 const OFFER_TONES = ["sky", "blue", "rose"];
 
 function Offers({ block }: { block: OffersBlock }) {
+  // Card names sit under the block's title (H2); without one they are the section headings.
+  const Name = block.title ? "h3" : "h2";
   return (
     <Panel tone={block.tone ?? "navy"} id={block.id} className="blk--offers">
       <SectionHead head={block} />
@@ -318,7 +343,7 @@ function Offers({ block }: { block: OffersBlock }) {
           <li className={`plan offer plan--${OFFER_TONES[(block.items.length === 2 ? i + 1 : i) % 3]}`} key={item.name}>
             {item.badge ? <p className="plan__badge caps">{item.badge}</p> : null}
             {item.tag ? <p className="offer__tag caps">{item.tag}</p> : null}
-            <h3 className="display plan__name">{item.name}</h3>
+            <Name className="display plan__name">{item.name}</Name>
             <p className="display plan__price">
               {item.price}
               {item.was ? (

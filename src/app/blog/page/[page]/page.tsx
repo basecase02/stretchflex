@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { BLOG_SEO, BlogListing, PAGE_COUNT } from "@/components/blog/blog-listing";
-import { pageMetadata } from "@/lib/seo";
+import { BlogListing, blogMetadata, PAGE_COUNT } from "@/components/blog/blog-listing";
 
 export const dynamicParams = false;
 
@@ -13,17 +12,7 @@ export function generateStaticParams() {
 type Props = { params: Promise<{ page: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { page } = await params;
-  const base = pageMetadata("/blog");
-  const path = `/blog/page/${page}`;
-  const title = `Stretching & Recovery Blog – Page ${page} | StretchFLEX Perth`;
-  return {
-    ...base,
-    title: { absolute: title },
-    description: BLOG_SEO.description,
-    alternates: { ...base.alternates, canonical: path },
-    openGraph: { ...base.openGraph, url: path, title: `${BLOG_SEO.ogTitle} – Page ${page}`, description: BLOG_SEO.ogDescription },
-  };
+  return blogMetadata(Number((await params).page));
 }
 
 export default async function BlogPageN({ params }: Props) {

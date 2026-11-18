@@ -6,13 +6,6 @@ const u = (path: string) => `/wp-content/uploads/${path}`;
 export const page: PageContent = {
   sessions: ["revive-stretch", "prime-mobility-stretch", "ultimate-stretch"],
   bookingTitle: "your first session",
-  seo: {
-    title: "Your First Assisted Stretching Session Perth | StretchFLEX",
-    description:
-      "New to assisted stretching? Here is exactly what happens in your first StretchFLEX session in Perth CBD, what to wear and how to prepare.",
-    ogTitle: "Your First Session at StretchFLEX",
-    ogDescription: "Never tried assisted stretching? Here is everything you need to know, from arrival to walking out lighter.",
-  },
   blocks: [
     {
       type: "hero",
@@ -20,7 +13,7 @@ export const page: PageContent = {
       title: "Your first session at",
       accent: "StretchFLEX",
       intro:
-        "You don't need to be flexible. You just need to be ready. Here is exactly what to expect, from the moment you arrive to the moment you walk out lighter.",
+        "You don't need to be flexible. You just need to be ready. Here is exactly what to expect from your first assisted stretching session in Perth CBD, from the moment you arrive to the moment you walk out lighter.",
       image: { src: "/images/team/stretchflex-team-reception.jpg", alt: "The StretchFLEX team ready to welcome first-time clients at reception in Trinity Arcade", position: "52% 50%" },
     },
     {
@@ -97,6 +90,7 @@ export const page: PageContent = {
     },
     {
       type: "accordion",
+      faq: true,
       id: "faqs",
       title: "First-timer questions",
       hand: "questions",

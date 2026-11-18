@@ -15,13 +15,6 @@ const BOOK = { label: "Book now", href: BOOK_URL };
  * left to the homepage, at the owner's request.
  */
 export const page: PageContent = {
-  seo: {
-    title: "The Ultimate Stretch: 60-Min Full-Body Stretch Perth | StretchFLEX",
-    description:
-      "Our deepest assisted stretch: 60 minutes, one-on-one, through every major muscle group. Perth CBD. $120, or save up to $150 with a pack.",
-    ogTitle: "The Ultimate Stretch: Our Deepest Session",
-    ogDescription: "Sixty minutes, every major muscle group, one-on-one in Perth CBD. Leave open, aligned and refreshed.",
-  },
   sessions: ["ultimate-stretch"],
   blocks: [
     {
@@ -82,8 +75,8 @@ export const page: PageContent = {
       tone: "rose",
       numbered: true,
       kicker: "What to expect",
-      title: "Your 60 minutes",
-      hand: "minutes",
+      title: "Your 60-minute Ultimate Stretch",
+      hand: "minute",
       lead: "**What to bring:** comfortable activewear and a clean, unworn pair of socks (compulsory for hygiene and grip). Grip socks are $15 at reception.",
       image: {
         src: "/images/stretch/stretch-strap.jpg",
@@ -188,11 +181,12 @@ export const page: PageContent = {
         "**The Architectural Overhaul** · 74 min · $165",
         "The Ultimate Stretch with 14 minutes of photobiomodulation light before and after.",
       ],
-      actions: [{ label: "Learn more", href: "/our-packages/photobiotic-assisted-stretching", tone: "navy" }],
+      actions: [{ label: "Explore Photobiotic Stretching", href: "/our-packages/photobiotic-assisted-stretching", tone: "navy" }],
     },
     {
       type: "accordion",
-      title: "Your questions, answered",
+      faq: true,
+      title: "Ultimate Stretch questions, answered",
       hand: "answered",
       items: [
         {
