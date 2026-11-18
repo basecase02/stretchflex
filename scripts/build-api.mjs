@@ -15,7 +15,7 @@ await build({
   minify: true,
   sourcemap: false,
   external: ["@aws-sdk/*"],
-  loader: { ".ttf": "binary", ".png": "binary", ".wasm": "binary" },
+  loader: { ".ttf": "binary", ".png": "binary", ".jpg": "binary", ".wasm": "binary" },
   tsconfig: "tsconfig.json",
   banner: { js: "import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);" },
   logLevel: "warning",
