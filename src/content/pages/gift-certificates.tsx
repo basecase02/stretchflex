@@ -37,25 +37,6 @@ export const page: PageContent = {
       "Give the gift of movement. StretchFLEX gift certificates for assisted stretching, Photobiotic stretching and recovery in Perth CBD. Emailed now or on the day, valid for 36 months.",
   },
   blocks: [
-    {
-      type: "hero",
-      kicker: "Gift certificates",
-      heading: "Assisted stretching gift certificates in Perth",
-      title: "Give the gift",
-      accent: "of movement.",
-      intro:
-        "An experience of recovery, mobility and wellbeing. Because one of the most meaningful gifts you can give someone is the opportunity to feel better in their own body.",
-      actions: [
-        { label: "Signature Experiences", href: "#gift-experiences" },
-        { label: "Choose your gift value", href: "#gift-values", tone: "line" },
-      ],
-      trust: ["Valid for 36 months", "Emailed now or on the day", "Redeem online or in studio"],
-      image: {
-        src: "/images/gift/gift-card-envelope.jpg",
-        alt: "A black StretchFLEX gift card with gold lettering beside a black envelope sealed with gold wax",
-        position: "40% 50%",
-      },
-    },
     { type: "node", node: <GiftBuy /> },
     { type: "node", node: <GiftFormats /> },
     { type: "accordion", id: "gift-faqs", title: "Gift certificate questions", hand: "questions", faq: true, items: FAQ },

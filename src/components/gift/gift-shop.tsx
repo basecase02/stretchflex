@@ -1,9 +1,13 @@
 "use client";
 
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useRef, useState, type FormEvent } from "react";
 import { AmountSelect } from "./amount-select";
 import { CertificateFace } from "./certificate-face";
 import { CUSTOM_AMOUNTS, GIFT_EXPERIENCES, GIFT_VALUES, SAMPLE_CODE, describe, validUntil, type GiftChoice } from "@/lib/gift/catalog";
+import { MESSAGE_MAX } from "@/lib/gift/certificate";
+
+const STEPS = ["Choose", "Personalise", "Delivery", "Review"] as const;
+const EMAIL = /^[^\s@<>()",;:]+@[^\s@<>()",;:]+\.[a-z]{2,}$/i;
 
 const GROUPS = [
   { name: "Assisted stretching", label: "Assisted stretching" },
@@ -12,28 +16,30 @@ const GROUPS = [
 ] as const;
 
 /**
- * Signature Experiences and Choose Your Gift Value (one choice between them),
- * then the personal details, with the certificate drawn live beside the form.
- * "Continue to payment" opens Square checkout (/api/gift/checkout). Styled
- * with the site's own panels, headings, cards and form fields.
+ * The gift checkout: four steps on the left (choose, personalise, delivery,
+ * review), the cart on the right (the live certificate, the line item and the
+ * total). It fills one screen; long steps scroll inside their card. Paying
+ * opens Square checkout (/api/gift/checkout).
  */
 export function GiftShop() {
-  const [choice, setChoice] = useState<GiftChoice>({ kind: "experience", id: "ultimate-stretch" });
+  const [step, setStep] = useState(0);
+  const [tab, setTab] = useState<"experience" | "value">("experience");
+  const [choice, setChoice] = useState<GiftChoice | null>({ kind: "experience", id: "ultimate-stretch" });
   const [custom, setCustom] = useState<number | null>(null);
   const [form, setForm] = useState({ recipientName: "", recipientEmail: "", fromName: "", fromEmail: "", message: "" });
   const [later, setLater] = useState(false);
   const [date, setDate] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [preview, setPreview] = useState(false);
+  const body = useRef<HTMLDivElement>(null);
 
-  const item = describe(choice);
+  const item = choice ? describe(choice) : null;
+  const price = item ? `$${item.price.toLocaleString("en-AU")}.00` : "$0.00";
   const set = (key: keyof typeof form) => (e: { target: { value: string } }) => setForm((f) => ({ ...f, [key]: e.target.value }));
-  const pick = (c: GiftChoice) => {
-    setChoice(c);
-    setError("");
-  };
   const today = new Date().toLocaleDateString("en-CA", { timeZone: "Australia/Perth" });
   const maxDate = new Date(Date.now() + 364 * 864e5).toLocaleDateString("en-CA", { timeZone: "Australia/Perth" });
+  const sendOn = later && date ? new Date(date + "T00:00:00").toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : null;
 
   const fields = useMemo(
     () => ({
@@ -48,15 +54,44 @@ export function GiftShop() {
     [form, item],
   );
 
-  async function submit(e: FormEvent) {
-    e.preventDefault();
-    if (!item) {
-      setError("Choose an experience or a gift value.");
-      return;
+  /** What stops a step from moving on, or "" if nothing. */
+  function problem(i: number): string {
+    if (i === 0 && !item) return "Choose an experience or a gift value.";
+    if (i === 1) {
+      if (!form.recipientName.trim()) return "Add the recipient’s name.";
+      if (!EMAIL.test(form.recipientEmail.trim())) return "Check the recipient’s email address.";
+      if (!form.fromName.trim()) return "Add your name.";
+      if (!EMAIL.test(form.fromEmail.trim())) return "Check your email address (for your receipt).";
     }
-    if (later && !date) {
-      setError("Choose the day to send it, or pick “Send now”.");
-      return;
+    if (i === 2 && later && !date) return "Choose the day to send it, or pick “Send now”.";
+    return "";
+  }
+
+  function go(to: number) {
+    if (to > step) {
+      for (let i = step; i < to; i++) {
+        const p = problem(i);
+        if (p) {
+          setStep(i);
+          setError(p);
+          return;
+        }
+      }
+    }
+    setError("");
+    setStep(to);
+    body.current?.scrollTo({ top: 0 });
+  }
+
+  async function pay(e: FormEvent) {
+    e.preventDefault();
+    for (let i = 0; i < 3; i++) {
+      const p = problem(i);
+      if (p) {
+        setStep(i);
+        setError(p);
+        return;
+      }
     }
     setBusy(true);
     setError("");
@@ -67,7 +102,7 @@ export function GiftShop() {
         body: JSON.stringify({ ...choice, ...form, deliver: later ? date : "now" }),
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.url) throw new Error(data.error || "We couldn’t start the payment. Please try again.");
+      if (!res.ok || !data.url) throw new Error(data.error || "We couldn’t start the payment. Please try again, or call us on 0432 569 077.");
       window.location.href = data.url;
     } catch (err) {
       setError((err as Error).message);
@@ -75,203 +110,291 @@ export function GiftShop() {
     }
   }
 
+  const pickExperience = (id: string) => {
+    setCustom(null);
+    setChoice({ kind: "experience", id });
+    setError("");
+  };
+  const pickValue = (amount: number, isCustom = false) => {
+    setCustom(isCustom ? amount : null);
+    setChoice({ kind: "value", amount });
+    setError("");
+  };
+
   return (
-    <form className="giftForm" onSubmit={submit} noValidate>
-      <section className="blk blk--rose panel" id="gift-experiences" aria-labelledby="gift-experiences-title">
-        <div className="wrap">
-          <header className="blk__head blk__head--center">
-            <p className="kicker">Signature Experiences</p>
-            <h2 className="display blk__title" id="gift-experiences-title">
-              Gift a StretchFLEX <span className="hand">experience</span>
-            </h2>
-            <p className="blk__lead">The exact session, at its studio price. They choose a time that suits them.</p>
-          </header>
-          <div className="gcols">
-            {GROUPS.map((group) => (
-              <div className="gcol" key={group.name} role="group" aria-label={group.label}>
-                <h3 className="gcol__title caps">{group.label}</h3>
-                {GIFT_EXPERIENCES.filter((x) => x.group === group.name).map((x) => (
-                  <label className="gopt" key={x.id}>
-                    <input type="radio" name="gift" checked={choice.kind === "experience" && choice.id === x.id} onChange={() => {
-                        setCustom(null);
-                        pick({ kind: "experience", id: x.id });
-                      }}
-                    />
-                    <span className="gopt__box">
-                      <span className="gopt__radio" aria-hidden="true" />
-                      <span className="gopt__main">
-                        <span className="gopt__meta caps">{x.minutes} minutes</span>
-                        <span className="gopt__name display">{x.name}</span>
-                        <span className="gopt__lead">{x.lead}</span>
-                      </span>
-                      <span className="gopt__price display">${x.price}</span>
-                    </span>
-                  </label>
-                ))}
-                {group.name === "Recovery" ? (
-                  <a className="gopt__hint" href="#gift-values">
-                    <strong>Not sure which one?</strong>
-                    Let them choose, with a gift value that works for any session.
-                    <span className="caps">Choose a gift value ↓</span>
-                  </a>
-                ) : null}
-              </div>
+    <section className="blk blk--rose panel gco" id="buy" aria-labelledby="gco-title">
+      <div className="wrap gco__wrap">
+        <header className="gco__head">
+          <div>
+            <p className="gco__label caps">Gift certificates</p>
+            <h1 className="display gco__title" id="gco-title">
+              Give the gift of <span className="hand">movement</span>
+            </h1>
+          </div>
+          <ol className="gco__crumbs" aria-label="Checkout steps">
+            {STEPS.map((name, i) => (
+              <li key={name}>
+                <button type="button" className={`gco__crumb${i === step ? " gco__crumb--on" : ""}${i < step ? " gco__crumb--done" : ""}`} aria-current={i === step ? "step" : undefined} onClick={() => go(i)}>
+                  {name}
+                </button>
+              </li>
             ))}
-          </div>
-        </div>
-      </section>
+          </ol>
+        </header>
 
-      <section className="blk blk--blush panel giftValuesPanel" id="gift-values" aria-labelledby="gift-values-title">
-        <div className="wrap">
-          <header className="blk__head blk__head--center">
-            <p className="kicker">Choose your gift value</p>
-            <h2 className="display blk__title" id="gift-values-title">
-              Or give a <span className="hand">dollar</span> value
-            </h2>
-            <p className="blk__lead">Credit towards any session they like. Anything left over stays on their code for next time.</p>
-          </header>
-          <div className="gvals">
-            {GIFT_VALUES.map((v) => (
-              <label className="gopt gval" key={v}>
-                <input
-                  type="radio"
-                  name="gift"
-                  checked={choice.kind === "value" && choice.amount === v && custom == null}
-                  onChange={() => {
-                    setCustom(null);
-                    pick({ kind: "value", amount: v });
-                  }}
-                />
-                <span className="gopt__box">
-                  <span className="gopt__radio" aria-hidden="true" />
-                  <span className="gopt__price display">${v}</span>
-                  <span className="gopt__meta caps">Gift card</span>
-                </span>
-              </label>
-            ))}
-            <div className={`gopt gval gval--custom${custom != null ? " gval--on" : ""}`}>
-              <div className="gopt__box">
-                <span className="gopt__radio" aria-hidden="true" />
-                <AmountSelect
-                  value={custom}
-                  options={CUSTOM_AMOUNTS}
-                  placeholder="Other"
-                  onChange={(v) => {
-                    setCustom(v);
-                    pick({ kind: "value", amount: v });
-                  }}
-                />
-                <span className="gopt__meta caps">Custom amount</span>
-              </div>
-            </div>
-          </div>
+        <form className="gco__grid" onSubmit={pay} noValidate>
+          {/* ───────── The step ───────── */}
+          <div className="gco__card">
+            <div className="gco__body" ref={body}>
+              {step === 0 ? (
+                <>
+                  <div className="gco__intro">
+                    <h2 className="display gco__h2">Choose a gift</h2>
+                    <div className="gco__tabs" role="tablist" aria-label="Gift type">
+                      <button type="button" role="tab" aria-selected={tab === "experience"} className="gco__tab" onClick={() => setTab("experience")}>
+                        Experiences
+                      </button>
+                      <button type="button" role="tab" aria-selected={tab === "value"} className="gco__tab" onClick={() => setTab("value")}>
+                        Gift value
+                      </button>
+                    </div>
+                  </div>
 
-          <div className="gpick" aria-live="polite">
-            <p className="gpick__text">
-              <span className="caps">Your gift</span>
-              <strong>{item ? item.title : "Choose a gift"}</strong>
-              {item ? <span className="gpick__detail">{item.detail}</span> : null}
-            </p>
-            <strong className="gpick__price display">{item ? `$${item.price.toLocaleString("en-AU")}` : ""}</strong>
-            <a className="btn btn--red btn--caps" href="#buy">
-              Personalise it
-            </a>
-          </div>
-        </div>
-      </section>
+                  {tab === "experience" ? (
+                    <div role="tabpanel" aria-label="Signature Experiences">
+                      <p className="gco__note">The exact session, at its studio price. They choose a time that suits them.</p>
+                      {GROUPS.map((group) => (
+                        <div className="gco__group" key={group.name} role="radiogroup" aria-label={group.label}>
+                          <h3 className="gcol__title caps">{group.label}</h3>
+                          <div className="gco__opts">
+                            {GIFT_EXPERIENCES.filter((x) => x.group === group.name).map((x) => (
+                              <label className="gopt" key={x.id}>
+                                <input type="radio" name="gift" checked={choice?.kind === "experience" && choice.id === x.id} onChange={() => pickExperience(x.id)} />
+                                <span className="gopt__box">
+                                  <span className="gopt__radio" aria-hidden="true" />
+                                  <span className="gopt__main">
+                                    <span className="gopt__meta caps">{x.minutes} minutes</span>
+                                    <span className="gopt__name display">{x.name}</span>
+                                    <span className="gopt__lead">{x.lead}</span>
+                                  </span>
+                                  <span className="gopt__price display">${x.price}</span>
+                                </span>
+                              </label>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div role="tabpanel" aria-label="Gift value">
+                      <p className="gco__note">Credit towards any session they like. Anything left over stays on their code for next time.</p>
+                      <div className="gvals" role="radiogroup" aria-label="Gift value">
+                        {GIFT_VALUES.map((v) => (
+                          <label className="gopt gval" key={v}>
+                            <input type="radio" name="gift" checked={choice?.kind === "value" && choice.amount === v && custom == null} onChange={() => pickValue(v)} />
+                            <span className="gopt__box">
+                              <span className="gopt__radio" aria-hidden="true" />
+                              <span className="gopt__price display">${v}</span>
+                              <span className="gopt__meta caps">Gift card</span>
+                            </span>
+                          </label>
+                        ))}
+                        <div className={`gopt gval gval--custom${custom != null ? " gval--on" : ""}`}>
+                          <div className="gopt__box">
+                            <span className="gopt__radio" aria-hidden="true" />
+                            <AmountSelect value={custom} options={CUSTOM_AMOUNTS} placeholder="Other" onChange={(v) => pickValue(v, true)} />
+                            <span className="gopt__meta caps">Custom amount</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : null}
 
-      <section className="blk blk--sky panel" id="buy" aria-labelledby="gift-make-title">
-        <div className="wrap">
-          <header className="blk__head blk__head--center">
-            <p className="kicker">Make it personal</p>
-            <h2 className="display blk__title" id="gift-make-title">
-              Their certificate, as they’ll <span className="hand">receive</span> it
-            </h2>
-          </header>
-          <div className="giftMake">
-            <div className="cform">
-              <p className="giftForm__legend caps">For</p>
-              <div className="cform__row">
-                <div className="cform__field">
-                  <label htmlFor="g-rname">Recipient’s name</label>
-                  <input id="g-rname" required maxLength={60} autoComplete="off" value={form.recipientName} onChange={set("recipientName")} />
-                </div>
-                <div className="cform__field">
-                  <label htmlFor="g-remail">Recipient’s email</label>
-                  <input id="g-remail" required type="email" maxLength={120} autoComplete="off" value={form.recipientEmail} onChange={set("recipientEmail")} />
-                </div>
-              </div>
-              <div className="cform__field">
-                <label htmlFor="g-msg">
-                  Personal message <span className="cform__optional">(optional)</span>
-                </label>
-                <textarea id="g-msg" maxLength={200} value={form.message} onChange={set("message")} placeholder="Happy birthday! Time to look after you." />
-              </div>
-
-              <p className="giftForm__legend caps">From</p>
-              <div className="cform__row">
-                <div className="cform__field">
-                  <label htmlFor="g-fname">Your name</label>
-                  <input id="g-fname" required maxLength={60} autoComplete="name" value={form.fromName} onChange={set("fromName")} />
-                </div>
-                <div className="cform__field">
-                  <label htmlFor="g-femail">
-                    Your email <span className="cform__optional">(for your receipt)</span>
-                  </label>
-                  <input id="g-femail" required type="email" maxLength={120} autoComplete="email" value={form.fromEmail} onChange={set("fromEmail")} />
-                </div>
-              </div>
-
-              <p className="giftForm__legend caps">Delivery</p>
-              <div className="giftWhen" role="radiogroup" aria-label="Delivery">
-                <label className="giftWhen__opt">
-                  <input type="radio" name="when" checked={!later} onChange={() => setLater(false)} />
-                  <span>
-                    <strong>Send now</strong> Straight after payment
-                  </span>
-                </label>
-                <label className="giftWhen__opt">
-                  <input type="radio" name="when" checked={later} onChange={() => setLater(true)} />
-                  <span>
-                    <strong>Schedule it</strong> 8 am Perth time on the day
-                  </span>
-                </label>
-              </div>
-              {later ? (
-                <div className="cform__field">
-                  <label htmlFor="g-date">Send on</label>
-                  <input id="g-date" type="date" min={today} max={maxDate} value={date} onChange={(e) => setDate(e.target.value)} required />
+              {step === 1 ? (
+                <div className="cform gco__form">
+                  <h2 className="display gco__h2">Make it personal</h2>
+                  <p className="giftForm__legend caps">For</p>
+                  <div className="cform__row">
+                    <div className="cform__field">
+                      <label htmlFor="g-rname">Recipient’s name</label>
+                      <input id="g-rname" maxLength={60} autoComplete="off" value={form.recipientName} onChange={set("recipientName")} />
+                    </div>
+                    <div className="cform__field">
+                      <label htmlFor="g-remail">Recipient’s email</label>
+                      <input id="g-remail" type="email" maxLength={120} autoComplete="off" value={form.recipientEmail} onChange={set("recipientEmail")} />
+                    </div>
+                  </div>
+                  <div className="cform__field">
+                    <label htmlFor="g-msg">
+                      Personal message <span className="cform__optional">(optional · {MESSAGE_MAX - form.message.length} left)</span>
+                    </label>
+                    <textarea id="g-msg" maxLength={MESSAGE_MAX} value={form.message} onChange={set("message")} placeholder="Happy birthday! Time to look after you." />
+                  </div>
+                  <p className="giftForm__legend caps">From</p>
+                  <div className="cform__row">
+                    <div className="cform__field">
+                      <label htmlFor="g-fname">Your name</label>
+                      <input id="g-fname" maxLength={60} autoComplete="name" value={form.fromName} onChange={set("fromName")} />
+                    </div>
+                    <div className="cform__field">
+                      <label htmlFor="g-femail">
+                        Your email <span className="cform__optional">(for your receipt)</span>
+                      </label>
+                      <input id="g-femail" type="email" maxLength={120} autoComplete="email" value={form.fromEmail} onChange={set("fromEmail")} />
+                    </div>
+                  </div>
                 </div>
               ) : null}
 
-              <div className="giftSummary" aria-live="polite">
-                <span>{item ? item.title : "Choose a gift"}</span>
-                <strong className="display">{item ? `$${item.price.toLocaleString("en-AU")}` : "—"}</strong>
-              </div>
+              {step === 2 ? (
+                <div className="cform gco__form">
+                  <h2 className="display gco__h2">When should it arrive?</h2>
+                  <div className="giftWhen giftWhen--big" role="radiogroup" aria-label="Delivery">
+                    <label className="giftWhen__opt">
+                      <input type="radio" name="when" checked={!later} onChange={() => setLater(false)} />
+                      <span>
+                        <strong>Send now</strong> Emailed straight after payment.
+                      </span>
+                    </label>
+                    <label className="giftWhen__opt">
+                      <input type="radio" name="when" checked={later} onChange={() => setLater(true)} />
+                      <span>
+                        <strong>Schedule it</strong> For a birthday or anniversary: emailed at 8 am Perth time on the day.
+                      </span>
+                    </label>
+                  </div>
+                  {later ? (
+                    <div className="cform__field gco__date">
+                      <label htmlFor="g-date">Send on</label>
+                      <input id="g-date" type="date" min={today} max={maxDate} value={date} onChange={(e) => setDate(e.target.value)} />
+                    </div>
+                  ) : null}
+                  <p className="gco__note">Either way, you get your receipt and a printable PDF straight away, so you can also hand it over yourself.</p>
+                </div>
+              ) : null}
+
+              {step === 3 ? (
+                <div className="gco__review">
+                  <h2 className="display gco__h2">Review your gift</h2>
+                  <dl className="gco__dl">
+                    <div>
+                      <dt>Gift</dt>
+                      <dd>
+                        {item?.title} <span>{item?.detail}</span>
+                      </dd>
+                      <button type="button" className="gco__edit" onClick={() => go(0)}>Edit</button>
+                    </div>
+                    <div>
+                      <dt>For</dt>
+                      <dd>
+                        {form.recipientName} <span>{form.recipientEmail}</span>
+                      </dd>
+                      <button type="button" className="gco__edit" onClick={() => go(1)}>Edit</button>
+                    </div>
+                    <div>
+                      <dt>From</dt>
+                      <dd>
+                        {form.fromName} <span>{form.fromEmail}</span>
+                      </dd>
+                      <button type="button" className="gco__edit" onClick={() => go(1)}>Edit</button>
+                    </div>
+                    {form.message.trim() ? (
+                      <div>
+                        <dt>Message</dt>
+                        <dd className="gco__msg">“{form.message.trim()}”</dd>
+                        <button type="button" className="gco__edit" onClick={() => go(1)}>Edit</button>
+                      </div>
+                    ) : null}
+                    <div>
+                      <dt>Delivery</dt>
+                      <dd>{sendOn ? `${sendOn}, 8 am Perth time` : "Straight after payment"}</dd>
+                      <button type="button" className="gco__edit" onClick={() => go(2)}>Edit</button>
+                    </div>
+                  </dl>
+                  <p className="gco__note">
+                    Valid for 36 months. Redeem online when booking, or in studio. See our <a href="/refund-and-cancellation-policy">Refund and Cancellation Policy</a>.
+                  </p>
+                </div>
+              ) : null}
+            </div>
+
+            <div className="gco__foot">
               {error ? (
-                <p className="cform__msg cform__msg--failed" role="alert">
+                <p className="cform__msg cform__msg--failed gco__error" role="alert">
                   {error}
                 </p>
               ) : null}
-              <div className="cform__send">
-                <button className="btn btn--red btn--caps btn--lg" type="submit" disabled={busy}>
-                  {busy ? "Opening secure payment…" : "Continue to payment"}
-                </button>
-                <p className="cform__note">
-                  Secure payment by Square. Valid for 36 months. See our <a href="/refund-and-cancellation-policy">Refund and Cancellation Policy</a>.
-                </p>
+              <div className="gco__nav">
+                {step > 0 ? (
+                  <button type="button" className="gco__back" onClick={() => go(step - 1)}>
+                    ‹ Return to {STEPS[step - 1].toLowerCase()}
+                  </button>
+                ) : (
+                  <span />
+                )}
+                {step < 3 ? (
+                  <button type="button" className="btn btn--red btn--caps" onClick={() => go(step + 1)}>
+                    Continue<span className="gco__next">&nbsp;to {STEPS[step + 1].toLowerCase()}</span>&nbsp;→
+                  </button>
+                ) : (
+                  <button type="submit" className="btn btn--red btn--caps" disabled={busy}>
+                    {busy ? "Opening secure payment…" : "Pay now"}
+                  </button>
+                )}
               </div>
-            </div>
-
-            <div className="giftPreview">
-              <div className="giftPreview__face">
-                <CertificateFace fields={fields} qrUrl="https://stretchflex.au/gift-certificates" label={`Preview of the gift certificate for ${fields.recipient}: ${fields.title}`} />
-              </div>
-              <p className="giftPreview__note">Live preview. Your certificate gets its own unique redemption code.</p>
             </div>
           </div>
-        </div>
-      </section>
-    </form>
+
+          {/* ───────── Order summary ───────── */}
+          <aside className={`gco__cart${preview ? " gco__cart--open" : ""}`} aria-label="Order summary">
+            <button type="button" className="gco__peek" aria-expanded={preview} onClick={() => setPreview((v) => !v)}>
+              <span>{preview ? "Hide order summary" : "Show order summary"}</span>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              <strong>{price}</strong>
+            </button>
+            <div className="gco__sum">
+              <div className="gco__line">
+                <div className="gco__thumb">
+                  <CertificateFace fields={fields} label="" />
+                  <span className="gco__qty" aria-label="Quantity 1">1</span>
+                </div>
+                <div className="gco__linetext">
+                  <strong>{item ? item.title : "No gift chosen yet"}</strong>
+                  <span>{item ? `Gift certificate · ${item.detail}` : "Choose an experience or a value"}</span>
+                  {form.recipientName.trim() ? <span>For {form.recipientName.trim()}</span> : null}
+                </div>
+                <span className="gco__amt">{price}</span>
+              </div>
+              <dl className="gco__rows">
+                <div>
+                  <dt>Subtotal</dt>
+                  <dd>{price}</dd>
+                </div>
+                <div>
+                  <dt>Delivery</dt>
+                  <dd>{sendOn ? `Email · ${sendOn}` : "Email · Free"}</dd>
+                </div>
+                <div className="gco__total">
+                  <dt>
+                    Total <small>Including GST</small>
+                  </dt>
+                  <dd>
+                    <small>AUD</small> <strong>{price}</strong>
+                  </dd>
+                </div>
+              </dl>
+              <div className="gco__face">
+                <p className="caps">Certificate preview</p>
+                <CertificateFace fields={fields} qrUrl="https://stretchflex.au/gift-certificates" label={`Preview of the gift certificate for ${fields.recipient}: ${fields.title}`} />
+              </div>
+            </div>
+          </aside>
+        </form>
+      </div>
+    </section>
   );
 }
