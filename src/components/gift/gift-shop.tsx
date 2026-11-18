@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useRef, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { AmountSelect } from "./amount-select";
 import { CertificateFace } from "./certificate-face";
 import { CUSTOM_AMOUNTS, GIFT_EXPERIENCES, GIFT_VALUES, SAMPLE_CODE, describe, validUntil, type GiftChoice } from "@/lib/gift/catalog";
 import { MESSAGE_MAX } from "@/lib/gift/certificate";
 
 const STEPS = ["Choose", "Personalise", "Delivery", "Review"] as const;
+const SAVE_KEY = "stretchflex-gift";
 const EMAIL = /^[^\s@<>()",;:]+@[^\s@<>()",;:]+\.[a-z]{2,}$/i;
 
 const GROUPS = [
@@ -33,6 +34,31 @@ export function GiftShop() {
   const [error, setError] = useState("");
   const [preview, setPreview] = useState(false);
   const body = useRef<HTMLDivElement>(null);
+
+  // What they have chosen and typed is kept for this browser tab, so leaving the
+  // page (to read a policy, or by mistake) and coming back loses nothing.
+  const [restored, setRestored] = useState(false);
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(sessionStorage.getItem(SAVE_KEY) ?? "null");
+      if (saved) {
+        if (saved.choice && describe(saved.choice)) setChoice(saved.choice);
+        setCustom(saved.custom ?? null);
+        setForm((f) => ({ ...f, ...saved.form, message: String(saved.form?.message ?? "").slice(0, MESSAGE_MAX) }));
+        setLater(!!saved.later);
+        setDate(saved.date ?? "");
+        setTab(saved.tab === "value" ? "value" : "experience");
+        setStep(Math.min(3, Math.max(0, Number(saved.step) || 0)));
+      }
+    } catch {}
+    setRestored(true);
+  }, []);
+  useEffect(() => {
+    if (!restored) return;
+    try {
+      sessionStorage.setItem(SAVE_KEY, JSON.stringify({ choice, custom, form, later, date, tab, step }));
+    } catch {}
+  }, [restored, choice, custom, form, later, date, tab, step]);
 
   const item = choice ? describe(choice) : null;
   const price = item ? `$${item.price.toLocaleString("en-AU")}.00` : "$0.00";
@@ -325,7 +351,7 @@ export function GiftShop() {
                     </div>
                   </dl>
                   <p className="gco__note">
-                    Valid for 36 months. Redeem online when booking, or in studio. See our <a href="/refund-and-cancellation-policy">Refund and Cancellation Policy</a>.
+                    Valid for 36 months. Redeem online when booking, or in studio. See our <a href="/refund-and-cancellation-policy" target="_blank" rel="noopener">Refund and Cancellation Policy<span className="sr-only"> (opens in a new tab)</span></a>.
                   </p>
                 </div>
               ) : null}

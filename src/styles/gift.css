@@ -536,3 +536,6 @@
 
 /* Continue / Back scroll here: the steps line, clear of the fixed header. */
 #gco-steps { scroll-margin-top: calc(var(--header-h) + var(--frame) + 14px); }
+
+/* The message is short (it has to fit on the certificate), so its box is too. */
+.gco__form textarea { min-height: 84px; }

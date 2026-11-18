@@ -29,7 +29,7 @@ export type CertificateArt = {
 };
 
 /** The longest personal message the certificate can show in full. */
-export const MESSAGE_MAX = 100;
+export const MESSAGE_MAX = 80;
 
 export const CERT_FONTS = {
   sans: "Albert Sans",

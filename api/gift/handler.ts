@@ -89,7 +89,7 @@ async function checkout(raw: string) {
   const recipientEmail = clean(input.recipientEmail, 120).toLowerCase();
   const fromName = clean(input.fromName, 60);
   const fromEmail = clean(input.fromEmail, 120).toLowerCase();
-  const message = clean(input.message, 200);
+  const message = clean(input.message, 80);
   let deliver = clean(input.deliver, 10) || "now";
   if (deliver !== "now") {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(deliver) || deliver > perthDay(365)) return json(400, { error: "Choose a delivery date within the next 12 months." });
