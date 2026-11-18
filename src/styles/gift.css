@@ -530,3 +530,41 @@
   .gco__dl > div { grid-template-columns: minmax(0, 1fr) auto; }
   .gco__dl dt { grid-column: 1 / -1; }
 }
+
+/* Phones and tablets: the live certificate is pinned under the header, so it
+   is always in view and fills in as they choose and type. */
+.gco__live { display: none; }
+
+@media (max-width: 1000px) {
+  .gco__live {
+    position: sticky;
+    top: calc(var(--header-h) + var(--frame) + 4px);
+    z-index: 6;
+    display: block;
+    margin: 0 calc(-1 * var(--gutter)) 12px;
+    padding: 8px var(--gutter) 10px;
+    background: linear-gradient(var(--rose) 86%, transparent);
+  }
+  .gco__live svg {
+    display: block;
+    width: min(100%, 380px);
+    height: auto;
+    margin-inline: auto;
+    border-radius: 10px;
+    box-shadow: 0 12px 26px -12px rgb(6 49 78 / 0.55);
+  }
+  /* The pinned one replaces the preview inside the order summary. */
+  .gco__sum .gco__face { display: none; }
+}
+
+/* Short screens (keyboard open): a smaller certificate leaves room to type. */
+@media (max-width: 1000px) and (max-height: 620px) {
+  .gco__live svg { width: min(100%, 250px); }
+}
+
+/* The header slides away when scrolling down: the pinned certificate moves up
+   into its place, and back down when the header returns. */
+@media (max-width: 1000px) {
+  .gco__live { transition: top 0.3s var(--ease); }
+  body:has(.header[data-hidden]) .gco__live { top: 0; }
+}

@@ -142,6 +142,11 @@ export function GiftShop() {
           </ol>
         </header>
 
+        {/* Phones: the certificate stays in view while they choose and type, filling in live. */}
+        <div className="gco__live" aria-hidden="true">
+          <CertificateFace fields={fields} label="" />
+        </div>
+
         <form className="gco__grid" onSubmit={pay} noValidate>
           {/* ───────── The step ───────── */}
           <div className="gco__card">
