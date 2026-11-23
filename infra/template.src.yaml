@@ -422,7 +422,7 @@ __EDGE_CODE__
     DeletionPolicy: Retain
     UpdateReplacePolicy: Retain
     Properties:
-      TableName: !Sub raymancini-stretchflex-gifts-${Env}
+      TableName: !Sub raymancini-stretchflex-${Env}-gifts   # (raymancini-stretchflex-gifts-prod is an empty table left by the first deploy)
       BillingMode: PAY_PER_REQUEST
       AttributeDefinitions: [{ AttributeName: code, AttributeType: S }]
       KeySchema: [{ AttributeName: code, KeyType: HASH }]

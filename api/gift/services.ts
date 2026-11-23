@@ -11,12 +11,17 @@ const env = (name: string) => process.env[name] ?? "";
 const ssm = new SSMClient({});
 const cache = new Map<string, Promise<string>>();
 
+/** A key from SSM. Found values are kept; a missing one is asked for again next time (so a key saved later works at once). */
 export function param(name: string): Promise<string> {
   if (!cache.has(name)) {
-    cache.set(
-      name,
-      ssm.send(new GetParameterCommand({ Name: name, WithDecryption: true })).then((r) => r.Parameter?.Value ?? "").catch(() => ""),
-    );
+    const value = ssm
+      .send(new GetParameterCommand({ Name: name, WithDecryption: true }))
+      .then((r) => r.Parameter?.Value ?? "")
+      .catch(() => "");
+    cache.set(name, value);
+    value.then((v) => {
+      if (!v) cache.delete(name);
+    });
   }
   return cache.get(name)!;
 }
