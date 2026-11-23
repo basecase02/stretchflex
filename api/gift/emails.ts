@@ -35,6 +35,24 @@ const howTo = (g: Gift) => `
 <p style="margin:0;font-size:13px;line-height:20px;color:#a99f8e;">Valid until ${esc(g.validUntil)}. ${g.choice.kind === "value" ? "Any amount left over stays on the certificate for next time." : "Covers one session of the experience shown."}</p>
 </td></tr>`;
 
+/** What to do before the session, from the site's First Time Visitors and FAQs (same wording). */
+const PREP: [string, string][] = [
+  ["Socks are compulsory", "Bring a clean, unworn pair of socks to change into before your session, for hygiene and grip. Forgot yours? StretchFLEX grip socks are $15 at reception."],
+  ["What to wear", "Comfortable, flexible activewear. You stay clothed for the whole session. For Photobiotic or light sessions, light-coloured activewear works best, as denim and dark, heavy fabrics block the light."],
+  ["Before you arrive", "Eat lightly and avoid a heavy meal in the one to two hours before, bring a water bottle, and arrive 5 to 10 minutes early."],
+  ["Your health", "Tell us about any injuries, surgery or health conditions when you book. If you have had a recent injury, surgery or diagnosis, check with your health professional first."],
+  ["Changing your booking", "Give us at least 48 hours notice to reschedule. See our Refund and Cancellation Policy at stretchflex.au/refund-and-cancellation-policy."],
+  ["Finding us", "111 Trinity Arcade, 72 St Georges Terrace, Perth. Trinity Arcade runs between St Georges Terrace and Hay Street Mall, a short walk from Perth Underground and Elizabeth Quay stations."],
+];
+
+const prepHtml = () => `
+<tr><td style="padding:22px 0 0;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="padding:26px 28px;background:#141210;border:1px solid #3a3226;border-radius:14px;">
+<p style="margin:0 0 12px;font-size:12px;letter-spacing:4px;color:${GOLD};text-transform:uppercase;">Before your session</p>
+${PREP.map(([h, b]) => `<p style="margin:0 0 12px;font-size:15px;line-height:23px;"><strong style="color:${GOLD};">${esc(h)}.</strong> ${esc(b)}</p>`).join("\n")}
+</td></tr></table></td></tr>`;
+
+const prepText = () => "\nBEFORE YOUR SESSION\n" + PREP.map(([h, b]) => `- ${h}: ${b}`).join("\n") + "\n";
+
 export function recipientEmail(g: Gift) {
   const first = g.recipientName.split(" ")[0];
   const html = shell(
@@ -47,6 +65,7 @@ export function recipientEmail(g: Gift) {
 ${g.message ? `<tr><td align="center" style="padding:0 24px 22px;font-family:Georgia,serif;font-style:italic;font-size:18px;line-height:28px;color:#f4eee2;">“${esc(g.message)}”<br><span style="font-style:normal;font-size:14px;color:${GOLD};">— ${esc(g.fromName)}</span></td></tr>` : ""}
 <tr><td align="center" style="padding:0 0 26px;">${button(`${SITE()}/book-your-session`, "Book your session")}${button(viewUrl(g), "Open mobile certificate")}</td></tr>
 ${howTo(g)}
+${prepHtml()}
 <tr><td align="center" style="padding:18px 0 0;font-size:13px;color:#a99f8e;">The printable certificate is attached as a PDF.</td></tr>`,
   );
   const text = `${first}, ${g.fromName} has gifted you ${g.title} at StretchFLEX, Perth.
@@ -56,7 +75,7 @@ Valid until: ${g.validUntil}
 
 Book online at ${SITE()}/book-your-session and enter your code, or call 0432 569 077.
 Show your certificate when you arrive: ${viewUrl(g)}
-
+${prepText()}
 StretchFLEX, 111 Trinity Arcade, 72 St Georges Terrace, Perth WA 6000`;
   return { subject: `${g.fromName} has sent you a StretchFLEX gift`, html, text };
 }

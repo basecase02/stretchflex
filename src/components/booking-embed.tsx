@@ -47,6 +47,19 @@ export function BookingEmbed() {
           <p className="booking__note">Private, one-on-one · Instant email confirmation · Free reschedule with 48 hours notice</p>
         </header>
 
+        {/* What to know before booking, above the scheduler (the full list is under it). */}
+        <ul className="booking__before" aria-label="Before you book">
+          <li>
+            <strong>Socks are compulsory:</strong> bring a clean, unworn pair (grip socks $15 at reception)
+          </li>
+          <li>
+            <strong>Health:</strong> tell us about any injuries or conditions in your booking
+          </li>
+          <li>
+            <strong>Changes:</strong> 48 hours notice for a full refund (<a href="/refund-and-cancellation-policy">policy</a>)
+          </li>
+        </ul>
+
         <div className="booking__bar" aria-live="polite">
           {session ? (
             <>

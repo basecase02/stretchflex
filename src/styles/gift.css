@@ -334,12 +334,13 @@
 
 /* ==========================================================================
    Checkout (gift-shop.tsx), laid out like a shop checkout: one card, the
-   steps on the left, the order summary on a tinted right column. One screen
-   tall under the fixed header; a long step scrolls inside its column.
+   steps on the left, the order summary on a tinted right column.
+   The page scrolls as normal at every size and zoom (no scrolling inside the
+   card), and the Back / Continue / Pay bar sticks to the bottom of the window
+   whenever a step is taller than the screen, so it can always be reached.
    ========================================================================== */
 
 .gco {
-  --gco-h: max(560px, calc(100svh - var(--header-h) - 3 * var(--frame) - 150px));
   margin-top: var(--frame);
   padding-top: calc(var(--header-h) + var(--frame) + clamp(10px, 2vh, 22px));
   padding-bottom: clamp(18px, 3vh, 32px);
@@ -363,16 +364,17 @@
 .gco__grid {
   display: grid;
   grid-template-columns: minmax(0, 1.3fr) minmax(320px, 0.7fr);
-  height: var(--gco-h);
   border: 1.5px solid var(--rule);
   border-radius: var(--r-card);
   background: var(--white);
-  overflow: hidden;
+  overflow: clip; /* rounds the corners without stopping the sticky bar */
 }
 
-.gco__card { display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 0; }
+.gco__grid { grid-template-rows: 1fr auto; }
+.gco__card { grid-column: 1; grid-row: 1; min-width: 0; }
+.gco__cart { grid-column: 2; grid-row: 1 / span 2; }
 
-.gco__body { min-height: 0; padding: clamp(20px, 2.6vw, 36px); overflow-y: auto; overscroll-behavior: contain; }
+.gco__body { padding: clamp(20px, 2.6vw, 36px); }
 
 .gco__intro { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
 
@@ -443,12 +445,31 @@
 .gco__edit:hover,
 .gco__back:hover { text-decoration: underline; text-underline-offset: 3px; }
 
-.gco__foot { padding: 14px clamp(20px, 2.6vw, 36px); border-top: 1.5px solid var(--rule); background: var(--white); }
+.gco__foot {
+  grid-column: 1;
+  grid-row: 2;
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  padding: 14px clamp(20px, 2.6vw, 36px) max(14px, env(safe-area-inset-bottom));
+  border-top: 1.5px solid var(--rule);
+  background: var(--white);
+  box-shadow: 0 -12px 24px -20px rgb(6 49 78 / 0.45);
+}
+
+/* The site's floating Book / Call buttons would sit on Continue and Pay: not on this page. */
+body:has(.gco) .quick { display: none; }
 .gco__error { margin-bottom: 10px; }
 .gco__nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.gco__count { font-size: 0.9rem; color: var(--ink-soft); }
 
 /* Order summary: the tinted right column. */
-.gco__cart { min-height: 0; border-left: 1.5px solid var(--rule); background: #f3f7fb; overflow-y: auto; overscroll-behavior: contain; }
+.gco__cart { min-width: 0; border-left: 1.5px solid var(--rule); background: #f3f7fb; }
+
+/* Laptops with room for it: the summary stays in view beside a long step. */
+@media (min-width: 1000.02px) and (min-height: 760px) {
+  .gco__sum { position: sticky; top: calc(var(--header-h) + var(--frame) + 12px); }
+}
 
 .gco__peek { display: none; }
 
@@ -494,10 +515,13 @@
 
 /* Tablets and phones: "Show order summary  $120.00" bar on top, then the step. */
 @media (max-width: 1000px) {
-  .gco__grid { grid-template-columns: 1fr; height: auto; overflow: visible; }
+  .gco__grid { grid-template-columns: 1fr; grid-template-rows: none; }
+  .gco__card,
+  .gco__cart,
+  .gco__foot { grid-column: 1; grid-row: auto; }
   .gco__card { order: 2; }
-  .gco__body { overflow: visible; }
-  .gco__cart { order: 1; border-left: 0; border-bottom: 1.5px solid var(--rule); border-radius: var(--r-card) var(--r-card) 0 0; overflow: visible; }
+  .gco__foot { order: 3; }
+  .gco__cart { order: 1; border-left: 0; border-bottom: 1.5px solid var(--rule); border-radius: var(--r-card) var(--r-card) 0 0; }
   .gco__peek {
     display: flex;
     align-items: center;
@@ -519,8 +543,7 @@
   .gco__cart:not(.gco__cart--open) .gco__line,
   .gco__cart:not(.gco__cart--open) .gco__rows,
   .gco__face .caps { display: none; }
-  .gco__face svg { max-width: 460px; }
-  /* Not sticky: the site's floating Book and call buttons sit in that corner. */
+  .gco__face svg { max-width: min(100%, 420px); }
   .gco__foot { border-radius: 0 0 var(--r-card) var(--r-card); }
 }
 
@@ -532,6 +555,12 @@
   .gco .gvals { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .gco__dl > div { grid-template-columns: minmax(0, 1fr) auto; }
   .gco__dl dt { grid-column: 1 / -1; }
+}
+
+/* Short screens with the summary on top (tablets, zoomed-in laptops, phones on their side):
+   the certificate waits behind "Show order summary" so the step itself comes first. */
+@media (max-width: 1000px) and (max-height: 720px) {
+  .gco__cart:not(.gco__cart--open) .gco__sum { display: none; }
 }
 
 /* Continue / Back scroll here: the steps line, clear of the fixed header. */

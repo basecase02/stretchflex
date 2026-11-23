@@ -122,6 +122,11 @@ export function GiftShop() {
 
   async function pay(e: FormEvent) {
     e.preventDefault();
+    // Enter in a field, before the review step, means Continue (never straight to payment).
+    if (step < 3) {
+      go(step + 1);
+      return;
+    }
     for (let i = 0; i < 3; i++) {
       const p = problem(i);
       if (p) {
@@ -358,30 +363,32 @@ export function GiftShop() {
               ) : null}
             </div>
 
-            <div className="gco__foot">
-              {error ? (
-                <p className="cform__msg cform__msg--failed gco__error" role="alert">
-                  {error}
-                </p>
-              ) : null}
-              <div className="gco__nav">
-                {step > 0 ? (
-                  <button type="button" className="gco__back" onClick={() => go(step - 1)}>
-                    ‹ Return to {STEPS[step - 1].toLowerCase()}
-                  </button>
-                ) : (
-                  <span />
-                )}
-                {step < 3 ? (
-                  <button type="button" className="btn btn--red btn--caps" onClick={() => go(step + 1)}>
-                    Continue<span className="gco__next">&nbsp;to {STEPS[step + 1].toLowerCase()}</span>&nbsp;→
-                  </button>
-                ) : (
-                  <button type="submit" className="btn btn--red btn--caps" disabled={busy}>
-                    {busy ? "Opening secure payment…" : "Pay now"}
-                  </button>
-                )}
-              </div>
+          </div>
+
+          {/* ───────── Back / Continue / Pay: pinned to the bottom of the window while the checkout is on screen ───────── */}
+          <div className="gco__foot">
+            {error ? (
+              <p className="cform__msg cform__msg--failed gco__error" role="alert">
+                {error}
+              </p>
+            ) : null}
+            <div className="gco__nav">
+              {step > 0 ? (
+                <button type="button" className="gco__back" onClick={() => go(step - 1)}>
+                  ‹ Return to {STEPS[step - 1].toLowerCase()}
+                </button>
+              ) : (
+                <span />
+              )}
+              {step < 3 ? (
+                <button key="next" type="button" className="btn btn--red btn--caps" onClick={() => go(step + 1)}>
+                  Continue<span className="gco__next">&nbsp;to {STEPS[step + 1].toLowerCase()}</span>&nbsp;→
+                </button>
+              ) : (
+                <button key="pay" type="submit" className="btn btn--red btn--caps" disabled={busy}>
+                  {busy ? "Opening secure payment…" : "Pay now"}
+                </button>
+              )}
             </div>
           </div>
 
