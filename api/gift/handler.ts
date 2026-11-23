@@ -5,21 +5,22 @@
 //   GET  /api/gift/view      ?c=&t= → certificate fields for the mobile certificate
 //   GET  /api/gift/pdf       ?c=&t= → printable PDF
 //
-// Direct invokes: { action: "deliver", code } (EventBridge Scheduler, for
-// scheduled gifts), { action: "sweep" } (every 10 minutes: completes paid gifts
-// whose buyer closed the tab before returning), { action: "check" } (setup check).
+// Direct invokes: { action: "sweep" } (every 10 minutes: completes paid gifts
+// whose buyer closed the tab before returning, and sends gifts whose delivery
+// day has come, from 8 am Perth time), { action: "deliver", code } (sends one
+// paid gift now, by hand), { action: "check" } (setup check).
 //
 // When a gift is paid: its code is created in Acuity under the matching
 // private product (so it can be redeemed when booking online), the buyer gets a
-// receipt with the certificate, and the recipient's email goes now or is
-// scheduled for 8 am Perth time on the chosen day.
+// receipt with the certificate, and the recipient's email goes now or, for a
+// later day, from 8 am Perth time that day (picked up by the sweep).
 import { randomBytes, randomInt, timingSafeEqual } from "node:crypto";
 import { acuityProductFor, describe, validUntil, type GiftChoice } from "../../src/lib/gift/catalog";
 import type { CertificateFields } from "../../src/lib/gift/certificate";
 import { buyerEmail, pdfUrl, recipientEmail, viewUrl } from "./emails";
 import { certificatePdf, landscapePng } from "./render";
 import {
-  acuityCertificate, getGift, param, pendingGifts, putNewGift, scheduleDelivery, sendMail, square, squareLocation, squareOrderPaid, updateGift, type Gift,
+  acuityCertificate, dueGifts, getGift, param, pendingGifts, putNewGift, sendMail, square, squareLocation, squareOrderPaid, updateGift, type Gift,
 } from "./services";
 
 type HttpEvent = {
@@ -164,9 +165,16 @@ async function settle(g: Gift): Promise<Gift> {
     await updateGift(g.code, { acuity: false }, undefined, `Acuity code not created: ${(e as Error).message}`);
   }
 
+  // The buyer's receipt first: it shouldn't depend on the recipient's address working.
+  try {
+    await mailWithCertificate(paid, g.fromEmail, buyerEmail(paid));
+    await updateGift(g.code, {}, undefined, `receipt emailed to ${g.fromEmail}`);
+  } catch (e) {
+    console.error("receipt", g.code, e);
+    await updateGift(g.code, {}, undefined, `receipt not sent: ${(e as Error).message}`);
+  }
+  // Later days are sent by the sweep, from 8 am Perth time on the day.
   if (g.deliver === "now") await deliver(paid);
-  else await scheduleDelivery(g.code, g.deliver);
-  await mailWithCertificate(paid, g.fromEmail, buyerEmail(paid));
   return (await getGift(g.code)) ?? paid;
 }
 
@@ -204,10 +212,19 @@ async function mailWithCertificate(g: Gift, to: string, mail: { subject: string;
   });
 }
 
+/** Emails the recipient once: the gift is claimed (paid → sent) before sending, and put back if sending fails. */
 async function deliver(g: Gift) {
-  await mailWithCertificate(g, g.recipientEmail, recipientEmail(g));
-  await updateGift(g.code, { status: "sent", sentAt: new Date().toISOString() }, "paid", `emailed to ${g.recipientEmail}`);
+  if (!(await updateGift(g.code, { status: "sent", sentAt: new Date().toISOString() }, "paid"))) return;
+  try {
+    await mailWithCertificate(g, g.recipientEmail, recipientEmail(g));
+    await updateGift(g.code, {}, undefined, `emailed to ${g.recipientEmail}`);
+  } catch (e) {
+    console.error("deliver", g.code, e);
+    await updateGift(g.code, { status: "paid" }, "sent", `email to ${g.recipientEmail} failed: ${(e as Error).message}`);
+  }
 }
+
+const perthHour = () => Number(new Date().toLocaleString("en-AU", { timeZone: "Australia/Perth", hour: "2-digit", hourCycle: "h23" }));
 
 /* ───────────────────────────── receiving ───────────────────────────── */
 
@@ -256,7 +273,19 @@ async function direct(event: HttpEvent) {
         console.error("sweep", g.code, e);
       }
     }
-    return { pending: pending.length, completed: done };
+    // Gifts for a later day: sent from 8 am Perth time on that day (or as soon as possible after it).
+    let sent = 0;
+    const today = perthDay();
+    const due = (await dueGifts(today)).filter((g) => g.deliver === "now" || g.deliver < today || perthHour() >= 8);
+    for (const g of due) {
+      try {
+        await deliver(g);
+        sent++;
+      } catch (e) {
+        console.error("sweep deliver", g.code, e);
+      }
+    }
+    return { pending: pending.length, completed: done, delivered: sent };
   }
   if (event.action === "check") {
     // Setup check: which connections work (no secrets returned).

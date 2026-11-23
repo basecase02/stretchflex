@@ -458,12 +458,6 @@ __EDGE_CODE__
               - Effect: Allow
                 Action: [ses:SendEmail, ses:SendRawEmail]
                 Resource: !Sub arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/*
-              - Effect: Allow
-                Action: [scheduler:CreateSchedule]
-                Resource: !Sub arn:aws:scheduler:${AWS::Region}:${AWS::AccountId}:schedule/default/stretchflex-gift-*
-              - Effect: Allow
-                Action: [iam:PassRole]
-                Resource: !GetAtt GiftSchedulerRole.Arn
 
   GiftSchedulerRole:
     Type: AWS::IAM::Role
@@ -501,7 +495,6 @@ __EDGE_CODE__
           SQUARE_TOKEN_PARAM: !Sub /raymancini/${Env}/stretchflex/square-token
           ACUITY_USER_PARAM: !Sub /raymancini/${Env}/stretchflex/acuity-user
           ACUITY_KEY_PARAM: !Sub /raymancini/${Env}/stretchflex/acuity-key
-          SCHEDULER_ROLE_ARN: !GetAtt GiftSchedulerRole.Arn
       Events:
         Api:
           Type: HttpApi
@@ -521,7 +514,8 @@ __EDGE_CODE__
       Name: !Sub raymancini-stretchflex-${Env}-api
       DefaultRouteSettings: { ThrottlingBurstLimit: 50, ThrottlingRateLimit: 20 }
 
-  # Every 10 minutes: completes gifts paid in Square whose buyer never came back to the thank-you page.
+  # Every 10 minutes: completes gifts paid in Square whose buyer never came back to the
+  # thank-you page, and sends gifts whose delivery day has come (from 8 am Perth time).
   GiftSweep:
     Type: AWS::Scheduler::Schedule
     Properties:

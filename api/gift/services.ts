@@ -4,7 +4,6 @@
 import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { SchedulerClient, CreateScheduleCommand } from "@aws-sdk/client-scheduler";
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 import { randomBytes } from "node:crypto";
 
@@ -232,21 +231,22 @@ export async function updateGift(code: string, fields: Partial<Gift>, from?: Gif
   }
 }
 
-/* ─────────────────────────────── Scheduled delivery ─────────────────────────────── */
-
-const scheduler = new SchedulerClient({});
-
-/** Sends the recipient's email at 8 am Perth time on `date` (YYYY-MM-DD). */
-export async function scheduleDelivery(code: string, date: string) {
-  await scheduler.send(
-    new CreateScheduleCommand({
-      Name: `stretchflex-gift-${code}`,
-      GroupName: "default",
-      ScheduleExpression: `at(${date}T08:00:00)`,
-      ScheduleExpressionTimezone: "Australia/Perth",
-      FlexibleTimeWindow: { Mode: "OFF" },
-      ActionAfterCompletion: "DELETE",
-      Target: { Arn: env("SELF_ARN"), RoleArn: env("SCHEDULER_ROLE_ARN"), Input: JSON.stringify({ action: "deliver", code }) },
-    }),
-  );
+/** Paid gifts not yet emailed to the recipient: "now" ones (a failed send is retried) and later days that have arrived (`today` is the Perth date, YYYY-MM-DD). */
+export async function dueGifts(today: string): Promise<Gift[]> {
+  const out: Gift[] = [];
+  let start: Record<string, any> | undefined;
+  do {
+    const r = await db.send(
+      new ScanCommand({
+        TableName: TABLE(),
+        FilterExpression: "#s = :paid AND (#d = :now OR #d <= :today)",
+        ExpressionAttributeNames: { "#s": "status", "#d": "deliver" },
+        ExpressionAttributeValues: { ":paid": "paid", ":now": "now", ":today": today },
+        ExclusiveStartKey: start,
+      }),
+    );
+    out.push(...((r.Items as Gift[]) ?? []));
+    start = r.LastEvaluatedKey;
+  } while (start);
+  return out;
 }
