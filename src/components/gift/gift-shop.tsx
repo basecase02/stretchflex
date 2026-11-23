@@ -299,7 +299,7 @@ export function GiftShop() {
                     <label className="giftWhen__opt">
                       <input type="radio" name="when" checked={later} onChange={() => setLater(true)} />
                       <span>
-                        <strong>Schedule it</strong> For a birthday or anniversary: emailed at 8 am Perth time on the day.
+                        <strong>Schedule it</strong> For a birthday or anniversary: emailed at 12 am (midnight) Perth time, the moment the day begins.
                       </span>
                     </label>
                   </div>
@@ -347,7 +347,7 @@ export function GiftShop() {
                     ) : null}
                     <div>
                       <dt>Delivery</dt>
-                      <dd>{sendOn ? `${sendOn}, 8 am Perth time` : "Straight after payment"}</dd>
+                      <dd>{sendOn ? `${sendOn}, 12 am (midnight) Perth time` : "Straight after payment"}</dd>
                       <button type="button" className="gco__edit" onClick={() => go(2)}>Edit</button>
                     </div>
                   </dl>

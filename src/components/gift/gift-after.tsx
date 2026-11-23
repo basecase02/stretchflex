@@ -55,7 +55,7 @@ export function GiftThanks() {
 
   const when =
     order?.deliver && order.deliver !== "now"
-      ? `on ${new Date(order.deliver + "T00:00:00").toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long" })} at 8 am`
+      ? `on ${new Date(order.deliver + "T00:00:00").toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long" })} at 12 am (midnight) Perth time`
       : "now";
 
   if (error)

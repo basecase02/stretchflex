@@ -65,7 +65,7 @@ export function buyerEmail(g: Gift) {
   const when =
     g.deliver === "now"
       ? `We’ve emailed it to ${g.recipientName} at ${g.recipientEmail}.`
-      : `We’ll email it to ${g.recipientName} at ${g.recipientEmail} on ${new Date(g.deliver + "T00:00:00").toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}, at 8 am Perth time.`;
+      : `We’ll email it to ${g.recipientName} at ${g.recipientEmail} on ${new Date(g.deliver + "T00:00:00").toLocaleDateString("en-AU", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}, at 12 am (midnight) Perth time, as the day begins.`;
   const html = shell(
     `Your StretchFLEX gift for ${g.recipientName} is confirmed`,
     `<tr><td align="center" style="padding:0 16px 22px;">

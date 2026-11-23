@@ -11,7 +11,7 @@ export function GiftBuy() {
 /** What arrives: one certificate in three formats. */
 export function GiftFormats() {
   const formats = [
-    { title: "A beautiful email", body: "Sent straight away, or at 8 am on the day you choose, with their certificate and your message." },
+    { title: "A beautiful email", body: "Sent straight away, or at midnight as the day you choose begins, with their certificate and your message." },
     { title: "A printable PDF", body: "A landscape certificate, ready to print and place in a card. You get a copy too, to hand over yourself." },
     { title: "A mobile certificate", body: "One tap opens it on their phone, ready to show at the studio, with their unique code." },
   ];

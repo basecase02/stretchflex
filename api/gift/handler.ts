@@ -5,15 +5,15 @@
 //   GET  /api/gift/view      ?c=&t= → certificate fields for the mobile certificate
 //   GET  /api/gift/pdf       ?c=&t= → printable PDF
 //
-// Direct invokes: { action: "sweep" } (every 10 minutes: completes paid gifts
-// whose buyer closed the tab before returning, and sends gifts whose delivery
-// day has come, from 8 am Perth time), { action: "deliver", code } (sends one
-// paid gift now, by hand), { action: "check" } (setup check).
+// Direct invokes: { action: "sweep" } (at midnight Perth time, and every 10
+// minutes: completes paid gifts whose buyer closed the tab before returning,
+// and sends gifts whose delivery day has begun), { action: "deliver", code }
+// (sends one paid gift now, by hand), { action: "check" } (setup check).
 //
 // When a gift is paid: its code is created in Acuity under the matching
 // private product (so it can be redeemed when booking online), the buyer gets a
 // receipt with the certificate, and the recipient's email goes now or, for a
-// later day, from 8 am Perth time that day (picked up by the sweep).
+// later day, at 12 am (midnight) Perth time as that day begins.
 import { randomBytes, randomInt, timingSafeEqual } from "node:crypto";
 import { acuityProductFor, describe, validUntil, type GiftChoice } from "../../src/lib/gift/catalog";
 import type { CertificateFields } from "../../src/lib/gift/certificate";
@@ -173,7 +173,7 @@ async function settle(g: Gift): Promise<Gift> {
     console.error("receipt", g.code, e);
     await updateGift(g.code, {}, undefined, `receipt not sent: ${(e as Error).message}`);
   }
-  // Later days are sent by the sweep, from 8 am Perth time on the day.
+  // Later days are sent by the midnight sweep as that day begins (Perth time).
   if (g.deliver === "now") await deliver(paid);
   return (await getGift(g.code)) ?? paid;
 }
@@ -224,8 +224,6 @@ async function deliver(g: Gift) {
   }
 }
 
-const perthHour = () => Number(new Date().toLocaleString("en-AU", { timeZone: "Australia/Perth", hour: "2-digit", hourCycle: "h23" }));
-
 /* ───────────────────────────── receiving ───────────────────────────── */
 
 const same = (a: string, b: string) => a.length === b.length && timingSafeEqual(Buffer.from(a), Buffer.from(b));
@@ -273,10 +271,10 @@ async function direct(event: HttpEvent) {
         console.error("sweep", g.code, e);
       }
     }
-    // Gifts for a later day: sent from 8 am Perth time on that day (or as soon as possible after it).
+    // Gifts for a later day: sent at midnight Perth time as the day begins (the
+    // 10-minute runs catch any the midnight run missed, and retry failed sends).
     let sent = 0;
-    const today = perthDay();
-    const due = (await dueGifts(today)).filter((g) => g.deliver === "now" || g.deliver < today || perthHour() >= 8);
+    const due = await dueGifts(perthDay());
     for (const g of due) {
       try {
         await deliver(g);

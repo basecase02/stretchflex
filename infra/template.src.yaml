@@ -515,12 +515,25 @@ __EDGE_CODE__
       DefaultRouteSettings: { ThrottlingBurstLimit: 50, ThrottlingRateLimit: 20 }
 
   # Every 10 minutes: completes gifts paid in Square whose buyer never came back to the
-  # thank-you page, and sends gifts whose delivery day has come (from 8 am Perth time).
+  # thank-you page, and sends any dated gift the midnight run missed or failed to send.
   GiftSweep:
     Type: AWS::Scheduler::Schedule
     Properties:
       Name: !Sub raymancini-stretchflex-${Env}-gift-sweep
       ScheduleExpression: rate(10 minutes)
+      FlexibleTimeWindow: { Mode: "OFF" }
+      Target:
+        Arn: !GetAtt GiftFunction.Arn
+        RoleArn: !GetAtt GiftSchedulerRole.Arn
+        Input: '{"action":"sweep"}'
+
+  # At 12 am Perth time every day: emails the gifts set for that day, as it begins.
+  GiftMidnight:
+    Type: AWS::Scheduler::Schedule
+    Properties:
+      Name: !Sub raymancini-stretchflex-${Env}-gift-midnight
+      ScheduleExpression: cron(0 0 * * ? *)
+      ScheduleExpressionTimezone: Australia/Perth
       FlexibleTimeWindow: { Mode: "OFF" }
       Target:
         Arn: !GetAtt GiftFunction.Arn

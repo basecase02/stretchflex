@@ -13,7 +13,7 @@ const FAQ = [
   },
   {
     title: "Can I schedule the email for a birthday or anniversary?",
-    body: "Yes. Choose “Schedule it” and pick the day. We email it at 8 am Perth time on that date, and you get your receipt and a printable copy straight away.",
+    body: "Yes. Choose “Schedule it” and pick the day. We email it at 12 am (midnight) Perth time as that day begins, and you get your receipt and a printable copy straight away.",
   },
   {
     title: "What if a gift value is more than one session?",
