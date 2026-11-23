@@ -66,6 +66,7 @@ export const NAV: NavItem[] = [
   },
   { label: "First Time Visitors", href: "/first-time-visitors" },
   { label: "Membership", href: "/membership" },
+  { label: "Gift Certificates", href: "/gift-certificates" },
   {
     label: "About",
     href: "/about",
@@ -447,6 +448,7 @@ export const FOOTER = {
       links: [
         { label: "First Time Visitors", href: "/first-time-visitors" },
         { label: "Membership", href: "/membership" },
+        { label: "Gift Certificates", href: "/gift-certificates" },
         { label: "Assisted Stretching Perth", href: "/assisted-stretching-perth" },
         { label: "About", href: "/about" },
         { label: "FAQs", href: "/faqs" },

@@ -19,10 +19,14 @@ node scripts/build-images.mjs
 if [ "${1:-}" != "--site-only" ]; then
   echo "==> Deploying stack $STACK"
   node infra/build.mjs stretchflex.au
+  node scripts/build-api.mjs
+  # Where the site lives, for links in gift emails and the Square return address.
+  if [ -n "$WEB_DOMAIN" ]; then ORIGIN="https://$WEB_DOMAIN"; elif [ -n "$DOMAIN" ]; then ORIGIN="https://$DOMAIN"; else
+    ORIGIN="https://$(aws cloudformation describe-stacks --stack-name "$STACK" --query "Stacks[0].Outputs[?OutputKey=='CloudFrontDomain'].OutputValue" --output text 2>/dev/null)"; fi
   sam deploy --template-file infra/template.yaml --stack-name "$STACK" --resolve-s3 \
     --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM --no-fail-on-empty-changeset --no-confirm-changeset \
     --tags project=raymancini site=stretchflex env=prod \
-    --parameter-overrides "ParameterKey=DomainName,ParameterValue=$DOMAIN" "ParameterKey=CertificateArn,ParameterValue=$CERT_ARN" "ParameterKey=HostedZoneId,ParameterValue=$ZONE_ID" "ParameterKey=WebDomain,ParameterValue=$WEB_DOMAIN" "ParameterKey=WebCertificateArn,ParameterValue=$WEB_CERT_ARN"
+    --parameter-overrides "ParameterKey=DomainName,ParameterValue=$DOMAIN" "ParameterKey=CertificateArn,ParameterValue=$CERT_ARN" "ParameterKey=HostedZoneId,ParameterValue=$ZONE_ID" "ParameterKey=WebDomain,ParameterValue=$WEB_DOMAIN" "ParameterKey=WebCertificateArn,ParameterValue=$WEB_CERT_ARN" "ParameterKey=SiteOrigin,ParameterValue=$ORIGIN"
 fi
 
 out() { aws cloudformation describe-stacks --stack-name "$STACK" --query "Stacks[0].Outputs[?OutputKey=='$1'].OutputValue" --output text; }

@@ -1,4 +1,4 @@
-// POST /api/contact (through CloudFront): the contact form's message.
+// POST /api/contact (API Gateway): the contact form's message.
 // Sends two emails with SES:
 //   1. the enquiry to the studio (TO_EMAIL), with Reply-To set to the visitor
 //   2. a short "thanks, we got it" reply to the visitor
@@ -14,7 +14,6 @@ const db = new DynamoDBClient({});
 const {
   TO_EMAIL = "info@stretchflex.au",
   FROM_DOMAIN = "stretchflex.au",
-  ORIGIN_SECRET = "",
   TABLE = "",
   RATE_LIMIT = "5",
 } = process.env;
@@ -162,9 +161,6 @@ const send = (from, to, replyTo, { subject, text, html }) =>
 
 export async function handler(event) {
   const headers = event.headers ?? {};
-  // Called through API Gateway (the direct-served domain) or through CloudFront → function URL.
-  const viaUrl = (event.requestContext?.domainName ?? "").includes(".lambda-url.");
-  if (viaUrl && ORIGIN_SECRET && headers["x-origin-secret"] !== ORIGIN_SECRET) return reply(403, { error: "forbidden" });
   if (event.requestContext?.http?.method !== "POST") return reply(405, { error: "method not allowed" });
 
   const data = parse(event);
@@ -176,7 +172,9 @@ export async function handler(event) {
   if (!fields) return reply(400, { error: "invalid fields" });
 
   // CloudFront-Viewer-Address is "ip:port" (IPv6 has colons too, so drop only the last part).
-  const ip = viaUrl ? (headers["cloudfront-viewer-address"] ?? "").replace(/:\d+$/, "") : event.requestContext?.http?.sourceIp ?? "";
+  // On the live domain API Gateway sees the visitor; behind CloudFront (the preview) the visitor is in CloudFront-Viewer-Address.
+  const viaCloudFront = (event.requestContext?.domainName ?? "").endsWith(".amazonaws.com") && headers["cloudfront-viewer-address"];
+  const ip = viaCloudFront ? headers["cloudfront-viewer-address"].replace(/:\d+$/, "") : event.requestContext?.http?.sourceIp ?? "";
   if (!(await allowed(ip))) return reply(429, { error: "too many messages" });
 
   try {
