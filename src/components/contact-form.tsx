@@ -80,11 +80,22 @@ export function ContactForm({ note }: { note: string }) {
         const response = await fetch(ENDPOINT, {
           method: "POST",
           headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify(data),
+          // `company` is a hidden field only bots fill in; the server drops those messages.
+          body: JSON.stringify({ ...data, company: (event.currentTarget.elements.namedItem("company") as HTMLInputElement | null)?.value ?? "" }),
         });
+        if (response.status === 429) {
+          setStatus({
+            kind: "failed",
+            text: `You've sent a few messages already. Please call us on [${PHONE.label}](${PHONE.href}) or email [${TO}](${EMAIL.href}).`,
+          });
+          return;
+        }
         if (!response.ok) throw new Error(String(response.status));
         setFields({ name: "", email: "", phone: "", message: "" });
-        setStatus({ kind: "sent", text: "Thank you. Your message has been sent and we will be in touch soon." });
+        setStatus({
+          kind: "sent",
+          text: `Thank you, ${data.name.split(" ")[0]}. Your message has been sent and a confirmation is on its way to ${data.email}. We will be in touch soon.`,
+        });
       } catch {
         setStatus({
           kind: "failed",
@@ -123,6 +134,11 @@ export function ContactForm({ note }: { note: string }) {
 
   return (
     <form className="cform" onSubmit={onSubmit} noValidate>
+      <div className="cform__trap" aria-hidden="true">
+        <label>
+          Company <input type="text" name="company" tabIndex={-1} autoComplete="off" defaultValue="" />
+        </label>
+      </div>
       <div className="cform__row">
         <div className="cform__field">
           <label htmlFor={`${id}-name`}>

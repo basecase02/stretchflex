@@ -8,7 +8,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 export AWS_PROFILE="${AWS_PROFILE:-basecase02}" AWS_REGION=ap-southeast-2
 STACK="${STACK:-raymancini-stretchflex-prod}"
-DOMAIN="" CERT_ARN="" ZONE_ID=""
+DOMAIN="" CERT_ARN="" ZONE_ID="" WEB_DOMAIN="" WEB_CERT_ARN=""
 [ -f infra/deploy.env ] && . infra/deploy.env
 
 echo "==> Building pages"
@@ -22,7 +22,7 @@ if [ "${1:-}" != "--site-only" ]; then
   sam deploy --template-file infra/template.yaml --stack-name "$STACK" --resolve-s3 \
     --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM --no-fail-on-empty-changeset --no-confirm-changeset \
     --tags project=raymancini site=stretchflex env=prod \
-    --parameter-overrides "ParameterKey=DomainName,ParameterValue=$DOMAIN" "ParameterKey=CertificateArn,ParameterValue=$CERT_ARN" "ParameterKey=HostedZoneId,ParameterValue=$ZONE_ID"
+    --parameter-overrides "ParameterKey=DomainName,ParameterValue=$DOMAIN" "ParameterKey=CertificateArn,ParameterValue=$CERT_ARN" "ParameterKey=HostedZoneId,ParameterValue=$ZONE_ID" "ParameterKey=WebDomain,ParameterValue=$WEB_DOMAIN" "ParameterKey=WebCertificateArn,ParameterValue=$WEB_CERT_ARN"
 fi
 
 out() { aws cloudformation describe-stacks --stack-name "$STACK" --query "Stacks[0].Outputs[?OutputKey=='$1'].OutputValue" --output text; }

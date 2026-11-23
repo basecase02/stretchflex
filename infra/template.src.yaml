@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
-Description: StretchFLEX website (static, S3 + CloudFront)
+Description: StretchFLEX website (static, S3 + CloudFront) and its contact form (Lambda + SES)
 
 # infra/build.mjs writes template.yaml from this file (the CloudFront function
 # code comes from infra/edge.template.js + redirects.mjs). Deploy with
@@ -33,10 +33,28 @@ Parameters:
   RoleBoundaryName:
     Type: String
     Default: AppRoleBoundary
+  WebDomain:
+    Type: String
+    Default: ""
+    Description: Serve the site on this domain (and www) through API Gateway, without CloudFront. Used while CloudFront can't take the domain.
+  WebCertificateArn:
+    Type: String
+    Default: ""
+    Description: ACM certificate in ap-southeast-2 covering WebDomain and www.WebDomain.
+  MailDomain:
+    Type: String
+    Default: stretchflex.au
+    Description: Domain the contact form's emails are sent from (verified in SES with DKIM records in HostedZoneId).
+  ContactEmail:
+    Type: String
+    Default: info@stretchflex.au
+    Description: Where contact form messages go; also the From/Reply-To of the reply visitors get.
 Conditions:
   HasDomain: !Not [!Equals [!Ref DomainName, ""]]
   HasZone: !And [!Condition HasDomain, !Not [!Equals [!Ref HostedZoneId, ""]]]
   HasBoundary: !Not [!Equals [!Ref RoleBoundaryName, ""]]
+  HasWebDomain: !Not [!Equals [!Ref WebDomain, ""]]
+  HasMailZone: !Not [!Equals [!Ref HostedZoneId, ""]]
 
 Resources:
   # ------------------------------------------------------------------------- website
@@ -69,6 +87,198 @@ Resources:
             Action: s3:ListBucket
             Resource: !GetAtt SiteBucket.Arn
             Condition: { StringEquals: { "AWS:SourceArn": !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/${Distribution}" } }
+
+  # ------------------------------------------------------------------------- contact form
+  # The contact form posts to /api/contact (a CloudFront behaviour in front of
+  # the function URL). The function emails the message to ContactEmail and a
+  # short thank-you to the visitor, both through SES from MailDomain.
+  MailIdentity:
+    Type: AWS::SES::EmailIdentity
+    Properties:
+      EmailIdentity: !Ref MailDomain
+      DkimSigningAttributes: { NextSigningKeyLength: RSA_2048_BIT }
+  MailDkimRecords:
+    Type: AWS::Route53::RecordSetGroup
+    Condition: HasMailZone
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      RecordSets:
+        - { Name: !GetAtt MailIdentity.DkimDNSTokenName1, Type: CNAME, TTL: "1800", ResourceRecords: [!GetAtt MailIdentity.DkimDNSTokenValue1] }
+        - { Name: !GetAtt MailIdentity.DkimDNSTokenName2, Type: CNAME, TTL: "1800", ResourceRecords: [!GetAtt MailIdentity.DkimDNSTokenValue2] }
+        - { Name: !GetAtt MailIdentity.DkimDNSTokenName3, Type: CNAME, TTL: "1800", ResourceRecords: [!GetAtt MailIdentity.DkimDNSTokenValue3] }
+
+  ContactRateTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub raymancini-stretchflex-${Env}-contact-rate
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions: [{ AttributeName: pk, AttributeType: S }]
+      KeySchema: [{ AttributeName: pk, KeyType: HASH }]
+      TimeToLiveSpecification: { AttributeName: expires, Enabled: true }
+
+  ContactRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub app-raymancini-stretchflex-${Env}-contact
+      PermissionsBoundary: !If [HasBoundary, !Sub "arn:aws:iam::${AWS::AccountId}:policy/${RoleBoundaryName}", !Ref "AWS::NoValue"]
+      AssumeRolePolicyDocument:
+        Statement: [{ Effect: Allow, Principal: { Service: lambda.amazonaws.com }, Action: sts:AssumeRole }]
+      ManagedPolicyArns: [arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole]
+      Policies:
+        - PolicyName: contact-form
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: ses:SendEmail
+                Resource: !Sub arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/${MailDomain}
+              - Effect: Allow
+                Action: dynamodb:UpdateItem
+                Resource: !GetAtt ContactRateTable.Arn
+
+  ContactFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub raymancini-stretchflex-${Env}-contact
+      CodeUri: contact/
+      Handler: index.handler
+      Runtime: nodejs22.x
+      Architectures: [arm64]
+      MemorySize: 256
+      Timeout: 10
+      Role: !GetAtt ContactRole.Arn
+      Environment:
+        Variables:
+          TO_EMAIL: !Ref ContactEmail
+          FROM_DOMAIN: !Ref MailDomain
+          TABLE: !Ref ContactRateTable
+          RATE_LIMIT: "5"
+          # Only CloudFront knows this (it adds the header), so the function URL can't be called directly.
+          ORIGIN_SECRET: !Select [2, !Split ["/", !Ref "AWS::StackId"]]
+      FunctionUrlConfig: { AuthType: NONE }
+  ContactLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/${ContactFunction}
+      RetentionInDays: 90
+  # Public function URLs need lambda:InvokeFunction as well as lambda:InvokeFunctionUrl (SAM adds that one).
+  ContactInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ContactFunction
+      Action: lambda:InvokeFunction
+      Principal: "*"
+      InvokedViaFunctionUrl: true
+
+  ContactOriginRequestPolicy:
+    Type: AWS::CloudFront::OriginRequestPolicy
+    Properties:
+      OriginRequestPolicyConfig:
+        Name: !Sub raymancini-stretchflex-${Env}-contact
+        CookiesConfig: { CookieBehavior: none }
+        QueryStringsConfig: { QueryStringBehavior: none }
+        HeadersConfig: { HeaderBehavior: whitelist, Headers: [CloudFront-Viewer-Address, Content-Type, Origin] }
+
+  # ------------------------------------------------------------------------- direct serving
+  # While CloudFront can't take stretchflex.au, the domain is served by this
+  # function (infra/web/index.mjs: the same clean URLs and redirects as the
+  # CloudFront function, reading pages from SiteBucket) behind API Gateway.
+  # The domain's A records in Route 53 are set by hand to the custom domains'
+  # regional names (see the WebApexTarget / WebWwwTarget outputs).
+  WebRole:
+    Type: AWS::IAM::Role
+    Condition: HasWebDomain
+    Properties:
+      RoleName: !Sub app-raymancini-stretchflex-${Env}-web
+      PermissionsBoundary: !If [HasBoundary, !Sub "arn:aws:iam::${AWS::AccountId}:policy/${RoleBoundaryName}", !Ref "AWS::NoValue"]
+      AssumeRolePolicyDocument:
+        Statement: [{ Effect: Allow, Principal: { Service: lambda.amazonaws.com }, Action: sts:AssumeRole }]
+      Policies:
+        - PolicyName: web
+          PolicyDocument:
+            Statement:
+              - Effect: Allow
+                Action: [logs:CreateLogGroup, logs:CreateLogStream, logs:PutLogEvents]
+                Resource: !Sub arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/raymancini-stretchflex-${Env}-web:*
+              - { Effect: Allow, Action: s3:GetObject, Resource: !Sub "${SiteBucket.Arn}/*" }
+              - { Effect: Allow, Action: s3:ListBucket, Resource: !GetAtt SiteBucket.Arn }
+  WebFunction:
+    Type: AWS::Serverless::Function
+    Condition: HasWebDomain
+    Properties:
+      FunctionName: !Sub raymancini-stretchflex-${Env}-web
+      CodeUri: web/
+      Handler: index.handler
+      Runtime: nodejs24.x
+      Architectures: [arm64]
+      MemorySize: 512
+      Timeout: 10
+      Role: !GetAtt WebRole.Arn
+      Environment:
+        Variables:
+          SITE_BUCKET: !Ref SiteBucket
+          SITE_HOST: !Ref WebDomain
+      Events:
+        Site:
+          Type: HttpApi
+          Properties: { ApiId: !Ref WebApi, Path: $default, Method: ANY }
+  WebLogs:
+    Type: AWS::Logs::LogGroup
+    Condition: HasWebDomain
+    Properties:
+      LogGroupName: !Sub /aws/lambda/raymancini-stretchflex-${Env}-web
+      RetentionInDays: 30
+  WebApi:
+    Type: AWS::Serverless::HttpApi
+    Condition: HasWebDomain
+    Properties:
+      Name: !Sub raymancini-stretchflex-${Env}-web
+      DefaultRouteSettings: { ThrottlingBurstLimit: 400, ThrottlingRateLimit: 200 }
+  # The contact form on the direct-served site.
+  ContactRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Condition: HasWebDomain
+    Properties:
+      ApiId: !Ref WebApi
+      RouteKey: POST /api/contact
+      Target: !Sub integrations/${ContactIntegration}
+  ContactIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Condition: HasWebDomain
+    Properties:
+      ApiId: !Ref WebApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !GetAtt ContactFunction.Arn
+      PayloadFormatVersion: "2.0"
+  ContactApiPermission:
+    Type: AWS::Lambda::Permission
+    Condition: HasWebDomain
+    Properties:
+      FunctionName: !Ref ContactFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WebApi}/*/POST/api/contact
+  WebDomainApex:
+    Type: AWS::ApiGatewayV2::DomainName
+    Condition: HasWebDomain
+    Properties:
+      DomainName: !Ref WebDomain
+      DomainNameConfigurations: [{ CertificateArn: !Ref WebCertificateArn, EndpointType: REGIONAL, SecurityPolicy: TLS_1_2 }]
+  WebDomainWww:
+    Type: AWS::ApiGatewayV2::DomainName
+    Condition: HasWebDomain
+    Properties:
+      DomainName: !Sub www.${WebDomain}
+      DomainNameConfigurations: [{ CertificateArn: !Ref WebCertificateArn, EndpointType: REGIONAL, SecurityPolicy: TLS_1_2 }]
+  WebMappingApex:
+    Type: AWS::ApiGatewayV2::ApiMapping
+    Condition: HasWebDomain
+    DependsOn: WebApiApiGatewayDefaultStage
+    Properties: { DomainName: !Ref WebDomainApex, ApiId: !Ref WebApi, Stage: $default }
+  WebMappingWww:
+    Type: AWS::ApiGatewayV2::ApiMapping
+    Condition: HasWebDomain
+    DependsOn: WebApiApiGatewayDefaultStage
+    Properties: { DomainName: !Ref WebDomainWww, ApiId: !Ref WebApi, Stage: $default }
 
   OriginAccessControl:
     Type: AWS::CloudFront::OriginAccessControl
@@ -146,6 +356,11 @@ __EDGE_CODE__
             DomainName: !GetAtt SiteBucket.RegionalDomainName
             OriginAccessControlId: !GetAtt OriginAccessControl.Id
             S3OriginConfig: { OriginAccessIdentity: "" }
+          - Id: contact
+            DomainName: !Select [2, !Split ["/", !GetAtt ContactFunctionUrl.FunctionUrl]]
+            CustomOriginConfig: { OriginProtocolPolicy: https-only, OriginSSLProtocols: [TLSv1.2] }
+            OriginCustomHeaders:
+              - { HeaderName: X-Origin-Secret, HeaderValue: !Select [2, !Split ["/", !Ref "AWS::StackId"]] }
         DefaultCacheBehavior:
           TargetOriginId: site
           ViewerProtocolPolicy: redirect-to-https
@@ -157,6 +372,14 @@ __EDGE_CODE__
             - EventType: viewer-request
               FunctionARN: !GetAtt UrlFunction.FunctionMetadata.FunctionARN
         CacheBehaviors:
+          - PathPattern: /api/*
+            TargetOriginId: contact
+            ViewerProtocolPolicy: https-only
+            AllowedMethods: [GET, HEAD, OPTIONS, PUT, PATCH, POST, DELETE]
+            Compress: true
+            CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad   # Managed-CachingDisabled
+            OriginRequestPolicyId: !Ref ContactOriginRequestPolicy
+            ResponseHeadersPolicyId: !Ref SecurityHeadersPolicy
           - PathPattern: /_next/*
             TargetOriginId: site
             ViewerProtocolPolicy: redirect-to-https
@@ -190,3 +413,6 @@ Outputs:
   SiteBucketName: { Value: !Ref SiteBucket }
   DistributionId: { Value: !Ref Distribution }
   CloudFrontDomain: { Value: !GetAtt Distribution.DomainName }
+  ContactFunctionName: { Value: !Ref ContactFunction }
+  WebApexTarget: { Condition: HasWebDomain, Value: !GetAtt WebDomainApex.RegionalDomainName }
+  WebWwwTarget: { Condition: HasWebDomain, Value: !GetAtt WebDomainWww.RegionalDomainName }

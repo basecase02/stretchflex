@@ -210,3 +210,12 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Honeypot: off-screen for people, still in the form for bots. */
+.cform__trap {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
