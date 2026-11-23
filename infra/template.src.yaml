@@ -448,6 +448,9 @@ __EDGE_CODE__
               - Effect: Allow
                 Action: [dynamodb:GetItem, dynamodb:PutItem, dynamodb:UpdateItem, dynamodb:Scan]
                 Resource: !GetAtt GiftTable.Arn
+              - Effect: Allow   # checkout attempts per visitor
+                Action: dynamodb:UpdateItem
+                Resource: !GetAtt ContactRateTable.Arn
               - Effect: Allow
                 Action: [ssm:GetParameter]
                 Resource: !Sub arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/raymancini/${Env}/stretchflex/*
@@ -490,6 +493,7 @@ __EDGE_CODE__
       Environment:
         Variables:
           GIFT_TABLE: !Ref GiftTable
+          RATE_TABLE: !Ref ContactRateTable
           SITE_ORIGIN: !Ref SiteOrigin
           MAIL_FROM: !Ref MailFrom
           SQUARE_TOKEN_PARAM: !Sub /raymancini/${Env}/stretchflex/square-token

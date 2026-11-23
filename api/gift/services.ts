@@ -169,6 +169,30 @@ export type Gift = {
 const db = DynamoDBDocumentClient.from(new DynamoDBClient({}), { marshallOptions: { removeUndefinedValues: true } });
 const TABLE = () => env("GIFT_TABLE");
 
+/* ─────────────────────────────── Rate limit ─────────────────────────────── */
+
+/** True while this visitor is under `limit` checkouts this hour (counted in the shared rate table). Fails open. */
+export async function underLimit(ip: string, limit: number): Promise<boolean> {
+  if (!ip || !env("RATE_TABLE")) return true;
+  const hour = Math.floor(Date.now() / 3_600_000);
+  try {
+    const r = await db.send(
+      new UpdateCommand({
+        TableName: env("RATE_TABLE"),
+        Key: { pk: `gift#${ip}#${hour}` },
+        UpdateExpression: "ADD #n :one SET #e = if_not_exists(#e, :exp)",
+        ExpressionAttributeNames: { "#n": "count", "#e": "expires" },
+        ExpressionAttributeValues: { ":one": 1, ":exp": (hour + 2) * 3600 },
+        ReturnValues: "UPDATED_NEW",
+      }),
+    );
+    return Number(r.Attributes?.count ?? 0) <= limit;
+  } catch (e) {
+    console.error("rate limit", e);
+    return true;
+  }
+}
+
 export async function getGift(code: string): Promise<Gift | null> {
   const r = await db.send(new GetCommand({ TableName: TABLE(), Key: { code } }));
   return (r.Item as Gift) ?? null;

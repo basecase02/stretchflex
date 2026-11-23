@@ -20,7 +20,7 @@ import type { CertificateFields } from "../../src/lib/gift/certificate";
 import { buyerEmail, pdfUrl, recipientEmail, viewUrl } from "./emails";
 import { certificatePdf, landscapePng } from "./render";
 import {
-  acuityCertificate, dueGifts, getGift, param, pendingGifts, putNewGift, sendMail, square, squareLocation, squareOrderPaid, updateGift, type Gift,
+  acuityCertificate, dueGifts, getGift, param, pendingGifts, putNewGift, sendMail, underLimit, square, squareLocation, squareOrderPaid, updateGift, type Gift,
 } from "./services";
 
 type HttpEvent = {
@@ -28,7 +28,8 @@ type HttpEvent = {
   rawQueryString?: string;
   body?: string;
   isBase64Encoded?: boolean;
-  requestContext?: { http?: { method: string } };
+  headers?: Record<string, string | undefined>;
+  requestContext?: { domainName?: string; http?: { method: string; sourceIp?: string } };
   action?: string;
   code?: string;
 };
@@ -53,7 +54,10 @@ export async function handler(event: HttpEvent, context: { invokedFunctionArn: s
     const route = `${method} ${path}`;
     const c = query.get("c") ?? "";
     const t = query.get("t") ?? "";
-    if (route === "POST /api/gift/checkout") return await checkout(raw);
+    if (route === "POST /api/gift/checkout") {
+      if (!(await underLimit(visitorIp(event), 10))) return json(429, { error: "Too many attempts. Please try again in an hour, or call us on 0432 569 077." });
+      return await checkout(raw);
+    }
     if (route === "GET /api/gift/order") return await order(c, t);
     if (route === "GET /api/gift/view") return await view(c, t);
     if (route === "GET /api/gift/pdf") return await pdf(c, t);
@@ -65,6 +69,12 @@ export async function handler(event: HttpEvent, context: { invokedFunctionArn: s
 }
 
 /* ───────────────────────────── buying ───────────────────────────── */
+
+/** The visitor: API Gateway sees them on the live domain; behind CloudFront (the preview) they are in CloudFront-Viewer-Address. */
+function visitorIp(event: HttpEvent): string {
+  const viaCloudFront = (event.requestContext?.domainName ?? "").endsWith(".amazonaws.com") && event.headers?.["cloudfront-viewer-address"];
+  return viaCloudFront ? event.headers!["cloudfront-viewer-address"]!.replace(/:\d+$/, "") : event.requestContext?.http?.sourceIp ?? "";
+}
 
 const EMAIL = /^[^\s@<>()",;:]+@[^\s@<>()",;:]+\.[a-z]{2,}$/i;
 const clean = (v: unknown, max: number) => String(v ?? "").replace(/[\u0000-\u001f\u007f<>]/g, " ").replace(/\s+/g, " ").trim().slice(0, max);
